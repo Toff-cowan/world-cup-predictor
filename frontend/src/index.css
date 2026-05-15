@@ -1,0 +1,81 @@
+@import "tailwindcss";
+@import "./fonts/akt.css";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: "Akt", Arial, "Helvetica Neue", Helvetica, sans-serif;
+  --font-display: "Oswald", "Akt", Arial, sans-serif;
+  --font-sport: "Poppins", "Akt", Arial, sans-serif;
+}
+
+html {
+  font-family: var(--font-sans);
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: var(--font-sans);
+  background: #f3f3f3;
+  color: #18181b;
+}
+
+html.dark body {
+  background: #0a0a0a;
+  color: #f4f4f5;
+}
+
+button,
+input,
+select,
+textarea,
+optgroup {
+  font-family: inherit;
+}
+
+.font-sport {
+  font-family: var(--font-sport);
+}
+
+.font-display {
+  font-family: var(--font-display);
+}
+
+/* FAQ accordion — soft expand */
+@keyframes faq-answer-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes faq-icon-in {
+  from {
+    opacity: 0;
+    transform: translateX(-8px) scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+.faq-answer-enter {
+  animation: faq-answer-in 1.4s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
+}
+
+.faq-icon-enter {
+  animation: faq-icon-in 1.2s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .faq-answer-enter,
+  .faq-icon-enter {
+    animation: none;
+  }
+}
