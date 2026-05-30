@@ -54,7 +54,23 @@ export const FIFA_TO_ISO2 = {
   WAL: "gb-wls",
 };
 
+function normalizeAlpha(code) {
+  return `${code || ""}`.toUpperCase().replace(/[^A-Z]/g, "");
+}
+
 export function fifaCodeToIso2(code) {
-  const key = `${code || ""}`.toUpperCase().replace(/[^A-Z]/g, "");
+  const key = normalizeAlpha(code);
   return FIFA_TO_ISO2[key] || null;
+}
+
+export function resolveFlagIso2(countryCode, teamCode) {
+  for (const raw of [countryCode, teamCode]) {
+    if (!raw) continue;
+    const key = normalizeAlpha(raw);
+    if (!key) continue;
+    if (key.length === 2) return key.toLowerCase();
+    const iso = FIFA_TO_ISO2[key];
+    if (iso) return iso;
+  }
+  return null;
 }

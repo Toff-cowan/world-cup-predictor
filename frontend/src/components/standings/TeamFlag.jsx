@@ -1,22 +1,26 @@
-import { useState } from "react";
-import { getFlagApiUrl, getFlagCdnUrl } from "../../utils/flagUrl.js";
+import { useEffect, useMemo, useState } from "react";
+import { getFlagUrls } from "../../utils/flagUrl.js";
 
 export default function TeamFlag({ countryCode, teamCode, className = "w-9 h-6" }) {
-  const cdnUrl = getFlagCdnUrl(countryCode, teamCode);
-  const apiUrl = getFlagApiUrl(countryCode, teamCode);
-  const [src, setSrc] = useState(cdnUrl || apiUrl);
-  const [failed, setFailed] = useState(false);
+  const urls = useMemo(() => getFlagUrls(countryCode, teamCode), [countryCode, teamCode]);
+  const [urlIndex, setUrlIndex] = useState(0);
 
-  if (!src || failed) {
+  useEffect(() => {
+    setUrlIndex(0);
+  }, [urls]);
+
+  const src = urls[urlIndex];
+
+  if (!src) {
     return <span className={`${className} bg-zinc-200 dark:bg-zinc-700 rounded-sm shrink-0 block`} />;
   }
 
   function handleError() {
-    if (src === cdnUrl && apiUrl) {
-      setSrc(apiUrl);
-      return;
-    }
-    setFailed(true);
+    setUrlIndex((i) => (i + 1 < urls.length ? i + 1 : urls.length));
+  }
+
+  if (urlIndex >= urls.length) {
+    return <span className={`${className} bg-zinc-200 dark:bg-zinc-700 rounded-sm shrink-0 block`} />;
   }
 
   return (

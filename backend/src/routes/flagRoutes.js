@@ -24,15 +24,6 @@ router.get("/:code", async (req, res, next) => {
     const code = req.params.code?.toUpperCase().replace(/[^A-Z]/g, "");
     if (!code) return res.status(400).end();
 
-    for (const url of fifaFlagUrlsToTry(code)) {
-      const result = await fetchBuffer(url, FIFA_FLAG_HEADERS);
-      if (result) {
-        res.set("Content-Type", result.contentType || "image/png");
-        res.set("Cache-Control", "public, max-age=604800");
-        return res.send(result.buffer);
-      }
-    }
-
     const iso2 = fifaCodeToIso2(code);
     if (iso2) {
       const cdn = await fetchBuffer(`https://flagcdn.com/w80/${iso2}.png`);
@@ -40,6 +31,23 @@ router.get("/:code", async (req, res, next) => {
         res.set("Content-Type", "image/png");
         res.set("Cache-Control", "public, max-age=604800");
         return res.send(cdn.buffer);
+      }
+      const svg = await fetchBuffer(
+        `https://hatscripts.github.io/circle-flags/flags/${iso2}.svg`
+      );
+      if (svg) {
+        res.set("Content-Type", "image/svg+xml");
+        res.set("Cache-Control", "public, max-age=604800");
+        return res.send(svg.buffer);
+      }
+    }
+
+    for (const url of fifaFlagUrlsToTry(code)) {
+      const result = await fetchBuffer(url, FIFA_FLAG_HEADERS);
+      if (result) {
+        res.set("Content-Type", result.contentType || "image/png");
+        res.set("Cache-Control", "public, max-age=604800");
+        return res.send(result.buffer);
       }
     }
 
