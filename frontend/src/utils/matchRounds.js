@@ -51,6 +51,7 @@ function standingRow(teamId, teamMeta, stats) {
     team_name: teamMeta.name,
     team_code: teamMeta.code,
     country_code: teamMeta.countryCode,
+    flag_url: teamMeta.flagUrl ?? teamMeta.flag_url,
     group_letter: teamMeta.groupLetter,
     ...stats,
     goal_difference: stats.goals_for - stats.goals_against,
@@ -95,12 +96,14 @@ export function topTwoByGroupThroughRound(allMatches, throughRound) {
         name: m.homeTeamName ?? m.home_team_name,
         code: m.homeTeamCode ?? m.home_team_code,
         countryCode: m.homeCountryCode ?? m.home_country_code,
+        flagUrl: m.homeFlagUrl ?? m.home_flag_url,
         groupLetter: group,
       });
       teams.set(awayId, {
         name: m.awayTeamName ?? m.away_team_name,
         code: m.awayTeamCode ?? m.away_team_code,
         countryCode: m.awayCountryCode ?? m.away_country_code,
+        flagUrl: m.awayFlagUrl ?? m.away_flag_url,
         groupLetter: group,
       });
 

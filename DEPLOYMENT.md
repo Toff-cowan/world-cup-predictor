@@ -139,7 +139,7 @@ Browser → Vercel (static site)
 
 `frontend/vercel.json` rewrites `/api/*` to your Render service (so relative `/api` works) and other routes to `index.html`. **Update the Render URL in `vercel.json` if your service name changes.**
 
-Team flags load from **flagcdn.com** in the browser (no API required). If you change Render hostnames, update both `VITE_API_URL` and the `/api` rewrite in `vercel.json`.
+Team flags are stored in Postgres as `/api/flags/USA` during `npm run scrape` and served by the API (with CDN/FIFA fallback). The frontend loads `teams.flag_url` from API responses. Set `SCRAPE_IF_EMPTY=true` on Render to auto-scrape when the teams table is empty on first boot.
 
 ---
 

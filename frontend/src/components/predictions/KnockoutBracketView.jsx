@@ -37,6 +37,7 @@ function TeamRow({ team, seed, winner, mirrored }) {
         <>
           {!mirrored && (
             <TeamFlag
+              flagUrl={team.flag_url}
               countryCode={team.country_code}
               teamCode={team.code}
               className="w-7 h-5 shrink-0"
@@ -47,6 +48,7 @@ function TeamRow({ team, seed, winner, mirrored }) {
           </span>
           {mirrored && (
             <TeamFlag
+              flagUrl={team.flag_url}
               countryCode={team.country_code}
               teamCode={team.code}
               className="w-7 h-5 shrink-0"
@@ -94,6 +96,7 @@ function FlagNode({ team, large = false }) {
   }
   return (
     <TeamFlag
+      flagUrl={team.flag_url}
       countryCode={team.country_code}
       teamCode={team.code}
       className={`${size} shrink-0 rounded-md overflow-hidden`}

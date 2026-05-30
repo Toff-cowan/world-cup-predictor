@@ -20,3 +20,4 @@ services:
       # JWT_SECRET — long random string
       # CLIENT_URL — https://your-app.vercel.app
       # ADMIN_SCRAPE_KEY — optional, for POST /api/scraper/run
+      # SCRAPE_IF_EMPTY — "true" to run npm run scrape on first boot when teams table is empty

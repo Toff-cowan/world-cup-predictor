@@ -39,11 +39,19 @@ function TeamCell({ team, align = "left" }) {
           <span className="text-sm font-medium text-zinc-900 dark:text-zinc-100 truncate">
             {team.name}
           </span>
-          <TeamFlag countryCode={team.country_code} teamCode={team.code || team.team_code} />
+          <TeamFlag
+            flagUrl={team.flag_url}
+            countryCode={team.country_code}
+            teamCode={team.code || team.team_code}
+          />
         </>
       ) : (
         <>
-          <TeamFlag countryCode={team.country_code} teamCode={team.code || team.team_code} />
+          <TeamFlag
+            flagUrl={team.flag_url}
+            countryCode={team.country_code}
+            teamCode={team.code || team.team_code}
+          />
           <span className="text-sm font-medium text-zinc-900 dark:text-zinc-100 truncate">
             {team.name}
           </span>

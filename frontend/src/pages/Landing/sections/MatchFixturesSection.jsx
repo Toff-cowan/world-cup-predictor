@@ -59,6 +59,7 @@ function MatchCard({ match }) {
       <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3">
         <div className="flex flex-col items-center gap-2 min-w-0 text-center">
           <TeamFlag
+            flagUrl={match.homeFlagUrl}
             countryCode={match.homeCountryCode}
             teamCode={match.homeTeamCode}
             className="w-10 h-7"
@@ -80,6 +81,7 @@ function MatchCard({ match }) {
 
         <div className="flex flex-col items-center gap-2 min-w-0 text-center">
           <TeamFlag
+            flagUrl={match.awayFlagUrl}
             countryCode={match.awayCountryCode}
             teamCode={match.awayTeamCode}
             className="w-10 h-7"
@@ -102,7 +104,12 @@ function QualifierChip({ team, rank }) {
       <span className="text-[10px] font-bold text-emerald-700 dark:text-emerald-400 shrink-0">
         {rank}
       </span>
-      <TeamFlag countryCode={team.country_code} teamCode={team.team_code} className="w-6 h-4 shrink-0" />
+      <TeamFlag
+        flagUrl={team.flag_url}
+        countryCode={team.country_code}
+        teamCode={team.team_code}
+        className="w-6 h-4 shrink-0"
+      />
       <span className="text-xs font-semibold truncate">{team.team_name}</span>
     </div>
   );

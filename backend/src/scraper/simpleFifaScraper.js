@@ -6,6 +6,7 @@ import {
   extractTeamsFromMatches,
   buildStandingsFromMatches,
 } from "./fifaApiClient.js";
+import { buildStoredFlagUrl, warmTeamFlag } from "../utils/teamFlagUrl.js";
 
 /**
  * Syncs real FIFA World Cup 2026 data via api.fifa.com (same source as fifa.com).
@@ -26,10 +27,14 @@ export async function syncFifaTournament() {
   }
 
   let teamsUpserted = 0;
+  let flagsWarmed = 0;
   const teamIdByCode = {};
 
   for (const team of teamMap) {
     const groupLetter = groupByCode[team.countryCode] || null;
+    const flagUrl = buildStoredFlagUrl(team.countryCode);
+    if (await warmTeamFlag(team.countryCode)) flagsWarmed++;
+
     const { rows } = await pool.query(
       `INSERT INTO teams (name, code, group_letter, flag_url, fifa_team_id, country_code)
        VALUES ($1, $2, $3, $4, $5, $6)
@@ -44,7 +49,7 @@ export async function syncFifaTournament() {
         team.name,
         team.code,
         groupLetter,
-        team.flagUrl,
+        flagUrl,
         team.fifaTeamId,
         team.countryCode,
       ]
@@ -163,6 +168,7 @@ export async function syncFifaTournament() {
   return {
     season: season.Name?.[0]?.Description,
     teams: teamsUpserted,
+    flagsWarmed,
     matches: matchesUpserted,
     standings: standingsUpserted,
   };
