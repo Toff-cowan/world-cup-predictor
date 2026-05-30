@@ -13,3 +13,9 @@ See **[FILES.md](./FILES.md)** for what every file does.
 3. Frontend: `cd frontend && cp .env.example .env && npm install && npm run dev`
 
 Open http://localhost:5173
+
+## Production deploy
+
+**Supabase** (Postgres) + **Render** (API) + **Vercel** (frontend).
+
+See **[DEPLOYMENT.md](./DEPLOYMENT.md)** for step-by-step setup and every env var you need.
