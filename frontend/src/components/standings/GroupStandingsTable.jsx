@@ -1,4 +1,7 @@
 import TeamFlag from "./TeamFlag.jsx";
+import FormIndicators from "./FormIndicators.jsx";
+import { nationalTeamSearchUrl } from "../../utils/teamSearchUrl.js";
+import { positionTrend } from "../../utils/teamForm.js";
 
 const STAT_COLS = [
   { key: "played", label: "P" },
@@ -11,26 +14,13 @@ const STAT_COLS = [
   { key: "points", label: "Pts" },
 ];
 
-function FormDots() {
-  return (
-    <div className="flex gap-1 justify-end">
-      {[0, 1, 2, 3, 4].map((i) => (
-        <span
-          key={i}
-          className="w-5 h-5 rounded-full bg-zinc-200 dark:bg-zinc-700 text-[10px] text-zinc-400 dark:text-zinc-500 flex items-center justify-center"
-        >
-          –
-        </span>
-      ))}
-    </div>
-  );
-}
-
 export default function GroupStandingsTable({
   title = "Standings",
   teams,
   showGroupColumn = false,
   showRank = true,
+  linkTeamSearch = false,
+  highlightQualifiers = !showGroupColumn,
 }) {
   const sorted = [...teams].sort(
     (a, b) =>
@@ -58,25 +48,58 @@ export default function GroupStandingsTable({
         <span className="text-right">Form</span>
       </div>
 
+      {highlightQualifiers && sorted.length > 0 && (
+        <p className="px-8 lg:px-12 py-2 text-[10px] uppercase tracking-widest text-emerald-700 dark:text-emerald-400 bg-emerald-50/80 dark:bg-emerald-950/30 border-b border-emerald-100 dark:border-emerald-900/40 m-0">
+          Top two advance
+        </p>
+      )}
+
       <ul>
         {sorted.map((row, index) => {
           const rank = row.position ?? index + 1;
+          const isQualifier = highlightQualifiers && rank <= 2;
+          const trend = positionTrend(row.form);
 
           return (
             <li
               key={row.id || row.team_id}
-              className={`grid ${gridCols} gap-x-6 lg:gap-x-8 items-center px-8 lg:px-12 py-4 border-b border-zinc-100 dark:border-zinc-800 last:border-0 hover:bg-zinc-50/80 dark:hover:bg-zinc-800/50 transition-colors`}
+              className={`grid ${gridCols} gap-x-6 lg:gap-x-8 items-center px-8 lg:px-12 py-4 border-b border-zinc-100 dark:border-zinc-800 last:border-0 transition-colors ${
+                isQualifier
+                  ? "bg-emerald-50/60 dark:bg-emerald-950/20 border-l-4 border-l-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-950/30"
+                  : "hover:bg-zinc-50/80 dark:hover:bg-zinc-800/50"
+              }`}
             >
               <div className="flex items-center gap-3 min-w-0">
                 {showRank && (
-                  <span className="w-5 text-sm font-medium text-zinc-400 tabular-nums shrink-0">
+                  <span
+                    className={`w-5 text-sm font-medium tabular-nums shrink-0 flex items-center gap-0.5 ${
+                      isQualifier ? "text-emerald-700 dark:text-emerald-400 font-bold" : "text-zinc-400"
+                    }`}
+                  >
                     {rank}
+                    {isQualifier && (
+                      <span className="text-[9px] uppercase tracking-wide text-emerald-600 dark:text-emerald-400" title="Qualifying position">
+                        Q
+                      </span>
+                    )}
                   </span>
                 )}
                 <TeamFlag countryCode={row.country_code} teamCode={row.team_code} />
-                <span className="text-sm font-medium text-zinc-900 dark:text-zinc-100 truncate">
-                  {row.team_name}
-                </span>
+                {linkTeamSearch && row.team_name ? (
+                  <a
+                    href={nationalTeamSearchUrl(row.team_name)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm font-medium text-zinc-900 dark:text-zinc-100 truncate hover:underline underline-offset-2"
+                    title={`Search ${row.team_name} on Google`}
+                  >
+                    {row.team_name}
+                  </a>
+                ) : (
+                  <span className="text-sm font-medium text-zinc-900 dark:text-zinc-100 truncate">
+                    {row.team_name}
+                  </span>
+                )}
               </div>
 
               {showGroupColumn && (
@@ -94,7 +117,7 @@ export default function GroupStandingsTable({
                 </span>
               ))}
 
-              <FormDots />
+              <FormIndicators form={row.form} showTrend trend={trend} />
             </li>
           );
         })}

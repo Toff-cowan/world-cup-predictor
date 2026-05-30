@@ -8,6 +8,7 @@ import {
   updatePrediction,
   deletePrediction,
   lockPredictionStage,
+  unlockPrediction,
 } from "../controllers/predictions/predictionHandlers.js";
 
 const router = Router();
@@ -21,5 +22,6 @@ router.post("/", createPrediction);
 router.patch("/:id", updatePrediction);
 router.delete("/:id", deletePrediction);
 router.post("/:id/lock", lockPredictionStage);
+router.post("/:id/unlock", unlockPrediction);
 
 export default router;

@@ -2,6 +2,7 @@ import HeroSection from "./sections/HeroSection.jsx";
 import HospitalityBanner from "./sections/HospitalityBanner.jsx";
 import NewsSection from "./sections/NewsSection.jsx";
 import StandingsPreview from "./sections/StandingsPreview.jsx";
+import MatchFixturesSection from "./sections/MatchFixturesSection.jsx";
 import FAQSection from "./sections/FAQSection.jsx";
 
 export default function LandingPage() {
@@ -11,6 +12,7 @@ export default function LandingPage() {
       <HospitalityBanner />
       <NewsSection />
       <StandingsPreview />
+      <MatchFixturesSection />
       <FAQSection />
     </div>
   );

@@ -11,14 +11,84 @@
 
 html {
   font-family: var(--font-sans);
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
 body {
   margin: 0;
   min-height: 100vh;
+  min-height: 100dvh;
   font-family: var(--font-sans);
   background: #f3f3f3;
   color: #18181b;
+  overflow-x: hidden;
+}
+
+body.mobile-nav-open {
+  overflow: hidden;
+  touch-action: none;
+}
+
+/* Touch-friendly controls */
+@media (max-width: 639px) {
+  button,
+  a[role="button"],
+  input[type="submit"],
+  input[type="button"],
+  select {
+    min-height: 2.75rem;
+  }
+
+  input[type="number"],
+  input[type="email"],
+  input[type="password"],
+  input[type="text"] {
+    font-size: 16px; /* prevents iOS zoom on focus */
+  }
+}
+
+/* Horizontal scroll regions (tables, brackets) */
+.mobile-scroll-x {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+  scrollbar-width: thin;
+}
+
+.mobile-scroll-hint {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .mobile-scroll-hint {
+    display: block;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgb(113 113 122);
+    margin: 0 0 0.5rem;
+  }
+
+  html.dark .mobile-scroll-hint {
+    color: rgb(161 161 170);
+  }
+}
+
+/* Safe areas for notched phones + floating news panel */
+.safe-bottom {
+  padding-bottom: max(1rem, env(safe-area-inset-bottom));
+}
+
+.app-main-mobile-pad {
+  padding-bottom: max(5.5rem, calc(env(safe-area-inset-bottom) + 4.5rem));
+}
+
+@media (min-width: 768px) {
+  .app-main-mobile-pad {
+    padding-bottom: 0;
+  }
 }
 
 html.dark body {
@@ -125,6 +195,165 @@ optgroup {
 @media (prefers-reduced-motion: reduce) {
   .faq-answer-enter,
   .faq-icon-enter {
+    animation: none;
+  }
+}
+
+/* Countdown ribbon — slide down from kickoff tab */
+@keyframes countdown-ribbon-slide-in {
+  from {
+    opacity: 0.6;
+    transform: translateY(-12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.countdown-ribbon-slide-in {
+  animation: countdown-ribbon-slide-in 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .countdown-ribbon-grid {
+    transition-duration: 0.01ms !important;
+  }
+
+  .countdown-ribbon-slide-in {
+    animation: none;
+  }
+}
+
+/* Bracket centre — World Cup trophy */
+.bracket-trophy-img {
+  transition:
+    transform 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+    filter 0.55s ease;
+}
+
+.bracket-trophy:hover .bracket-trophy-img {
+  transform: scale(1.05) translateY(-3px);
+  filter: drop-shadow(0 14px 28px rgba(0, 0, 0, 0.12));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bracket-trophy-img {
+    transition: none;
+  }
+
+  .bracket-trophy:hover .bracket-trophy-img {
+    transform: none;
+  }
+}
+
+/* Hero — floating World Cup trophy */
+@keyframes hero-trophy-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-28px);
+  }
+}
+
+.hero-trophy-float {
+  animation: hero-trophy-float 4.5s ease-in-out infinite;
+  filter: drop-shadow(0 24px 48px rgba(0, 0, 0, 0.55))
+    drop-shadow(0 0 80px rgba(255, 209, 0, 0.15));
+}
+
+/* Hero — staggered floating news cards */
+@keyframes hero-news-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.hero-news-card {
+  animation: hero-news-float 5s ease-in-out infinite both;
+}
+
+.hero-news-card-1 {
+  animation-duration: 4.8s;
+}
+
+.hero-news-card-2 {
+  animation-duration: 5.4s;
+  animation-delay: 0.35s;
+}
+
+.hero-news-card-3 {
+  animation-duration: 5.1s;
+  animation-delay: 0.7s;
+}
+
+/* Site-wide floating news panel */
+@keyframes floating-news-panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes floating-news-item-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+.floating-news-panel {
+  animation: floating-news-panel-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.floating-news-item {
+  animation: floating-news-item-float 6s ease-in-out infinite both;
+}
+
+.floating-news-item-1 {
+  animation-duration: 5.5s;
+}
+
+.floating-news-item-2 {
+  animation-duration: 6.2s;
+  animation-delay: 0.25s;
+}
+
+.floating-news-item-3 {
+  animation-duration: 5.8s;
+  animation-delay: 0.5s;
+}
+
+/* Disclaimer modal entrance */
+@keyframes disclaimer-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-trophy-float,
+  .hero-news-card,
+  .floating-news-panel,
+  .floating-news-item {
     animation: none;
   }
 }

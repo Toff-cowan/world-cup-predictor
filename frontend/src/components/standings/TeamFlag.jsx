@@ -13,6 +13,7 @@ export default function TeamFlag({ countryCode, teamCode, className = "w-9 h-6" 
     <img
       src={src}
       alt=""
+      crossOrigin="anonymous"
       className={`${className} object-cover rounded-sm shrink-0`}
       loading="lazy"
       onError={() => setFailed(true)}

@@ -13,5 +13,10 @@ export const predictionsApi = {
       method: "POST",
       body: JSON.stringify({ stage }),
     }),
+  unlock: (id, body) =>
+    apiFetch(`/predictions/${id}/unlock`, {
+      method: "POST",
+      body: JSON.stringify(body),
+    }),
   shared: (token) => apiFetch(`/predictions/shared/${token}`),
 };

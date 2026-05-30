@@ -107,6 +107,8 @@ export default function StandingsPage() {
             title="Overall standings"
             teams={overallRows.map((row, i) => ({ ...row, position: i + 1 }))}
             showGroupColumn
+            linkTeamSearch
+            highlightQualifiers={false}
           />
         )}
 
@@ -117,7 +119,9 @@ export default function StandingsPage() {
                 key={group}
                 title={`Group ${group}`}
                 teams={standings[group]}
-                showRank={false}
+                showRank
+                linkTeamSearch
+                highlightQualifiers
               />
             ))}
           </div>

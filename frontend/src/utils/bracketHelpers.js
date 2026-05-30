@@ -1,4 +1,9 @@
 import { GROUP_LETTERS, KNOCKOUT_ROUNDS, matchKey } from "../constants/bracket.js";
+import {
+  computePredictedStandings,
+  fixturesByGroup,
+  qualifiersFromStandings,
+} from "./groupPredictionHelpers.js";
 
 export function createEmptyBracket() {
   const groups = {};
@@ -14,7 +19,7 @@ export function createEmptyBracket() {
     }
   }
 
-  return { groups, knockout };
+  return { groups, group_matches: {}, locked_groups: [], knockout };
 }
 
 function ensureMatch(knockout, roundKey, index) {
@@ -66,7 +71,7 @@ export function syncKnockoutAdvancement(knockout) {
   return k;
 }
 
-export function normalizeBracket(raw) {
+export function normalizeBracket(raw, { teams, matches } = {}) {
   const base = createEmptyBracket();
   if (!raw || typeof raw !== "object") return base;
 
@@ -89,19 +94,135 @@ export function normalizeBracket(raw) {
           home: s.home ?? null,
           away: s.away ?? null,
           winner: s.winner ?? null,
+          scores: {
+            home: s.scores?.home ?? null,
+            away: s.scores?.away ?? null,
+          },
         };
       }
     }
   }
 
   base.knockout = syncKnockoutAdvancement(base.knockout);
+
+  if (raw.group_matches && typeof raw.group_matches === "object") {
+    base.group_matches = { ...raw.group_matches };
+  }
+
+  if (Array.isArray(raw.locked_groups)) {
+    base.locked_groups = raw.locked_groups.filter((g) => GROUP_LETTERS.includes(g));
+  }
+
+  if (teams?.length && matches) {
+    return syncGroupQualifiers(base, teams, matches);
+  }
+
   return base;
+}
+
+function syncGroupQualifiers(bracket, teams, matches) {
+  const grouped = fixturesByGroup(matches, teams);
+  const next = structuredClone(bracket);
+
+  for (const letter of GROUP_LETTERS) {
+    const groupTeams = teams.filter((t) => t.group_letter === letter);
+    const fixtures = grouped[letter] || [];
+    const standings = computePredictedStandings(
+      groupTeams,
+      fixtures,
+      next.group_matches || {}
+    );
+    const { first, second } = qualifiersFromStandings(standings);
+    next.groups[letter] = { first, second };
+  }
+
+  return next;
+}
+
+export function lockGroupInBracket(bracket, letter) {
+  const next = structuredClone(bracket);
+  if (!next.locked_groups) next.locked_groups = [];
+  if (!next.locked_groups.includes(letter)) {
+    next.locked_groups = [...next.locked_groups, letter];
+  }
+  return next;
+}
+
+export function unlockGroupInBracket(bracket, letter) {
+  const next = structuredClone(bracket);
+  if (!next.locked_groups?.length) return next;
+  next.locked_groups = next.locked_groups.filter((g) => g !== letter);
+  return next;
+}
+
+export function isGroupLocked(bracket, letter) {
+  return bracket.locked_groups?.includes(letter) ?? false;
 }
 
 export function setGroupPick(bracket, group, slot, teamId) {
   const next = structuredClone(bracket);
   next.groups[group] = { ...next.groups[group], [slot]: teamId || null };
   return next;
+}
+
+export function setGroupMatchScore(bracket, matchId, side, value, teams, matches) {
+  const next = structuredClone(bracket);
+  if (!next.group_matches) next.group_matches = {};
+
+  const key = String(matchId);
+  const current = next.group_matches[key] || { home_score: null, away_score: null };
+  const parsed =
+    value === "" || value == null ? null : Math.max(0, Math.min(99, Number(value)));
+
+  next.group_matches[key] = {
+    ...current,
+    [side]: Number.isNaN(parsed) ? null : parsed,
+  };
+
+  return syncGroupQualifiers(next, teams, matches);
+}
+
+export function setKnockoutMatchScore(
+  bracket,
+  roundKey,
+  matchIndex,
+  side,
+  value,
+  tieWinner = null
+) {
+  const next = structuredClone(bracket);
+  const mk = matchKey(matchIndex);
+  ensureMatch(next.knockout, roundKey, matchIndex);
+
+  const match = next.knockout[roundKey][mk];
+  if (!match.scores) match.scores = { home: null, away: null };
+
+  const parsed =
+    value === "" || value == null ? null : Math.max(0, Math.min(99, Number(value)));
+  match.scores[side === "home_score" ? "home" : "away"] = Number.isNaN(parsed)
+    ? null
+    : parsed;
+
+  const hs = match.scores.home;
+  const as = match.scores.away;
+
+  if (hs != null && as != null) {
+    if (hs > as) match.winner = match.home;
+    else if (as > hs) match.winner = match.away;
+    else match.winner = tieWinner || null;
+  } else {
+    match.winner = null;
+  }
+
+  if (
+    match.winner &&
+    match.winner !== match.home &&
+    match.winner !== match.away
+  ) {
+    match.winner = null;
+  }
+
+  return { ...next, knockout: syncKnockoutAdvancement(next.knockout) };
 }
 
 export function setKnockoutSide(bracket, roundKey, matchIndex, side, teamId) {

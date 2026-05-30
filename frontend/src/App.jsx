@@ -17,6 +17,14 @@ export default function App() {
         <Route index element={<LandingPage />} />
         <Route path="standings" element={<StandingsPage />} />
         <Route
+          path="profile"
+          element={
+            <PrivateRoute>
+              <ProfilePage />
+            </PrivateRoute>
+          }
+        />
+        <Route
           path="predictions"
           element={
             <PrivateRoute>
@@ -27,14 +35,6 @@ export default function App() {
         <Route element={<MainLayout />}>
           <Route path="login" element={<Login />} />
           <Route path="register" element={<Register />} />
-          <Route
-            path="profile"
-            element={
-              <PrivateRoute>
-                <ProfilePage />
-              </PrivateRoute>
-            }
-          />
           <Route path="*" element={<NotFound />} />
         </Route>
       </Route>

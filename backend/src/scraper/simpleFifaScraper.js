@@ -62,8 +62,8 @@ export async function syncFifaTournament() {
     await pool.query(
       `INSERT INTO matches (
         external_id, home_team_id, away_team_id, stage, group_letter,
-        kickoff_at, home_score, away_score, status
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+        kickoff_at, home_score, away_score, status, venue
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
       ON CONFLICT (external_id) DO UPDATE SET
         home_team_id = EXCLUDED.home_team_id,
         away_team_id = EXCLUDED.away_team_id,
@@ -73,6 +73,7 @@ export async function syncFifaTournament() {
         home_score = EXCLUDED.home_score,
         away_score = EXCLUDED.away_score,
         status = EXCLUDED.status,
+        venue = COALESCE(EXCLUDED.venue, matches.venue),
         updated_at = NOW()`,
       [
         m.externalId,
@@ -84,6 +85,7 @@ export async function syncFifaTournament() {
         m.homeScore,
         m.awayScore,
         m.status,
+        m.venue || null,
       ]
     );
     matchesUpserted++;

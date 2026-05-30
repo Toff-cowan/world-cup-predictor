@@ -12,6 +12,7 @@ import predictionRoutes from "./routes/predictionRoutes.js";
 import forumRoutes from "./routes/forumRoutes.js";
 import scraperRoutes from "./routes/scraperRoutes.js";
 import flagRoutes from "./routes/flagRoutes.js";
+import newsRoutes from "./routes/newsRoutes.js";
 
 const app = express();
 
@@ -31,6 +32,7 @@ app.use("/api/predictions", predictionRoutes);
 app.use("/api/forum", forumRoutes);
 app.use("/api/scraper", scraperRoutes);
 app.use("/api/flags", flagRoutes);
+app.use("/api/news", newsRoutes);
 
 app.use(errorMiddleware);
 

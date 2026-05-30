@@ -1,17 +1,14 @@
-import { useCountdownVisibility } from "../../context/CountdownVisibilityContext.jsx";
 import { WC_BLUE } from "../../constants/wcTheme.js";
 
-/** Always visible — toggles the countdown ribbon on/off (replaces Show timer). */
-export default function CountdownKickoffButton() {
-  const { visible, show, hide } = useCountdownVisibility();
-
+/** Kickoff tab — opens the countdown ribbon below the navbar. */
+export default function CountdownKickoffButton({ onClick }) {
   return (
     <button
       type="button"
-      onClick={() => (visible ? hide() : show())}
+      onClick={onClick}
       className="flex flex-col items-center -mt-px outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2 focus-visible:ring-offset-black shrink-0"
-      aria-pressed={visible}
-      aria-label={visible ? "Hide kickoff countdown" : "Show kickoff countdown"}
+      aria-expanded={false}
+      aria-label="Show kickoff countdown"
     >
       <span
         className="inline-flex items-center gap-2 rounded-b-lg px-3 py-1.5 text-[10px] sm:text-xs font-bold uppercase tracking-[0.12em] text-white transition-opacity hover:brightness-110"
@@ -19,9 +16,7 @@ export default function CountdownKickoffButton() {
       >
         Kickoff
         <svg
-          className={`w-3.5 h-3.5 shrink-0 transition-transform duration-300 ${
-            visible ? "rotate-180" : "rotate-0"
-          }`}
+          className="w-3.5 h-3.5 shrink-0"
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"

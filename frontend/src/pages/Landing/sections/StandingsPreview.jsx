@@ -57,7 +57,8 @@ export default function StandingsPreview() {
                 <GroupStandingsTable
                   title={`Group ${letter}`}
                   teams={standings[letter]}
-                  showRank={false}
+                  showRank
+                  highlightQualifiers
                 />
               </div>
             ))}

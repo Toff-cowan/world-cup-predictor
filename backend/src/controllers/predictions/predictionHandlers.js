@@ -1,7 +1,19 @@
 import crypto from "crypto";
 import pool from "../../config/db.js";
 import { ok, fail } from "../../utils/apiResponse.js";
-import { STAGES } from "../../utils/constants.js";
+import { GROUPS, STAGES } from "../../utils/constants.js";
+
+function parseBracket(bracket) {
+  if (!bracket) return {};
+  if (typeof bracket === "string") {
+    try {
+      return JSON.parse(bracket);
+    } catch {
+      return {};
+    }
+  }
+  return bracket;
+}
 
 function slugify(name) {
   return `${name}`.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
@@ -135,6 +147,60 @@ export async function lockPredictionStage(req, res, next) {
        WHERE id = $3 AND user_id = $4
        RETURNING *`,
       [[...locked], STAGES, req.params.id, req.user.id]
+    );
+    return ok(res, { prediction: rows[0] });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function unlockPrediction(req, res, next) {
+  try {
+    const { stage, group, all } = req.body;
+    if (!stage && !group && !all) {
+      return fail(res, "Provide stage, group, or all: true to unlock");
+    }
+
+    const { rows: existing } = await pool.query(
+      `SELECT * FROM predictions WHERE id = $1 AND user_id = $2`,
+      [req.params.id, req.user.id]
+    );
+    const pred = existing[0];
+    if (!pred) return fail(res, "Prediction not found", 404);
+
+    let lockedStages = [...(pred.locked_stages || [])];
+    const bracket = parseBracket(pred.bracket);
+
+    if (all) {
+      lockedStages = [];
+      bracket.locked_groups = [];
+    } else {
+      if (stage) {
+        if (!STAGES.includes(stage)) {
+          return fail(res, `stage must be one of: ${STAGES.join(", ")}`);
+        }
+        lockedStages = lockedStages.filter((s) => s !== stage);
+      }
+      if (group) {
+        const letter = `${group}`.toUpperCase();
+        if (!GROUPS.includes(letter)) {
+          return fail(res, `group must be one of: ${GROUPS.join(", ")}`);
+        }
+        bracket.locked_groups = (bracket.locked_groups || []).filter((g) => g !== letter);
+      }
+    }
+
+    const isFullyLocked = STAGES.every((s) => lockedStages.includes(s));
+
+    const { rows } = await pool.query(
+      `UPDATE predictions
+       SET locked_stages = $1,
+           is_fully_locked = $2,
+           bracket = $3,
+           updated_at = NOW()
+       WHERE id = $4 AND user_id = $5
+       RETURNING *`,
+      [lockedStages, isFullyLocked, JSON.stringify(bracket), req.params.id, req.user.id]
     );
     return ok(res, { prediction: rows[0] });
   } catch (err) {

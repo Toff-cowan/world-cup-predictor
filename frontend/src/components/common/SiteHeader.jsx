@@ -1,22 +1,22 @@
 import { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
+import { TROPHY_IMAGE } from "../../constants/assets.js";
 import { useTheme } from "../../context/ThemeContext.jsx";
 
 const NAV_LINKS = [
   { to: "/", label: "HOME", end: true },
   { to: "/standings", label: "STANDINGS" },
   { to: "/predictions", label: "MY PREDICTIONS" },
-  { to: "/", label: "NEWS" },
+  { to: "/#news", label: "NEWS" },
 ];
 
-function LogoPlaceholder({ className = "" }) {
+function SiteLogo({ className = "" }) {
   return (
-    <div
-      className={`flex items-center justify-center border border-dashed border-white/30 bg-white/5 text-white/40 text-[10px] font-semibold uppercase tracking-wider shrink-0 ${className}`}
-      aria-label="Logo placeholder"
-    >
-      Logo
-    </div>
+    <img
+      src={TROPHY_IMAGE}
+      alt="World Cup Predictor"
+      className={`object-contain shrink-0 ${className}`}
+    />
   );
 }
 
@@ -87,8 +87,8 @@ export default function SiteHeader() {
             </svg>
           </button>
 
-          <Link to="/" className="flex items-center shrink-0 self-center">
-            <LogoPlaceholder className="h-10 w-14 rounded" />
+          <Link to="/" className="flex items-center shrink-0 self-center hover:opacity-90 transition-opacity">
+            <SiteLogo className="h-10 w-auto max-w-[2.75rem]" />
           </Link>
 
           <div

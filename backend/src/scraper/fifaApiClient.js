@@ -62,6 +62,8 @@ export function parseMatch(m) {
   const groupName = localeText(m.GroupName);
   const groupLetter = groupName?.replace(/Group\s*/i, "").trim() || null;
   const stage = mapStage(localeText(m.StageName), groupLetter);
+  const homeScore = m.Home?.Score ?? m.HomeTeamScore ?? null;
+  const awayScore = m.Away?.Score ?? m.AwayTeamScore ?? null;
 
   return {
     externalId: m.IdMatch,
@@ -71,14 +73,27 @@ export function parseMatch(m) {
     groupLetter: groupLetter?.length === 1 ? groupLetter.toUpperCase() : null,
     kickoffAt: m.Date,
     localDate: m.LocalDate,
-    status: m.Home?.Score != null && m.Away?.Score != null ? "completed" : "scheduled",
-    homeScore: m.Home?.Score ?? null,
-    awayScore: m.Away?.Score ?? null,
+    status: inferMatchStatus(m, homeScore, awayScore),
+    homeScore,
+    awayScore,
     home: parseTeamFromMatchSide(m.Home),
     away: parseTeamFromMatchSide(m.Away),
     stageName: localeText(m.StageName),
     groupName,
+    venue: localeText(m.Stadium?.Name),
   };
+}
+
+function inferMatchStatus(m, homeScore, awayScore) {
+  const ms = m.MatchStatus;
+  if (ms === 2 || m.LastPeriodUpdate) return "live";
+  if (ms >= 3) return "completed";
+  if (homeScore != null && awayScore != null) return "completed";
+  const kickoff = m.Date ? new Date(m.Date) : null;
+  if (kickoff && kickoff <= new Date() && (homeScore != null || awayScore != null)) {
+    return "live";
+  }
+  return "scheduled";
 }
 
 function mapStage(stageName, groupLetter) {
