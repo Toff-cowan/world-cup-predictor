@@ -1,16 +1,23 @@
 import { Outlet } from "react-router-dom";
 import SiteHeader from "../components/common/SiteHeader.jsx";
-import CountdownRibbon from "../components/common/CountdownRibbon.jsx";
-import { useCountdownVisible } from "../hooks/useCountdownVisible.js";
+import SiteFooter from "../components/common/SiteFooter.jsx";
+import CountdownKickoffBar from "../components/common/CountdownKickoffBar.jsx";
+import FloatingNewsHighlights from "../components/common/FloatingNewsHighlights.jsx";
+import FifaDisclaimerModal from "../components/common/FifaDisclaimerModal.jsx";
 
 export default function AppLayout() {
-  const { visible, hide, show } = useCountdownVisible();
-
   return (
-    <>
-      <SiteHeader countdownHidden={!visible} onShowCountdown={show} />
-      {visible && <CountdownRibbon onClose={hide} />}
-      <Outlet />
-    </>
+    <div className="min-h-screen flex flex-col">
+      <FifaDisclaimerModal />
+      <div className="sticky top-0 z-50">
+        <SiteHeader />
+        <CountdownKickoffBar />
+      </div>
+      <div className="flex-1 app-main-mobile-pad">
+        <Outlet />
+      </div>
+      <SiteFooter />
+      <FloatingNewsHighlights />
+    </div>
   );
 }

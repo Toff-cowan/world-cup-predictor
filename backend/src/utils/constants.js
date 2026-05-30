@@ -1,5 +1,7 @@
 export const GROUPS = "ABCDEFGHIJKL".split("");
 
+export { GROUPS as GROUP_LETTERS };
+
 export const STAGES = [
   "group",
   "round_of_32",

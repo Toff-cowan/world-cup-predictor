@@ -1,30 +1,32 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
+import { TROPHY_IMAGE } from "../../constants/assets.js";
 import { useTheme } from "../../context/ThemeContext.jsx";
 
 const NAV_LINKS = [
-  { to: "/", label: "HOME", end: true },
-  { to: "/standings", label: "STANDINGS" },
-  { to: "/predictions", label: "MY PREDICTIONS" },
-  { to: "/", label: "NEWS" },
+  { to: "/", label: "Home", end: true },
+  { to: "/standings", label: "Standings" },
+  { to: "/predictions", label: "Predictions" },
+  { to: "/#news", label: "News" },
+  { to: "/#fixtures", label: "Fixtures" },
 ];
 
-function LogoPlaceholder({ className = "" }) {
+function SiteLogo({ className = "" }) {
   return (
-    <div
-      className={`flex items-center justify-center border border-dashed border-white/30 bg-white/5 text-white/40 text-[10px] font-semibold uppercase tracking-wider shrink-0 ${className}`}
-      aria-label="Logo placeholder"
-    >
-      Logo
-    </div>
+    <img
+      src={TROPHY_IMAGE}
+      alt="World Cup Predictor"
+      className={`object-contain shrink-0 ${className}`}
+    />
   );
 }
 
-function AccountButton({ className = "" }) {
+function AccountButton({ className = "", onNavigate }) {
   return (
     <Link
       to="/profile"
-      className={`flex items-center gap-2 text-[11px] sm:text-xs font-semibold tracking-wide uppercase hover:opacity-80 shrink-0 ${className}`}
+      onClick={onNavigate}
+      className={`flex items-center justify-center gap-2 min-h-[2.75rem] min-w-[2.75rem] sm:min-w-0 px-2 sm:px-0 text-[11px] sm:text-xs font-semibold tracking-wide uppercase hover:opacity-80 shrink-0 ${className}`}
       aria-label="Account"
     >
       <svg className="w-5 h-5 text-white shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
@@ -42,7 +44,7 @@ function ThemeToggle() {
     <button
       type="button"
       onClick={toggleTheme}
-      className="p-1 text-white/90 hover:text-white transition-opacity shrink-0"
+      className="flex items-center justify-center min-h-[2.75rem] min-w-[2.75rem] p-1 text-white/90 hover:text-white transition-opacity shrink-0"
       aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
     >
       {isDark ? (
@@ -64,74 +66,98 @@ function ThemeToggle() {
   );
 }
 
-function HeaderActions({ countdownHidden, onShowCountdown, className = "" }) {
-  return (
-    <div className={`flex items-center gap-4 shrink-0 ${className}`}>
-      {countdownHidden && onShowCountdown && (
-        <button
-          type="button"
-          onClick={onShowCountdown}
-          className="text-[11px] font-semibold uppercase tracking-wide text-white/80 hover:text-white whitespace-nowrap"
-        >
-          Show timer
-        </button>
-      )}
-      <ThemeToggle />
-      <AccountButton />
-    </div>
-  );
-}
-
-export default function SiteHeader({ onShowCountdown, countdownHidden }) {
+export default function SiteHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
 
+  useEffect(() => {
+    document.body.classList.toggle("mobile-nav-open", menuOpen);
+    return () => document.body.classList.remove("mobile-nav-open");
+  }, [menuOpen]);
+
+  const closeMenu = () => setMenuOpen(false);
+
   const navClass = ({ isActive }) =>
-    `text-[11px] sm:text-xs font-semibold tracking-wide whitespace-nowrap transition-opacity hover:opacity-80 ${
+    `flex items-center min-h-[3rem] px-1 text-sm sm:text-xs font-semibold tracking-wide whitespace-nowrap transition-opacity hover:opacity-80 ${
       isActive ? "opacity-100 underline underline-offset-4 decoration-2" : "opacity-90"
     }`;
 
   return (
-    <header className="font-sans sticky top-0 z-50 bg-black text-white border-b border-white/10">
+    <header className="font-sans sticky top-0 z-50 bg-black text-white border-b border-white/10 safe-top">
       <nav>
-        <div className="max-w-[1400px] mx-auto px-4 lg:px-8 min-h-14 py-2 flex items-center gap-4 lg:gap-6 relative flex-wrap">
+        <div className="max-w-[1400px] mx-auto px-4 lg:px-8 min-h-14 py-2 flex items-center gap-3 lg:gap-6 relative">
           <button
             type="button"
-            className="lg:hidden text-white p-1 shrink-0"
-            aria-label="Menu"
+            className="lg:hidden flex items-center justify-center min-h-[2.75rem] min-w-[2.75rem] text-white shrink-0 -ml-1"
+            aria-label={menuOpen ? "Close menu" : "Open menu"}
+            aria-expanded={menuOpen}
             onClick={() => setMenuOpen((o) => !o)}
           >
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
+            {menuOpen ? (
+              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" d="M6 6l12 12M18 6L6 18" />
+              </svg>
+            ) : (
+              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            )}
           </button>
 
-          <Link to="/" className="flex items-center shrink-0">
-            <LogoPlaceholder className="h-10 w-14 rounded" />
+          <Link
+            to="/"
+            onClick={closeMenu}
+            className="flex items-center shrink-0 hover:opacity-90 transition-opacity"
+          >
+            <SiteLogo className="h-9 sm:h-10 w-auto max-w-[2.75rem]" />
           </Link>
 
-          <div
-            className={`${
-              menuOpen ? "flex" : "hidden"
-            } lg:flex flex-col lg:flex-row lg:items-center gap-4 lg:gap-6 w-full lg:w-auto absolute lg:static top-full left-0 right-0 bg-black lg:bg-transparent p-4 lg:p-0 border-b lg:border-0 border-white/10 z-40`}
-          >
+          <span className="hidden sm:inline text-xs font-bold uppercase tracking-widest text-white/80 truncate max-w-[8rem] lg:max-w-none">
+            WC Predictor
+          </span>
+
+          <div className="hidden lg:flex items-center gap-6 ml-6">
+            {NAV_LINKS.map(({ to, label, end }) => (
+              <NavLink key={label} to={to} end={end} className={navClass}>
+                {label}
+              </NavLink>
+            ))}
+          </div>
+
+          <div className="flex items-center gap-1 sm:gap-3 ml-auto shrink-0">
+            <ThemeToggle />
+            <AccountButton onNavigate={closeMenu} />
+          </div>
+        </div>
+
+        {menuOpen && (
+          <button
+            type="button"
+            className="lg:hidden fixed inset-0 top-14 z-30 bg-black/60 backdrop-blur-[2px]"
+            aria-label="Close menu"
+            onClick={closeMenu}
+          />
+        )}
+
+        <div
+          className={`lg:hidden absolute left-0 right-0 top-full z-40 bg-black border-b border-white/10 shadow-xl transition-all duration-200 origin-top ${
+            menuOpen
+              ? "opacity-100 scale-y-100 pointer-events-auto"
+              : "opacity-0 scale-y-95 pointer-events-none h-0 overflow-hidden"
+          }`}
+        >
+          <div className="px-4 py-3 flex flex-col">
             {NAV_LINKS.map(({ to, label, end }) => (
               <NavLink
                 key={label}
                 to={to}
                 end={end}
                 className={navClass}
-                onClick={() => setMenuOpen(false)}
+                onClick={closeMenu}
               >
                 {label}
               </NavLink>
             ))}
           </div>
-
-          <HeaderActions
-            className="ml-auto"
-            countdownHidden={countdownHidden}
-            onShowCountdown={onShowCountdown}
-          />
         </div>
       </nav>
     </header>

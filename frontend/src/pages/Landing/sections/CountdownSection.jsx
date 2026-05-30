@@ -1,6 +1,6 @@
 import CountdownRibbon from "../../../components/common/CountdownRibbon.jsx";
 
-/** @deprecated Use CountdownRibbon in AppLayout; kept for optional local override */
+/** @deprecated — use AppLayout CountdownRibbon + CountdownDropdownOverlay on home */
 export default function CountdownSection() {
-  return <CountdownRibbon showViewMatches />;
+  return <CountdownRibbon />;
 }
