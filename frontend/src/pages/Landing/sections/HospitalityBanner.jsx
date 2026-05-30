@@ -1,3 +1,5 @@
+import HomeButton from "../../../components/common/HomeButton.jsx";
+
 export default function HospitalityBanner() {
   return (
     <section className="bg-black text-white border-y border-white/10">
@@ -8,15 +10,12 @@ export default function HospitalityBanner() {
             Save multiple brackets, share with friends, and compare picks to live results.
           </p>
         </div>
-        <button
-          type="button"
-          className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wide hover:opacity-80 shrink-0"
-        >
+        <HomeButton variant="outline" className="shrink-0">
           Choose your package
           <span className="text-lg leading-none" aria-hidden>
             +
           </span>
-        </button>
+        </HomeButton>
       </div>
     </section>
   );

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import { TROPHY_IMAGE } from "../../../constants/assets.js";
 import { newsApi } from "../../../api/newsApi.js";
+import HomeButton from "../../../components/common/HomeButton.jsx";
 
 export default function HeroSection() {
   const [highlights, setHighlights] = useState([]);
@@ -47,12 +47,14 @@ export default function HeroSection() {
               Create brackets, lock stages as the tournament unfolds, and track how your
               predictions stack up against real standings.
             </p>
-            <Link
+            <HomeButton
+              as="link"
               to="/predictions"
-              className="mt-8 inline-flex w-fit items-center justify-center px-8 py-3 bg-white text-black text-sm font-bold hover:bg-white/90 transition-colors"
+              variant="primary"
+              className="mt-8 w-fit"
             >
               Start predicting
-            </Link>
+            </HomeButton>
           </div>
 
           {/* Centre spacer — trophy sits behind via absolute layer */}

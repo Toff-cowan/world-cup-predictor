@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { newsApi } from "../../../api/newsApi.js";
+import HomeButton from "../../../components/common/HomeButton.jsx";
 
 function formatDate(iso) {
   if (!iso) return "";
@@ -95,14 +96,15 @@ export default function NewsSection() {
                 {featured.body || featured.summary}
               </p>
               <div className="flex flex-wrap items-center gap-4 mt-4">
-                <a
+                <HomeButton
+                  as="a"
                   href={featured.sourceUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-sm font-semibold underline underline-offset-4"
+                  variant="link"
                 >
                   Read on FIFA.com
-                </a>
+                </HomeButton>
                 {featured.publishedAt && (
                   <span className="text-xs text-zinc-500">{formatDate(featured.publishedAt)}</span>
                 )}

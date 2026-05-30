@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { matchesApi } from "../../../api/matchesApi.js";
+import HomeButton from "../../../components/common/HomeButton.jsx";
 import { isLikelyEmptyDatabase } from "../../../utils/apiError.js";
 import TeamFlag from "../../../components/standings/TeamFlag.jsx";
 import {
@@ -202,18 +203,14 @@ export default function MatchFixturesSection() {
           </div>
           <div className="flex items-center gap-2 shrink-0">
             {[1, 2, 3].map((round) => (
-              <button
+              <HomeButton
                 key={round}
-                type="button"
+                variant="tab"
+                active={activeRound === round}
                 onClick={() => setActiveRound(round)}
-                className={`px-4 py-2 text-xs font-bold uppercase tracking-wide border transition-colors ${
-                  activeRound === round
-                    ? "bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 border-zinc-900 dark:border-white"
-                    : "bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 border-zinc-300 dark:border-zinc-600 hover:border-zinc-900 dark:hover:border-white"
-                }`}
               >
                 Round {round}
-              </button>
+              </HomeButton>
             ))}
           </div>
         </div>
