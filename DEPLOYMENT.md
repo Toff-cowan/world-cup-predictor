@@ -121,9 +121,9 @@ Browser → Vercel (static site)
 
    | Variable | Value |
    |----------|--------|
-   | `VITE_API_URL` | `https://YOUR-API.onrender.com/api` |
+   | `VITE_API_URL` | *(optional)* — production uses same-origin `/api` via `vercel.json` rewrite |
 
-   Must end with `/api`. Set for **Production** (and Preview if you use previews).
+   You do **not** need `VITE_API_URL` on Vercel if `frontend/vercel.json` points at your Render service. Only set it for non-Vercel hosting (`VITE_FORCE_DIRECT_API=true`).
 
 4. Deploy. Your site will be `https://something.vercel.app`.
 

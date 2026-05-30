@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { matchesApi } from "../../../api/matchesApi.js";
+import { isLikelyEmptyDatabase } from "../../../utils/apiError.js";
 import TeamFlag from "../../../components/standings/TeamFlag.jsx";
 import {
   groupStageFixturesByRound,
@@ -216,9 +217,19 @@ export default function MatchFixturesSection() {
 
         {error && (
           <p className="text-red-600 dark:text-red-400 text-sm">
-            {error}. Run{" "}
-            <code className="bg-zinc-200 dark:bg-zinc-800 px-1.5 py-0.5">npm run scrape</code> in
-            the backend.
+            {error}
+            {isLikelyEmptyDatabase({ message: error }) && (
+              <>
+                {" "}
+                Run{" "}
+                <code className="bg-zinc-200 dark:bg-zinc-800 px-1.5 py-0.5">npm run scrape</code>{" "}
+                in the backend (or seed production via{" "}
+                <code className="bg-zinc-200 dark:bg-zinc-800 px-1.5 py-0.5">
+                  POST /api/scraper/run
+                </code>
+                ).
+              </>
+            )}
           </p>
         )}
 
