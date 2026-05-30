@@ -1,4 +1,4 @@
-/** FIFA 3-letter codes → ISO 3166-1 alpha-2 for flagcdn fallback */
+/** FIFA 3-letter codes → ISO 3166-1 alpha-2 (flagcdn.com). WC 2026 teams. */
 export const FIFA_TO_ISO2 = {
   ALG: "dz",
   ARG: "ar",
