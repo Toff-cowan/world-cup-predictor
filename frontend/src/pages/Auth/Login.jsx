@@ -21,30 +21,47 @@ export default function Login() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-md mx-auto space-y-4">
-      <h1 className="text-2xl font-bold">Login</h1>
-      {error && <p className="text-red-400 text-sm">{error}</p>}
-      <input
-        type="email"
-        placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        className="w-full px-3 py-2 rounded bg-slate-800 border border-white/10"
-        required
-      />
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        className="w-full px-3 py-2 rounded bg-slate-800 border border-white/10"
-        required
-      />
-      <button type="submit" className="w-full py-2 rounded bg-emerald-500 text-slate-950 font-semibold">
+    <form
+      onSubmit={handleSubmit}
+      className="max-w-md mx-auto space-y-4 p-6 sm:p-8 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700"
+    >
+      <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100 m-0">Login</h1>
+      {error && <p className="text-red-600 dark:text-red-400 text-sm m-0">{error}</p>}
+      <label className="block">
+        <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">Email</span>
+        <input
+          type="email"
+          autoComplete="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="mt-1 w-full min-h-[2.75rem] px-3 py-2 bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-600 text-zinc-900 dark:text-zinc-100"
+          required
+        />
+      </label>
+      <label className="block">
+        <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">
+          Password
+        </span>
+        <input
+          type="password"
+          autoComplete="current-password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="mt-1 w-full min-h-[2.75rem] px-3 py-2 bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-600 text-zinc-900 dark:text-zinc-100"
+          required
+        />
+      </label>
+      <button
+        type="submit"
+        className="w-full min-h-[2.75rem] py-2 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 font-bold"
+      >
         Sign in
       </button>
-      <p className="text-sm text-slate-400">
-        No account? <Link to="/register" className="text-emerald-400">Register</Link>
+      <p className="text-sm text-zinc-500 m-0">
+        No account?{" "}
+        <Link to="/register" className="text-zinc-900 dark:text-zinc-100 font-semibold underline">
+          Register
+        </Link>
       </p>
     </form>
   );

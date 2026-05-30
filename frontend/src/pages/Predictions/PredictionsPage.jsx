@@ -312,8 +312,8 @@ export default function PredictionsPage() {
 
   return (
     <div className="min-h-screen bg-[#f3f3f3] dark:bg-[#0a0a0a] text-zinc-900 dark:text-zinc-100">
-      <section className="w-full bg-black text-white py-12 lg:py-16">
-        <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold uppercase tracking-tight text-center m-0">
+      <section className="w-full bg-black text-white py-10 sm:py-12 lg:py-16 px-4">
+        <h1 className="font-display text-2xl sm:text-4xl lg:text-5xl font-bold uppercase tracking-tight text-center m-0">
           My Predictions
         </h1>
         {prediction?.name && (
@@ -321,7 +321,7 @@ export default function PredictionsPage() {
         )}
       </section>
 
-      <div className="w-full max-w-none mx-auto px-6 lg:px-12 xl:px-16 pb-10 pt-8 space-y-6">
+      <div className="w-full max-w-none mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 pb-10 pt-6 sm:pt-8 space-y-5 sm:space-y-6">
         <div
           className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4"
           {...helpTargetProps("help-brackets", helpHighlight)}
@@ -385,11 +385,12 @@ export default function PredictionsPage() {
           </div>
         </div>
 
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div className="flex flex-col gap-3">
           <div
-            className="flex flex-wrap gap-2"
+            className="mobile-scroll-x -mx-4 px-4 sm:mx-0 sm:px-0"
             {...helpTargetProps("help-stage-locks", helpHighlight)}
           >
+            <div className="flex flex-nowrap sm:flex-wrap gap-2 min-w-min pb-1 sm:pb-0">
             {STAGE_ORDER.map((stage) => {
               const locked = lockedStages.includes(stage);
               return (
@@ -415,13 +416,14 @@ export default function PredictionsPage() {
                 </button>
               );
             })}
+            </div>
           </div>
           {hasAnyLock && (
             <button
               type="button"
               disabled={saving}
               onClick={unlockEntireBracket}
-              className="shrink-0 px-4 py-2 text-[10px] font-bold uppercase tracking-wide border border-amber-600 text-amber-700 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-950/30 disabled:opacity-40"
+              className="w-full sm:w-auto shrink-0 px-4 py-2.5 text-[10px] font-bold uppercase tracking-wide border border-amber-600 text-amber-700 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-950/30 disabled:opacity-40"
             >
               Unlock entire bracket
             </button>

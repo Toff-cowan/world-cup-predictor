@@ -79,7 +79,8 @@ export default function GroupStageEditor({
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap gap-2">
+      <div className="mobile-scroll-x -mx-4 px-4 sm:mx-0 sm:px-0">
+        <div className="flex flex-nowrap sm:flex-wrap gap-2 pb-1 sm:pb-0 min-w-min">
         {GROUP_LETTERS.map((letter) => {
           const saved = lockedGroups.includes(letter);
           return (
@@ -87,7 +88,7 @@ export default function GroupStageEditor({
               key={letter}
               type="button"
               onClick={() => setActiveGroup(letter)}
-              className={`min-w-[2.75rem] px-3 py-2 text-sm font-bold uppercase tracking-wide border transition-colors ${
+              className={`min-w-[2.75rem] min-h-[2.75rem] px-3 py-2 text-sm font-bold uppercase tracking-wide border transition-colors shrink-0 ${
                 activeGroup === letter
                   ? "bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 border-zinc-900 dark:border-white"
                   : "bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 border-zinc-300 dark:border-zinc-600 hover:border-zinc-900 dark:hover:border-white"
@@ -98,6 +99,7 @@ export default function GroupStageEditor({
             </button>
           );
         })}
+        </div>
       </div>
 
       {groupTeams.length === 0 && (

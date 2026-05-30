@@ -12,14 +12,19 @@ export function markHelpSeen() {
   localStorage.setItem(HELP_KEY, "true");
 }
 
-const CARD_WIDTH = 320;
+const CARD_WIDTH_MAX = 320;
 const GAP = 14;
 const VIEWPORT_PAD = 16;
+
+function cardWidth() {
+  return Math.min(CARD_WIDTH_MAX, window.innerWidth - VIEWPORT_PAD * 2);
+}
 
 function measureTarget(targetId, cardHeight) {
   const el = document.querySelector(`[data-help-id="${targetId}"]`);
   if (!el) return null;
 
+  const width = cardWidth();
   const rect = el.getBoundingClientRect();
   const spaceBelow = window.innerHeight - rect.bottom;
   const placeAbove = spaceBelow < cardHeight + GAP + VIEWPORT_PAD;
@@ -35,12 +40,12 @@ function measureTarget(targetId, cardHeight) {
   }
 
   const centerX = rect.left + rect.width / 2;
-  let left = centerX - CARD_WIDTH / 2;
-  left = Math.max(VIEWPORT_PAD, Math.min(left, window.innerWidth - CARD_WIDTH - VIEWPORT_PAD));
+  let left = centerX - width / 2;
+  left = Math.max(VIEWPORT_PAD, Math.min(left, window.innerWidth - width - VIEWPORT_PAD));
 
-  const arrowLeft = Math.max(20, Math.min(CARD_WIDTH - 20, centerX - left));
+  const arrowLeft = Math.max(20, Math.min(width - 20, centerX - left));
 
-  return { top, left, arrowLeft, placement: placeAbove ? "above" : "below" };
+  return { top, left, width, arrowLeft, placement: placeAbove ? "above" : "below" };
 }
 
 export default function PredictionHelpTour({ open, stepIndex, onStepChange, onClose }) {
@@ -115,7 +120,8 @@ export default function PredictionHelpTour({ open, stepIndex, onStepChange, onCl
         style={{
           top: layout?.top ?? VIEWPORT_PAD,
           left: layout?.left ?? VIEWPORT_PAD,
-          width: CARD_WIDTH,
+          width: layout?.width ?? cardWidth(),
+          maxWidth: `calc(100vw - ${VIEWPORT_PAD * 2}px)`,
         }}
         onClick={(e) => e.stopPropagation()}
       >

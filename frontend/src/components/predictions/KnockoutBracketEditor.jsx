@@ -94,14 +94,14 @@ export default function KnockoutBracketEditor({
             ? "Bracket view — your predicted path to the final."
             : "Edit mode — pick teams and enter Home / Away scores."}
         </p>
-        <div className="flex flex-wrap items-center gap-2 self-start sm:self-auto">
+        <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-2 w-full sm:w-auto">
           {mode === "view" && (
             <>
               <button
                 type="button"
                 disabled={downloading}
                 onClick={handleDownload}
-                className="px-4 py-2 text-xs font-bold uppercase tracking-wide border border-zinc-300 dark:border-zinc-600 hover:border-zinc-900 dark:hover:border-white disabled:opacity-50"
+                className="w-full sm:w-auto min-h-[2.75rem] px-4 py-2 text-xs font-bold uppercase tracking-wide border border-zinc-300 dark:border-zinc-600 hover:border-zinc-900 dark:hover:border-white disabled:opacity-50"
               >
                 {downloading ? "Preparing…" : "Download PNG"}
               </button>
@@ -112,11 +112,11 @@ export default function KnockoutBracketEditor({
               )}
             </>
           )}
-          <div className="flex border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-900 p-1">
+          <div className="flex border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-900 p-1 w-full sm:w-auto">
             <button
               type="button"
               onClick={() => setMode("view")}
-              className={`px-4 py-2 text-sm font-medium transition-colors ${
+              className={`flex-1 sm:flex-none min-h-[2.75rem] px-4 py-2 text-sm font-medium transition-colors ${
                 mode === "view"
                   ? "bg-zinc-900 dark:bg-white text-white dark:text-zinc-900"
                   : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white"
@@ -127,7 +127,7 @@ export default function KnockoutBracketEditor({
             <button
               type="button"
               onClick={() => setMode("edit")}
-              className={`px-4 py-2 text-sm font-medium transition-colors ${
+              className={`flex-1 sm:flex-none min-h-[2.75rem] px-4 py-2 text-sm font-medium transition-colors ${
                 mode === "edit"
                   ? "bg-zinc-900 dark:bg-white text-white dark:text-zinc-900"
                   : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white"

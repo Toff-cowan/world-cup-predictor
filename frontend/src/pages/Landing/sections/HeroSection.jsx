@@ -14,7 +14,7 @@ export default function HeroSection() {
   }, []);
 
   return (
-    <section className="relative bg-black text-white overflow-hidden min-h-[min(88vh,780px)]">
+    <section className="relative bg-black text-white overflow-hidden min-h-[min(85vh,780px)] sm:min-h-[min(88vh,780px)]">
       <div className="absolute inset-0 bg-black" aria-hidden data-hero-video-slot />
       <div
         className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/55 to-black pointer-events-none"
@@ -40,7 +40,7 @@ export default function HeroSection() {
             <p className="text-xs font-semibold uppercase tracking-widest text-white/70 m-0">
               Bracket predictor
             </p>
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight mt-3 m-0 leading-tight drop-shadow-lg">
+            <h1 className="text-2xl sm:text-4xl lg:text-5xl font-bold tracking-tight mt-3 m-0 leading-tight drop-shadow-lg">
               Pick your World Cup 2026 winners
             </h1>
             <p className="text-base text-white/85 mt-4 m-0 leading-relaxed max-w-md drop-shadow">

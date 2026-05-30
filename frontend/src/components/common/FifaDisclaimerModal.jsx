@@ -41,7 +41,7 @@ export default function FifaDisclaimerModal() {
         onClick={dismiss}
       />
 
-      <div className="relative w-full max-w-lg overflow-hidden border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-950 shadow-2xl animate-[disclaimer-in_0.45s_cubic-bezier(0.16,1,0.3,1)_both]">
+      <div className="relative w-full max-w-lg max-h-[min(90vh,90dvh)] overflow-y-auto border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-950 shadow-2xl animate-[disclaimer-in_0.45s_cubic-bezier(0.16,1,0.3,1)_both] safe-bottom">
         <div
           className="h-1.5 w-full"
           style={{

@@ -77,6 +77,10 @@ body.mobile-nav-open {
 }
 
 /* Safe areas for notched phones + floating news panel */
+.safe-top {
+  padding-top: env(safe-area-inset-top);
+}
+
 .safe-bottom {
   padding-bottom: max(1rem, env(safe-area-inset-bottom));
 }

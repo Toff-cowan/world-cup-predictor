@@ -67,8 +67,8 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen bg-[#f3f3f3] dark:bg-[#0a0a0a] text-zinc-900 dark:text-zinc-100">
-      <section className="w-full bg-black text-white py-12 lg:py-16">
-        <div className="max-w-[1400px] mx-auto px-6 lg:px-12 flex flex-col sm:flex-row sm:items-center gap-6">
+      <section className="w-full bg-black text-white py-10 sm:py-12 lg:py-16">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12 flex flex-col sm:flex-row sm:items-center gap-6">
           <div
             className="w-20 h-20 shrink-0 flex items-center justify-center text-2xl font-bold bg-white/10 border border-white/20"
             aria-hidden
@@ -96,7 +96,7 @@ export default function ProfilePage() {
         </div>
       </section>
 
-      <div className="max-w-[1400px] mx-auto px-6 lg:px-12 xl:px-16 py-10 space-y-10">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 py-8 sm:py-10 space-y-8 sm:space-y-10">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <StatCard label="Brackets" value={predictions.length} hint="Saved prediction sets" />
           <StatCard label="Locked" value={lockedCount} hint="Fully locked brackets" />

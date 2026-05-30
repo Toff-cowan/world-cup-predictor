@@ -48,19 +48,19 @@ export default function StandingsPage() {
 
   return (
     <div className="min-h-screen bg-[#f3f3f3] dark:bg-[#0a0a0a] text-zinc-900 dark:text-zinc-100">
-      <section className="w-full bg-black text-white py-12 lg:py-16">
-        <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold uppercase tracking-tight text-center m-0">
+      <section className="w-full bg-black text-white py-10 sm:py-12 lg:py-16 px-4">
+        <h1 className="font-display text-2xl sm:text-4xl lg:text-5xl font-bold uppercase tracking-tight text-center m-0">
           Standings
         </h1>
       </section>
 
-      <div className="w-full max-w-none mx-auto px-6 lg:px-12 xl:px-16 pb-10 pt-8 space-y-6">
-        <div className="flex justify-end">
-          <div className="flex border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-900 p-1">
+      <div className="w-full max-w-none mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 pb-10 pt-6 sm:pt-8 space-y-6">
+        <div className="flex justify-stretch sm:justify-end">
+          <div className="flex w-full sm:w-auto border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-900 p-1">
             <button
               type="button"
               onClick={() => setView("overall")}
-              className={`px-4 py-2 text-sm font-medium transition-colors ${
+              className={`flex-1 sm:flex-none min-h-[2.75rem] px-4 py-2 text-sm font-medium transition-colors ${
                 view === "overall"
                   ? "bg-zinc-900 dark:bg-white text-white dark:text-zinc-900"
                   : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white"
@@ -71,7 +71,7 @@ export default function StandingsPage() {
             <button
               type="button"
               onClick={() => setView("groups")}
-              className={`px-4 py-2 text-sm font-medium transition-colors ${
+              className={`flex-1 sm:flex-none min-h-[2.75rem] px-4 py-2 text-sm font-medium transition-colors ${
                 view === "groups"
                   ? "bg-zinc-900 dark:bg-white text-white dark:text-zinc-900"
                   : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white"

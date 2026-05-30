@@ -207,7 +207,9 @@ const KnockoutBracketView = forwardRef(function KnockoutBracketView(
   const champion = teamById(teams, finalMatch.winner);
 
   return (
-    <section className="bg-white text-zinc-900 border border-zinc-200 overflow-x-auto pb-10">
+    <section className="bg-white text-zinc-900 border border-zinc-200 pb-6 sm:pb-10">
+      <p className="mobile-scroll-hint px-4 pt-3 mb-0 md:hidden">Swipe sideways to view full bracket →</p>
+      <div className="mobile-scroll-x">
       <div
         ref={ref}
         data-bracket-export
@@ -263,6 +265,7 @@ const KnockoutBracketView = forwardRef(function KnockoutBracketView(
 
           <BracketHalf side="right" knockout={knockout} teams={teams} groups={groups} />
         </div>
+      </div>
       </div>
     </section>
   );
