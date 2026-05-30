@@ -1,4 +1,4 @@
-import { API_BASE } from "../constants/apiBase.js";
+import { getApiBase } from "../constants/apiBase.js";
 import { formatApiError } from "../utils/apiError.js";
 
 function getToken() {
@@ -16,7 +16,7 @@ export async function apiFetch(path, options = {}) {
 
   let res;
   try {
-    res = await fetch(`${API_BASE}${path}`, {
+    res = await fetch(`${getApiBase()}${path}`, {
       ...options,
       headers,
     });

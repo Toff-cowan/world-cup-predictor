@@ -75,7 +75,7 @@ Browser → Vercel (static site)
    | `JWT_SECRET` | Long random string (`openssl rand -base64 48`) |
    | `JWT_EXPIRES_IN` | `7d` |
    | `CLIENT_URL` | `https://YOUR-APP.vercel.app` (**no trailing slash**) |
-   | `ALLOW_VERCEL_PREVIEWS` | `true` (optional, for Vercel preview URLs) |
+   | `ALLOW_VERCEL_PREVIEWS` | `true` (default; set `false` to block `*.vercel.app` previews) |
    | `ADMIN_SCRAPE_KEY` | Random string (for scraper endpoint) |
    | `TOURNAMENT_START` | `2026-06-11` |
    | `TOURNAMENT_END` | `2026-07-19` |
@@ -186,8 +186,9 @@ Team flags are stored in Postgres as `/api/flags/USA` during `npm run scrape` an
 
 | Problem | Fix |
 |---------|-----|
-| CORS error in browser | `CLIENT_URL` must exactly match Vercel origin (https, no trailing slash) |
-| API 404 on Vercel | `VITE_API_URL` must be Render URL + `/api`; rebuild Vercel after changing |
+| CORS on `*.vercel.app` preview | Remove `VITE_API_URL` from Vercel (app uses `/api` rewrite). Redeploy frontend. On Render set `ALLOW_VERCEL_PREVIEWS=true` (or leave unset — previews allowed by default). |
+| CORS on production Vercel URL | `CLIENT_URL` = your main Vercel URL, no trailing slash. Redeploy Render. |
+| API 404 on Vercel | Fix Render URL in `frontend/vercel.json`; redeploy frontend |
 | DB connection failed | `DATABASE_SSL=true`; use Session pooler URI (5432) |
 | Empty standings/news | Run `npm run scrape` or `POST /api/scraper/run` with `x-admin-key` |
 | Slow first API request | Render free tier cold start — normal |

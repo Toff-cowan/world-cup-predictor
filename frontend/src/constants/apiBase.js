@@ -1,8 +1,8 @@
 /**
  * API root including /api.
  * - Dev: Vite proxies /api → localhost:5000 (override with VITE_API_URL).
- * - Production on Vercel: always same-origin /api (vercel.json rewrite → Render).
- * - Other production hosts: set VITE_API_URL + VITE_FORCE_DIRECT_API=true if needed.
+ * - Vercel (production + preview): same-origin /api via vercel.json rewrite (no CORS).
+ * - Other hosts: set VITE_API_URL + VITE_FORCE_DIRECT_API=true if needed.
  */
 export function getApiBase() {
   const configured = import.meta.env.VITE_API_URL?.trim().replace(/\/$/, "");
@@ -11,11 +11,19 @@ export function getApiBase() {
     return configured || "/api";
   }
 
+  if (typeof window !== "undefined") {
+    const host = window.location.hostname;
+    if (host.endsWith(".vercel.app") || host === "vercel.app") {
+      return "/api";
+    }
+  }
+
   if (import.meta.env.VITE_FORCE_DIRECT_API === "true" && configured) {
     return configured;
   }
 
-  return "/api";
+  return configured || "/api";
 }
 
-export const API_BASE = getApiBase();
+/** @deprecated use getApiBase() — resolved at call time so Vercel host detection works */
+export const API_BASE = "/api";

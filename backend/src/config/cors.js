@@ -12,22 +12,29 @@ function parseOrigins() {
     .filter(Boolean);
 }
 
+function isVercelHost(origin) {
+  try {
+    const host = new URL(origin).hostname.toLowerCase();
+    return host === "vercel.app" || host.endsWith(".vercel.app");
+  } catch {
+    return false;
+  }
+}
+
 function isAllowedOrigin(origin, allowed) {
   if (!origin) return true;
   const normalized = normalizeOrigin(origin);
   if (allowed.includes(normalized)) return true;
-  if (process.env.ALLOW_VERCEL_PREVIEWS === "true" && /\.vercel\.app$/i.test(normalized)) {
-    return true;
-  }
+  // All Vercel production + preview deployments (*.vercel.app)
+  if (isVercelHost(normalized)) return true;
   return false;
 }
 
-const allowedOrigins = parseOrigins();
+export const allowedOrigins = parseOrigins();
 
 export const corsOptions = {
   origin(origin, callback) {
     if (isAllowedOrigin(origin, allowedOrigins)) {
-      // Echo the request origin exactly (no trailing slash) — required for credentialed requests
       callback(null, normalizeOrigin(origin) || true);
     } else {
       callback(new Error(`CORS blocked origin: ${origin}`));

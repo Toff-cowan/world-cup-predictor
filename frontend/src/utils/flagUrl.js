@@ -1,14 +1,16 @@
-import { API_BASE } from "../constants/apiBase.js";
+import { getApiBase } from "../constants/apiBase.js";
 import { resolveFlagIso2 } from "./fifaToIso2.js";
 
 /** Turn stored teams.flag_url (/api/flags/MEX) into a browser-loadable URL. */
 export function resolveStoredFlagUrl(stored, countryCode, teamCode) {
+  const apiBase = getApiBase();
+
   if (stored?.startsWith("http")) return stored;
 
   if (stored?.startsWith("/api/flags/")) {
-    if (API_BASE.startsWith("http")) {
+    if (apiBase.startsWith("http")) {
       const suffix = stored.replace(/^\/api/, "");
-      return `${API_BASE}${suffix}`;
+      return `${apiBase}${suffix}`;
     }
     return stored;
   }
@@ -16,8 +18,8 @@ export function resolveStoredFlagUrl(stored, countryCode, teamCode) {
   const code = (countryCode || teamCode || "").toUpperCase().replace(/[^A-Z]/g, "");
   if (!code) return null;
 
-  if (API_BASE.startsWith("http")) {
-    return `${API_BASE}/flags/${code}`;
+  if (apiBase.startsWith("http")) {
+    return `${apiBase}/flags/${code}`;
   }
   return `/api/flags/${code}`;
 }
