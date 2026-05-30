@@ -16,17 +16,17 @@ export default function App() {
       <Route element={<AppLayout />}>
         <Route index element={<LandingPage />} />
         <Route path="standings" element={<StandingsPage />} />
+        <Route
+          path="predictions"
+          element={
+            <PrivateRoute>
+              <PredictionsPage />
+            </PrivateRoute>
+          }
+        />
         <Route element={<MainLayout />}>
           <Route path="login" element={<Login />} />
           <Route path="register" element={<Register />} />
-          <Route
-            path="predictions"
-            element={
-              <PrivateRoute>
-                <PredictionsPage />
-              </PrivateRoute>
-            }
-          />
           <Route
             path="profile"
             element={

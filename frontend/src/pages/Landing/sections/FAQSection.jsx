@@ -210,7 +210,7 @@ export default function FAQSection() {
                             {active && (
                               <p
                                 key={`faq-answer-${i}`}
-                                className={`font-sans faq-answer-enter text-base sm:text-lg leading-relaxed m-0 mt-5 lg:mt-7 max-w-xl text-[#3a3a3a] ${
+                                className={`font-sans faq-answer-enter text-base sm:text-lg leading-relaxed m-0 mt-5 lg:mt-7 max-w-xl text-[#3a3a3a] dark:text-zinc-200 ${
                                   alignRight ? "ml-auto" : "mr-auto"
                                 }`}
                               >

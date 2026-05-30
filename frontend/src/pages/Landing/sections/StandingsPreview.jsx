@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { standingsApi } from "../../../api/standingsApi.js";
 import GroupStandingsTable from "../../../components/standings/GroupStandingsTable.jsx";
-import { WC_PAGE_BG } from "../../../constants/wcTheme.js";
 
 const GROUP_ORDER = "ABCDEFGHIJKL".split("");
 
@@ -27,7 +26,7 @@ export default function StandingsPreview() {
   const groups = sortGroups(Object.keys(standings));
 
   return (
-    <section className="text-zinc-900" style={{ backgroundColor: WC_PAGE_BG }}>
+    <section className="text-zinc-900 dark:text-zinc-100 bg-[#f3f3f3] dark:bg-[#0a0a0a]">
       <div className="max-w-[1400px] mx-auto px-4 lg:px-8 py-12 lg:py-16">
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8">
           <h2 className="text-2xl sm:text-3xl font-bold tracking-tight m-0">

@@ -64,25 +64,7 @@ function ThemeToggle() {
   );
 }
 
-function HeaderActions({ countdownHidden, onShowCountdown, className = "" }) {
-  return (
-    <div className={`flex items-center gap-4 shrink-0 ${className}`}>
-      {countdownHidden && onShowCountdown && (
-        <button
-          type="button"
-          onClick={onShowCountdown}
-          className="text-[11px] font-semibold uppercase tracking-wide text-white/80 hover:text-white whitespace-nowrap"
-        >
-          Show timer
-        </button>
-      )}
-      <ThemeToggle />
-      <AccountButton />
-    </div>
-  );
-}
-
-export default function SiteHeader({ onShowCountdown, countdownHidden }) {
+export default function SiteHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   const navClass = ({ isActive }) =>
@@ -96,7 +78,7 @@ export default function SiteHeader({ onShowCountdown, countdownHidden }) {
         <div className="max-w-[1400px] mx-auto px-4 lg:px-8 min-h-14 py-2 flex items-center gap-4 lg:gap-6 relative flex-wrap">
           <button
             type="button"
-            className="lg:hidden text-white p-1 shrink-0"
+            className="lg:hidden text-white p-1 shrink-0 self-center"
             aria-label="Menu"
             onClick={() => setMenuOpen((o) => !o)}
           >
@@ -105,14 +87,14 @@ export default function SiteHeader({ onShowCountdown, countdownHidden }) {
             </svg>
           </button>
 
-          <Link to="/" className="flex items-center shrink-0">
+          <Link to="/" className="flex items-center shrink-0 self-center">
             <LogoPlaceholder className="h-10 w-14 rounded" />
           </Link>
 
           <div
             className={`${
               menuOpen ? "flex" : "hidden"
-            } lg:flex flex-col lg:flex-row lg:items-center gap-4 lg:gap-6 w-full lg:w-auto absolute lg:static top-full left-0 right-0 bg-black lg:bg-transparent p-4 lg:p-0 border-b lg:border-0 border-white/10 z-40`}
+            } lg:flex flex-col lg:flex-row lg:items-center gap-4 lg:gap-6 w-full lg:w-auto absolute lg:static top-full left-0 right-0 bg-black lg:bg-transparent p-4 lg:p-0 border-b lg:border-0 border-white/10 z-40 self-center`}
           >
             {NAV_LINKS.map(({ to, label, end }) => (
               <NavLink
@@ -127,11 +109,10 @@ export default function SiteHeader({ onShowCountdown, countdownHidden }) {
             ))}
           </div>
 
-          <HeaderActions
-            className="ml-auto"
-            countdownHidden={countdownHidden}
-            onShowCountdown={onShowCountdown}
-          />
+          <div className="flex items-center gap-3 ml-auto shrink-0">
+            <ThemeToggle />
+            <AccountButton />
+          </div>
         </div>
       </nav>
     </header>

@@ -21,13 +21,13 @@ const STORY_LIST = [
 
 export default function NewsSection() {
   return (
-    <section className="bg-white text-zinc-900">
+    <section className="bg-white dark:bg-zinc-950 text-zinc-900">
       <div className="max-w-[1400px] mx-auto px-4 lg:px-8 py-12 lg:py-16">
         <h2 className="text-2xl sm:text-3xl font-bold tracking-tight m-0">Top stories</h2>
 
         <div className="mt-8 grid lg:grid-cols-[1.2fr_1fr] gap-10 lg:gap-14">
           <article>
-            <div className="aspect-[16/10] w-full bg-zinc-100 border border-zinc-200 flex items-center justify-center text-zinc-400 text-xs uppercase tracking-wider">
+            <div className="aspect-[16/10] w-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 flex items-center justify-center text-zinc-400 text-xs uppercase tracking-wider">
               Featured image
             </div>
             <p className="text-[10px] uppercase tracking-widest text-zinc-500 mt-5 m-0">
@@ -47,11 +47,11 @@ export default function NewsSection() {
             </Link>
           </article>
 
-          <ul className="space-y-0 list-none m-0 p-0 divide-y divide-zinc-200">
+          <ul className="space-y-0 list-none m-0 p-0 divide-y divide-zinc-200 dark:divide-zinc-700">
             {STORY_LIST.map(({ tag, title }) => (
               <li key={title} className="flex gap-4 py-4 first:pt-0">
                 <div
-                  className="w-16 h-16 shrink-0 bg-zinc-100 border border-zinc-200"
+                  className="w-16 h-16 shrink-0 bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700"
                   aria-hidden
                 />
                 <div className="min-w-0">
