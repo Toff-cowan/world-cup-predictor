@@ -11,4 +11,9 @@ export const forumApi = {
       method: "POST",
       body: JSON.stringify(body),
     }),
+  vote: (postId, vote) =>
+    apiFetch(`/forum/${postId}/vote`, {
+      method: "POST",
+      body: JSON.stringify({ vote }),
+    }),
 };

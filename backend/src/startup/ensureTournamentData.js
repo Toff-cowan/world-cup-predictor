@@ -1,6 +1,6 @@
 import pool from "../config/db.js";
 import { syncFifaTournament } from "../scraper/simpleFifaScraper.js";
-import { syncFifaNews } from "../scraper/syncFifaNews.js";
+import { runNewsSync } from "./newsSyncScheduler.js";
 
 /**
  * Optional first-boot seeding (set SCRAPE_IF_EMPTY=true on Render).
@@ -16,6 +16,6 @@ export async function ensureTournamentData() {
   const result = await syncFifaTournament();
   console.log("Tournament sync:", result);
 
-  const news = await syncFifaNews();
+  const news = await runNewsSync();
   console.log("News sync:", news);
 }

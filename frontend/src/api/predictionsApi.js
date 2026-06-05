@@ -19,4 +19,9 @@ export const predictionsApi = {
       body: JSON.stringify(body),
     }),
   shared: (token) => apiFetch(`/predictions/shared/${token}`),
+  copyFromShare: (shareToken, name) =>
+    apiFetch("/predictions/copy-from-share", {
+      method: "POST",
+      body: JSON.stringify({ share_token: shareToken, name }),
+    }),
 };

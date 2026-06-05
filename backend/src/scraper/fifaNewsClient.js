@@ -61,31 +61,30 @@ export function mapNewsListItem(item) {
   };
 }
 
-export async function fetchLatestNewsItems(limit = 20) {
+export async function fetchLatestNewsItems(limit = 40) {
   const page = await fifaPlusGet("/pages/news?locale=en");
   const newsSections = (page.sections || []).filter((s) => s.entryType === "news");
 
   const items = [];
   const seen = new Set();
+  const perSectionLimit = Math.max(limit, 30);
 
   for (const section of newsSections) {
-    if (items.length >= limit) break;
     const endpoint = section.entryEndpoint?.startsWith("/")
       ? section.entryEndpoint
       : `/${section.entryEndpoint}`;
     const sep = endpoint.includes("?") ? "&" : "?";
-    const data = await fifaPlusGet(`${endpoint}${sep}limit=${limit}`);
+    const data = await fifaPlusGet(`${endpoint}${sep}limit=${perSectionLimit}`);
     for (const item of data.items || []) {
       if (seen.has(item.entryId)) continue;
       seen.add(item.entryId);
       items.push(mapNewsListItem(item));
-      if (items.length >= limit) break;
     }
   }
 
-  return items.sort(
-    (a, b) => new Date(b.publishedAt || 0) - new Date(a.publishedAt || 0)
-  );
+  return items
+    .sort((a, b) => new Date(b.publishedAt || 0) - new Date(a.publishedAt || 0))
+    .slice(0, limit);
 }
 
 export async function fetchArticleBody(externalId) {

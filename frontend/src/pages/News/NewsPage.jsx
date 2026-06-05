@@ -57,11 +57,32 @@ export default function NewsPage() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    newsApi
-      .list(24)
-      .then((data) => setArticles(data.articles || []))
-      .catch((err) => setError(err.message))
-      .finally(() => setLoading(false));
+    let cancelled = false;
+
+    function load(isInitial = false) {
+      if (isInitial) setLoading(true);
+      newsApi
+        .list(24)
+        .then((data) => {
+          if (!cancelled) {
+            setArticles(data.articles || []);
+            setError("");
+          }
+        })
+        .catch((err) => {
+          if (!cancelled) setError(err.message);
+        })
+        .finally(() => {
+          if (!cancelled && isInitial) setLoading(false);
+        });
+    }
+
+    load(true);
+    const id = setInterval(() => load(false), 5 * 60 * 1000);
+    return () => {
+      cancelled = true;
+      clearInterval(id);
+    };
   }, []);
 
   return (

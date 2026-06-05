@@ -12,6 +12,8 @@ function formatDate(iso) {
   });
 }
 
+const NEWS_POLL_MS = 5 * 60 * 1000;
+
 export default function NewsSection() {
   const [featured, setFeatured] = useState(null);
   const [articles, setArticles] = useState([]);
@@ -19,16 +21,34 @@ export default function NewsSection() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    Promise.all([newsApi.featured(), newsApi.list(9)])
-      .then(([featuredRes, listRes]) => {
-        setFeatured(featuredRes.article || null);
-        const rest = (listRes.articles || []).filter(
-          (a) => a.slug !== featuredRes.article?.slug
-        );
-        setArticles(rest.slice(0, 8));
-      })
-      .catch((err) => setError(err.message))
-      .finally(() => setLoading(false));
+    let cancelled = false;
+
+    function load(isInitial = false) {
+      if (isInitial) setLoading(true);
+      Promise.all([newsApi.featured(), newsApi.list(9)])
+        .then(([featuredRes, listRes]) => {
+          if (cancelled) return;
+          setFeatured(featuredRes.article || null);
+          const rest = (listRes.articles || []).filter(
+            (a) => a.slug !== featuredRes.article?.slug
+          );
+          setArticles(rest.slice(0, 8));
+          setError("");
+        })
+        .catch((err) => {
+          if (!cancelled) setError(err.message);
+        })
+        .finally(() => {
+          if (!cancelled && isInitial) setLoading(false);
+        });
+    }
+
+    load(true);
+    const id = setInterval(() => load(false), NEWS_POLL_MS);
+    return () => {
+      cancelled = true;
+      clearInterval(id);
+    };
   }, []);
 
   return (

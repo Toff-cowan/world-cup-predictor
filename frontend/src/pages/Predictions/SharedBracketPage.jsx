@@ -3,6 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import { predictionsApi } from "../../api/predictionsApi.js";
 import { teamsApi } from "../../api/teamsApi.js";
 import KnockoutBracketView from "../../components/predictions/KnockoutBracketView.jsx";
+import ForumPostActions from "../../components/forum/ForumPostActions.jsx";
 import { normalizeBracket } from "../../utils/bracketHelpers.js";
 
 export default function SharedBracketPage() {
@@ -73,7 +74,12 @@ export default function SharedBracketPage() {
         </div>
       </section>
 
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12 py-8">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12 py-8 space-y-6">
+        <ForumPostActions
+          shareToken={token}
+          sharedName={shared.name}
+          showVotes={false}
+        />
         {bracket && (
           <KnockoutBracketView
             teams={teams}

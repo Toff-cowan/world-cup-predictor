@@ -58,12 +58,12 @@ export function setActiveLocalBracket(id) {
   writeStore(store);
 }
 
-export function createLocalBracket(name = "My Bracket") {
+export function createLocalBracket(name = "My Bracket", bracketData = null) {
   const store = readStore();
   const bracket = {
     id: newLocalId(),
     name,
-    bracket: createEmptyBracket(),
+    bracket: bracketData || createEmptyBracket(),
     locked_stages: [],
     is_fully_locked: false,
     share_token: null,
@@ -74,6 +74,22 @@ export function createLocalBracket(name = "My Bracket") {
   store.activeId = bracket.id;
   writeStore(store);
   return bracket;
+}
+
+export function copySharedToLocal(sharedPrediction, name) {
+  let bracketData = sharedPrediction.bracket;
+  if (typeof bracketData === "string") {
+    try {
+      bracketData = JSON.parse(bracketData);
+    } catch {
+      bracketData = createEmptyBracket();
+    }
+  }
+  if (bracketData && typeof bracketData === "object") {
+    bracketData = { ...bracketData, locked_groups: [] };
+  }
+  const copyName = name || `${sharedPrediction.name} (copy)`;
+  return createLocalBracket(copyName, bracketData || createEmptyBracket());
 }
 
 export function updateLocalBracket(id, patch) {

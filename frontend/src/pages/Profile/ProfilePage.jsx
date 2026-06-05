@@ -170,7 +170,7 @@ export default function ProfilePage() {
               to="/forum/new"
               className="text-xs font-bold uppercase tracking-wide text-zinc-600 dark:text-zinc-300 hover:underline underline-offset-4"
             >
-              Share bracket
+              New post
             </Link>
           </div>
 

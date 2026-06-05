@@ -1,6 +1,8 @@
 import { Link, NavLink } from "react-router-dom";
 import { TROPHY_IMAGE } from "../../constants/assets.js";
 
+const CREATOR_URL = "https://toff-industries.com/";
+
 const FOOTER_LINKS = [
   { to: "/", label: "Home", end: true },
   { to: "/news", label: "News" },
@@ -14,7 +16,7 @@ export default function SiteFooter() {
   return (
     <footer className="font-sans bg-black text-white border-t border-white/10 mt-auto">
       <div className="max-w-[1400px] mx-auto px-4 lg:px-8 py-12 lg:py-14">
-        <div className="grid grid-cols-1 md:grid-cols-[1.2fr_1fr_1fr] gap-10 lg:gap-16">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-12">
           <div>
             <Link to="/" className="inline-flex items-center gap-3 hover:opacity-90 transition-opacity">
               <img src={TROPHY_IMAGE} alt="" className="h-10 w-auto" />
@@ -62,7 +64,7 @@ export default function SiteFooter() {
               FIFA World Cup 2026™ on FIFA.com →
             </a>
             <p className="text-xs text-white/45 mt-4 m-0 leading-relaxed">
-              Schedules, tickets, and verified news are always on{" "}
+              Schedules, tickets, and verified news on{" "}
               <a
                 href="https://www.fifa.com/en"
                 target="_blank"
@@ -74,12 +76,48 @@ export default function SiteFooter() {
               .
             </p>
           </div>
+
+          <div>
+            <p className="text-[10px] font-bold uppercase tracking-widest text-white/50 m-0 mb-4">
+              Creator
+            </p>
+            <a
+              href={CREATOR_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 text-sm font-semibold text-[#7eb3ff] hover:underline underline-offset-4"
+            >
+              Christoff Cowan · Toff Industries →
+            </a>
+            <p className="text-xs text-white/45 mt-4 m-0 leading-relaxed">
+              Built by{" "}
+              <a
+                href={CREATOR_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-white/70 hover:text-white underline underline-offset-2"
+              >
+                Christoff Cowan
+              </a>
+              . View portfolio, projects, and services at toff-industries.com.
+            </p>
+          </div>
         </div>
 
         <div
           className="mt-10 pt-6 border-t border-white/10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-xs text-white/40"
         >
-          <p className="m-0">© {new Date().getFullYear()} World Cup Predictor · Fan project</p>
+          <p className="m-0">
+            © {new Date().getFullYear()} World Cup Predictor · Fan project ·{" "}
+            <a
+              href={CREATOR_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-white/60 hover:text-white underline underline-offset-2"
+            >
+              toff-industries.com
+            </a>
+          </p>
           <p className="m-0">USA · Canada · Mexico 2026</p>
         </div>
       </div>

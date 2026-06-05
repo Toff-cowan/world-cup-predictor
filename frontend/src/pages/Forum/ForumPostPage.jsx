@@ -4,6 +4,8 @@ import { forumApi } from "../../api/forumApi.js";
 import { predictionsApi } from "../../api/predictionsApi.js";
 import { teamsApi } from "../../api/teamsApi.js";
 import KnockoutBracketView from "../../components/predictions/KnockoutBracketView.jsx";
+import ForumComments from "../../components/forum/ForumComments.jsx";
+import ForumPostActions from "../../components/forum/ForumPostActions.jsx";
 import { normalizeBracket } from "../../utils/bracketHelpers.js";
 
 function formatDate(iso) {
@@ -23,6 +25,7 @@ export default function ForumPostPage() {
   const preview = location.state?.preview;
 
   const [post, setPost] = useState(preview || null);
+  const [comments, setComments] = useState([]);
   const [shared, setShared] = useState(null);
   const [teams, setTeams] = useState([]);
   const [loadingPost, setLoadingPost] = useState(!preview);
@@ -35,7 +38,10 @@ export default function ForumPostPage() {
     forumApi
       .get(id)
       .then((data) => {
-        if (!cancelled) setPost(data.post);
+        if (!cancelled) {
+          setPost(data.post);
+          setComments(data.comments || []);
+        }
       })
       .catch((err) => {
         if (!cancelled) setError(err.message);
@@ -87,7 +93,18 @@ export default function ForumPostPage() {
           </Link>
           {post ? (
             <>
-              <h1 className="font-display text-2xl sm:text-4xl font-bold uppercase tracking-tight mt-4 m-0">
+              <div className="flex flex-wrap items-center gap-3 mt-4">
+                {post.share_token ? (
+                  <span className="text-[10px] font-bold uppercase tracking-widest px-2 py-1 bg-white/10 border border-white/20">
+                    Bracket post
+                  </span>
+                ) : (
+                  <span className="text-[10px] font-bold uppercase tracking-widest px-2 py-1 bg-white/10 border border-white/20">
+                    Question
+                  </span>
+                )}
+              </div>
+              <h1 className="font-display text-2xl sm:text-4xl font-bold uppercase tracking-tight mt-3 m-0">
                 {post.title}
               </h1>
               <p className="text-sm text-white/60 mt-2 m-0">
@@ -107,8 +124,28 @@ export default function ForumPostPage() {
         {error && <p className="text-red-600 dark:text-red-400">{error}</p>}
 
         {post && (
-          <article className="border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 p-6 lg:p-8">
+          <article className="border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 p-6 lg:p-8 space-y-4">
             <p className="text-base leading-relaxed whitespace-pre-wrap m-0">{post.body}</p>
+            <ForumPostActions
+              postId={post.id}
+              shareToken={post.share_token}
+              likes={post.likes}
+              dislikes={post.dislikes}
+              userVote={post.user_vote}
+              sharedName={shared?.name || post.title}
+              onVoteChange={(data) =>
+                setPost((p) =>
+                  p
+                    ? {
+                        ...p,
+                        likes: data.likes,
+                        dislikes: data.dislikes,
+                        user_vote: data.userVote,
+                      }
+                    : p
+                )
+              }
+            />
           </article>
         )}
 
@@ -143,6 +180,8 @@ export default function ForumPostPage() {
             </div>
           </section>
         )}
+
+        {post && <ForumComments postId={post.id} initialComments={comments} />}
       </div>
     </div>
   );

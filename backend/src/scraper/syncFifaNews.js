@@ -1,9 +1,9 @@
 import pool from "../config/db.js";
 import { fetchArticleBody, fetchLatestNewsItems } from "./fifaNewsClient.js";
 
-const BODY_FETCH_LIMIT = 12;
+const BODY_FETCH_LIMIT = 15;
 
-export async function syncFifaNews({ itemLimit = 20, fetchBodies = true } = {}) {
+export async function syncFifaNews({ itemLimit = 40, fetchBodies = true } = {}) {
   const items = await fetchLatestNewsItems(itemLimit);
   let upserted = 0;
 

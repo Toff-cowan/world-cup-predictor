@@ -127,6 +127,26 @@ html.dark .text-black {
   color: rgb(250 250 250);
 }
 
+/* White / light buttons and chips keep dark text in dark mode */
+html.dark :is(.bg-white, .dark\:bg-white, .bg-zinc-100, .dark\:bg-zinc-100):is(
+    .text-black,
+    .text-zinc-900,
+    .text-zinc-800,
+    .dark\:text-zinc-900,
+    .dark\:text-black
+  ) {
+  color: rgb(24 24 27) !important;
+}
+
+html.dark :is(.bg-white, .dark\:bg-white) :is(.text-black, .text-zinc-900, .dark\:text-zinc-900) {
+  color: rgb(24 24 27) !important;
+}
+
+html.dark button:is(.bg-white, .dark\:bg-white),
+html.dark a:is(.bg-white, .dark\:bg-white) {
+  color: rgb(24 24 27) !important;
+}
+
 html.dark .text-slate-950,
 html.dark .text-slate-900 {
   color: rgb(250 250 250);

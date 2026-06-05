@@ -207,3 +207,35 @@ export async function unlockPrediction(req, res, next) {
     next(err);
   }
 }
+
+export async function copySharedPrediction(req, res, next) {
+  try {
+    const { share_token: shareToken, name } = req.body;
+    if (!shareToken) return fail(res, "share_token is required");
+
+    const { rows } = await pool.query(
+      `SELECT bracket, name, user_id FROM predictions WHERE share_token = $1`,
+      [shareToken]
+    );
+    if (!rows[0]) return fail(res, "Shared prediction not found", 404);
+    if (rows[0].user_id === req.user.id) {
+      return fail(res, "This is already your bracket", 400);
+    }
+
+    const bracket = parseBracket(rows[0].bracket);
+    bracket.locked_groups = [];
+    const copyName = (name || `${rows[0].name} (copy)`).slice(0, 120);
+    const slug = `${slugify(copyName)}-${Date.now()}`;
+    const newShareToken = crypto.randomBytes(16).toString("hex");
+
+    const { rows: created } = await pool.query(
+      `INSERT INTO predictions (user_id, name, slug, bracket, share_token)
+       VALUES ($1, $2, $3, $4, $5)
+       RETURNING id, name, slug, locked_stages, is_fully_locked, accuracy_score, share_token, created_at, updated_at`,
+      [req.user.id, copyName, slug, JSON.stringify(bracket), newShareToken]
+    );
+    return ok(res, { prediction: created[0] }, 201);
+  } catch (err) {
+    next(err);
+  }
+}

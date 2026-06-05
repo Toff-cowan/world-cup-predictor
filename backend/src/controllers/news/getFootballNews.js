@@ -1,7 +1,7 @@
 import pool from "../../config/db.js";
 import { ok } from "../../utils/apiResponse.js";
 import { fetchArticleBody } from "../../scraper/fifaNewsClient.js";
-import { syncFifaNews } from "../../scraper/syncFifaNews.js";
+import { runNewsSync, maybeSyncNewsInBackground } from "../../startup/newsSyncScheduler.js";
 
 function mapRow(row) {
   return {
@@ -31,7 +31,7 @@ export async function getFootballNews(req, res, next) {
 
     if (rows.length === 0) {
       try {
-        await syncFifaNews({ itemLimit: limit });
+        await runNewsSync({ itemLimit: Math.max(limit, 30) });
         const retry = await pool.query(
           `SELECT id, slug, title, summary, tag, roofline, image_url, source_url, published_at
            FROM news_articles
@@ -44,6 +44,8 @@ export async function getFootballNews(req, res, next) {
         return ok(res, { articles: [] });
       }
     }
+
+    maybeSyncNewsInBackground();
 
     return ok(res, { articles: rows.map(mapRow) });
   } catch (err) {
@@ -61,13 +63,15 @@ export async function getFeaturedNews(_req, res, next) {
     );
 
     if (rows.length === 0) {
-      await syncFifaNews({ itemLimit: 8 });
+      await runNewsSync({ itemLimit: 30 });
       ({ rows } = await pool.query(
         `SELECT id, external_id, slug, title, summary, tag, roofline, image_url, source_url, published_at
          FROM news_articles
          ORDER BY published_at DESC NULLS LAST, id DESC
          LIMIT 1`
       ));
+    } else {
+      maybeSyncNewsInBackground();
     }
 
     return ok(res, { article: rows[0] ? mapRow(rows[0]) : null });
