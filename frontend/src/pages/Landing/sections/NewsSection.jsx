@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { newsApi } from "../../../api/newsApi.js";
 import HomeButton from "../../../components/common/HomeButton.jsx";
 
@@ -33,18 +34,25 @@ export default function NewsSection() {
   return (
     <section id="news" className="bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100">
       <div className="max-w-[1400px] mx-auto px-4 lg:px-8 py-12 lg:py-16">
-        <h2 className="text-2xl sm:text-3xl font-bold tracking-tight m-0">Top stories</h2>
-        <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-2 m-0">
-          Latest from{" "}
-          <a
-            href="https://www.fifa.com/en/news"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="underline underline-offset-2 hover:text-zinc-900 dark:hover:text-white"
-          >
-            FIFA.com
-          </a>
-        </p>
+        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+          <div>
+            <h2 className="text-2xl sm:text-3xl font-bold tracking-tight m-0">Top stories</h2>
+            <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-2 m-0">
+              Latest from{" "}
+              <a
+                href="https://www.fifa.com/en/news"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline underline-offset-2 hover:text-zinc-900 dark:hover:text-white"
+              >
+                FIFA.com
+              </a>
+            </p>
+          </div>
+          <HomeButton as="link" to="/news" variant="link">
+            View all news →
+          </HomeButton>
+        </div>
 
         {loading && (
           <p className="text-zinc-500 dark:text-zinc-400 mt-8">Loading news…</p>
@@ -96,14 +104,17 @@ export default function NewsSection() {
                 {featured.body || featured.summary}
               </p>
               <div className="flex flex-wrap items-center gap-4 mt-4">
+                <HomeButton as="link" to={`/news/${featured.slug}`} state={{ preview: featured }}>
+                  Read article
+                </HomeButton>
                 <HomeButton
                   as="a"
                   href={featured.sourceUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  variant="link"
+                  variant="ghost"
                 >
-                  Read on FIFA.com
+                  FIFA.com
                 </HomeButton>
                 {featured.publishedAt && (
                   <span className="text-xs text-zinc-500">{formatDate(featured.publishedAt)}</span>
@@ -138,14 +149,13 @@ export default function NewsSection() {
                     <p className="text-[10px] uppercase tracking-widest text-zinc-500 m-0">
                       {story.tag || "News"}
                     </p>
-                    <a
-                      href={story.sourceUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                    <Link
+                      to={`/news/${story.slug}`}
+                      state={{ preview: story }}
                       className="text-sm font-bold mt-1 m-0 leading-snug block hover:underline underline-offset-2"
                     >
                       {story.title}
-                    </a>
+                    </Link>
                     {story.summary && (
                       <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1 m-0 line-clamp-2">
                         {story.summary}

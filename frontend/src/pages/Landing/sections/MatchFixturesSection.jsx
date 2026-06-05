@@ -148,7 +148,7 @@ function RoundQualifiers({ topTwoByGroup, round }) {
   );
 }
 
-export default function MatchFixturesSection() {
+export default function MatchFixturesSection({ embedded = false }) {
   const [matches, setMatches] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -190,18 +190,42 @@ export default function MatchFixturesSection() {
 
   return (
     <section
-      id="fixtures"
-      className="bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 border-t border-zinc-200 dark:border-zinc-800"
+      id={embedded ? undefined : "fixtures"}
+      className={`bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 ${
+        embedded ? "" : "border-t border-zinc-200 dark:border-zinc-800"
+      }`}
     >
       <div className="max-w-[1400px] mx-auto px-4 lg:px-8 py-12 lg:py-16">
-        <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4 mb-8">
-          <div>
-            <h2 className="text-2xl sm:text-3xl font-bold tracking-tight m-0">Match fixtures</h2>
-            <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-2 m-0">
-              Group stage by round · three featured matches · top two qualifiers per group
-            </p>
+        {!embedded && (
+          <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4 mb-8">
+            <div>
+              <h2 className="text-2xl sm:text-3xl font-bold tracking-tight m-0">Match fixtures</h2>
+              <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-2 m-0">
+                Group stage by round · three featured matches · top two qualifiers per group
+              </p>
+            </div>
+            <div className="flex flex-wrap items-center gap-3 shrink-0">
+              <HomeButton as="link" to="/fixtures" variant="link">
+                Full fixtures page →
+              </HomeButton>
+              <div className="flex items-center gap-2">
+                {[1, 2, 3].map((round) => (
+                  <HomeButton
+                    key={round}
+                    variant="tab"
+                    active={activeRound === round}
+                    onClick={() => setActiveRound(round)}
+                  >
+                    Round {round}
+                  </HomeButton>
+                ))}
+              </div>
+            </div>
           </div>
-          <div className="flex items-center gap-2 shrink-0">
+        )}
+
+        {embedded && (
+          <div className="flex flex-wrap items-center gap-2 mb-8">
             {[1, 2, 3].map((round) => (
               <HomeButton
                 key={round}
@@ -213,7 +237,7 @@ export default function MatchFixturesSection() {
               </HomeButton>
             ))}
           </div>
-        </div>
+        )}
 
         {loading && (
           <p className="text-zinc-500 dark:text-zinc-400">Loading fixtures…</p>

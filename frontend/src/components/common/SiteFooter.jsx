@@ -1,12 +1,13 @@
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { TROPHY_IMAGE } from "../../constants/assets.js";
 
 const FOOTER_LINKS = [
   { to: "/", label: "Home", end: true },
+  { to: "/news", label: "News" },
+  { to: "/fixtures", label: "Fixtures" },
   { to: "/standings", label: "Standings" },
-  { to: "/predictions", label: "My Predictions" },
-  { to: "/#news", label: "News" },
-  { to: "/#fixtures", label: "Fixtures" },
+  { to: "/predictions", label: "Predictions" },
+  { to: "/forum", label: "Forum" },
 ];
 
 export default function SiteFooter() {
@@ -32,13 +33,17 @@ export default function SiteFooter() {
             <ul className="space-y-2.5 list-none m-0 p-0">
               {FOOTER_LINKS.map(({ to, label, end }) => (
                 <li key={label}>
-                  <Link
+                  <NavLink
                     to={to}
                     end={end}
-                    className="text-sm text-white/80 hover:text-white hover:underline underline-offset-4 transition-colors"
+                    className={({ isActive }) =>
+                      `text-sm transition-colors hover:underline underline-offset-4 ${
+                        isActive ? "text-white font-semibold" : "text-white/80 hover:text-white"
+                      }`
+                    }
                   >
                     {label}
-                  </Link>
+                  </NavLink>
                 </li>
               ))}
             </ul>

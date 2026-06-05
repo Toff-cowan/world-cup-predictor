@@ -1,14 +1,16 @@
 import { useEffect, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { TROPHY_IMAGE } from "../../constants/assets.js";
+import { useAuth } from "../../context/AuthContext.jsx";
 import { useTheme } from "../../context/ThemeContext.jsx";
 
 const NAV_LINKS = [
   { to: "/", label: "Home", end: true },
+  { to: "/news", label: "News" },
+  { to: "/fixtures", label: "Fixtures" },
   { to: "/standings", label: "Standings" },
   { to: "/predictions", label: "Predictions" },
-  { to: "/#news", label: "News" },
-  { to: "/#fixtures", label: "Fixtures" },
+  { to: "/forum", label: "Forum" },
 ];
 
 function SiteLogo({ className = "" }) {
@@ -21,18 +23,44 @@ function SiteLogo({ className = "" }) {
   );
 }
 
-function AccountButton({ className = "", onNavigate }) {
+function AccountMenu({ className = "", onNavigate }) {
+  const { isAuthenticated, logout } = useAuth();
+
+  if (isAuthenticated) {
+    return (
+      <div className={`flex items-center gap-1 sm:gap-2 shrink-0 ${className}`}>
+        <Link
+          to="/profile"
+          onClick={onNavigate}
+          className="flex items-center justify-center gap-2 min-h-[2.75rem] min-w-[2.75rem] sm:min-w-0 px-2 sm:px-0 text-[11px] sm:text-xs font-semibold tracking-wide uppercase hover:opacity-80"
+          aria-label="Account"
+        >
+          <svg className="w-5 h-5 text-white shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+            <path d="M12 12c2.2 0 4-1.8 4-4s-1.8-4-4-4-4 1.8-4 4 1.8 4 4 4zm0 2c-2.7 0-8 1.3-8 4v2h16v-2c0-2.7-5.3-4-8-4z" />
+          </svg>
+          <span className="hidden sm:inline">Account</span>
+        </Link>
+        <button
+          type="button"
+          onClick={() => {
+            logout();
+            onNavigate?.();
+          }}
+          className="hidden sm:inline text-[10px] font-bold uppercase tracking-wide text-white/60 hover:text-white px-2"
+        >
+          Log out
+        </button>
+      </div>
+    );
+  }
+
   return (
     <Link
-      to="/profile"
+      to="/login"
       onClick={onNavigate}
-      className={`flex items-center justify-center gap-2 min-h-[2.75rem] min-w-[2.75rem] sm:min-w-0 px-2 sm:px-0 text-[11px] sm:text-xs font-semibold tracking-wide uppercase hover:opacity-80 shrink-0 ${className}`}
-      aria-label="Account"
+      className={`flex items-center justify-center min-h-[2.75rem] px-3 text-[11px] sm:text-xs font-semibold tracking-wide uppercase hover:opacity-80 shrink-0 ${className}`}
     >
-      <svg className="w-5 h-5 text-white shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-        <path d="M12 12c2.2 0 4-1.8 4-4s-1.8-4-4-4-4 1.8-4 4 1.8 4 4 4zm0 2c-2.7 0-8 1.3-8 4v2h16v-2c0-2.7-5.3-4-8-4z" />
-      </svg>
-      <span className="hidden sm:inline">Account</span>
+      Sign in
     </Link>
   );
 }
@@ -115,7 +143,7 @@ export default function SiteHeader() {
             WC Predictor
           </span>
 
-          <div className="hidden lg:flex items-center gap-6 ml-6">
+          <div className="hidden lg:flex items-center gap-5 xl:gap-6 ml-4 xl:ml-6 overflow-x-auto">
             {NAV_LINKS.map(({ to, label, end }) => (
               <NavLink key={label} to={to} end={end} className={navClass}>
                 {label}
@@ -125,7 +153,7 @@ export default function SiteHeader() {
 
           <div className="flex items-center gap-1 sm:gap-3 ml-auto shrink-0">
             <ThemeToggle />
-            <AccountButton onNavigate={closeMenu} />
+            <AccountMenu onNavigate={closeMenu} />
           </div>
         </div>
 

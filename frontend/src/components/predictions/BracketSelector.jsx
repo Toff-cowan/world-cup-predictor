@@ -10,6 +10,9 @@ export default function BracketSelector({
   onCreated,
   onRenamed,
   onDeleted,
+  onRenameRequest,
+  onCreateRequest,
+  onDeleteRequest,
   disabled,
 }) {
   const [nameDraft, setNameDraft] = useState(activeName || "");
@@ -25,6 +28,10 @@ export default function BracketSelector({
     if (renameTimer.current) clearTimeout(renameTimer.current);
     renameTimer.current = setTimeout(async () => {
       try {
+        if (onRenameRequest) {
+          onRenameRequest(activeId, value.trim());
+          return;
+        }
         const data = await predictionsApi.update(activeId, { name: value.trim() });
         onRenamed?.(data.prediction);
       } catch {
@@ -36,6 +43,10 @@ export default function BracketSelector({
   async function handleCreate() {
     setCreating(true);
     try {
+      if (onCreateRequest) {
+        onCreateRequest();
+        return;
+      }
       const data = await predictionsApi.create({
         name: `Bracket ${brackets.length + 1}`,
         bracket: createEmptyBracket(),
@@ -49,6 +60,10 @@ export default function BracketSelector({
   async function handleDelete() {
     if (!activeId || brackets.length <= 1) return;
     if (!window.confirm("Delete this bracket? This cannot be undone.")) return;
+    if (onDeleteRequest) {
+      onDeleteRequest(activeId);
+      return;
+    }
     await predictionsApi.remove(activeId);
     onDeleted?.(activeId);
   }
@@ -80,7 +95,7 @@ export default function BracketSelector({
           <select
             value={activeId ?? ""}
             disabled={disabled}
-            onChange={(e) => onSelect(Number(e.target.value))}
+            onChange={(e) => onSelect(e.target.value)}
             className="mt-1 w-full text-sm font-medium bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-600 px-3 py-2 disabled:opacity-50"
           >
             {brackets.map((b) => (

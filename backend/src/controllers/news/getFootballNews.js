@@ -22,7 +22,7 @@ export async function getFootballNews(req, res, next) {
   try {
     const limit = Math.min(Number(req.query.limit) || 12, 30);
     const { rows } = await pool.query(
-      `SELECT id, slug, title, summary, body, tag, roofline, image_url, source_url, published_at
+      `SELECT id, slug, title, summary, tag, roofline, image_url, source_url, published_at
        FROM news_articles
        ORDER BY published_at DESC NULLS LAST, id DESC
        LIMIT $1`,
@@ -33,7 +33,7 @@ export async function getFootballNews(req, res, next) {
       try {
         await syncFifaNews({ itemLimit: limit });
         const retry = await pool.query(
-          `SELECT id, slug, title, summary, body, tag, roofline, image_url, source_url, published_at
+          `SELECT id, slug, title, summary, tag, roofline, image_url, source_url, published_at
            FROM news_articles
            ORDER BY published_at DESC NULLS LAST, id DESC
            LIMIT $1`,
@@ -54,7 +54,7 @@ export async function getFootballNews(req, res, next) {
 export async function getFeaturedNews(_req, res, next) {
   try {
     let { rows } = await pool.query(
-      `SELECT id, external_id, slug, title, summary, body, tag, roofline, image_url, source_url, published_at
+      `SELECT id, external_id, slug, title, summary, tag, roofline, image_url, source_url, published_at
        FROM news_articles
        ORDER BY published_at DESC NULLS LAST, id DESC
        LIMIT 1`
@@ -63,7 +63,7 @@ export async function getFeaturedNews(_req, res, next) {
     if (rows.length === 0) {
       await syncFifaNews({ itemLimit: 8 });
       ({ rows } = await pool.query(
-        `SELECT id, external_id, slug, title, summary, body, tag, roofline, image_url, source_url, published_at
+        `SELECT id, external_id, slug, title, summary, tag, roofline, image_url, source_url, published_at
          FROM news_articles
          ORDER BY published_at DESC NULLS LAST, id DESC
          LIMIT 1`
