@@ -9,6 +9,7 @@ import {
   deletePrediction,
   lockPredictionStage,
   unlockPrediction,
+  copySharedPrediction,
 } from "../controllers/predictions/predictionHandlers.js";
 
 const router = Router();
@@ -17,6 +18,7 @@ router.get("/shared/:token", getSharedPrediction);
 
 router.use(authMiddleware);
 router.get("/", getPredictions);
+router.post("/copy-from-share", copySharedPrediction);
 router.get("/:id", getPredictionById);
 router.post("/", createPrediction);
 router.patch("/:id", updatePrediction);

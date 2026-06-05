@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { authApi } from "../../api/authApi.js";
 import { predictionsApi } from "../../api/predictionsApi.js";
 import { forumApi } from "../../api/forumApi.js";
+import { useAuth } from "../../context/AuthContext.jsx";
 
 function formatDate(iso) {
   if (!iso) return "—";
@@ -33,24 +33,23 @@ function StatCard({ label, value, hint }) {
 }
 
 export default function ProfilePage() {
-  const [user, setUser] = useState(null);
+  const { user, logout } = useAuth();
   const [predictions, setPredictions] = useState([]);
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     Promise.all([
-      authApi.me(),
       predictionsApi.list(),
       forumApi.list().catch(() => ({ posts: [] })),
     ])
-      .then(([me, preds, forum]) => {
-        setUser(me.user);
+      .then(([preds, forum]) => {
         setPredictions(preds.predictions || []);
-        setPosts((forum.posts || []).slice(0, 5));
+        const mine = (forum.posts || []).filter((p) => p.username === user?.username);
+        setPosts(mine.slice(0, 5));
       })
       .finally(() => setLoading(false));
-  }, []);
+  }, [user?.username]);
 
   const lockedCount = useMemo(
     () => predictions.filter((p) => p.is_fully_locked).length,
@@ -93,6 +92,13 @@ export default function ProfilePage() {
           >
             Open predictions
           </Link>
+          <button
+            type="button"
+            onClick={logout}
+            className="shrink-0 inline-flex items-center justify-center px-4 py-3 border border-white/30 text-sm font-bold hover:bg-white/10 transition-colors"
+          >
+            Log out
+          </button>
         </div>
       </section>
 
@@ -158,22 +164,37 @@ export default function ProfilePage() {
         </section>
 
         <section className="border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 overflow-hidden">
-          <div className="px-6 lg:px-8 py-4 border-b border-zinc-100 dark:border-zinc-800">
-            <h2 className="text-lg font-bold m-0">Recent forum posts</h2>
+          <div className="px-6 lg:px-8 py-4 border-b border-zinc-100 dark:border-zinc-800 flex items-center justify-between gap-4">
+            <h2 className="text-lg font-bold m-0">Your forum posts</h2>
+            <Link
+              to="/forum/new"
+              className="text-xs font-bold uppercase tracking-wide text-zinc-600 dark:text-zinc-300 hover:underline underline-offset-4"
+            >
+              New post
+            </Link>
           </div>
 
           {posts.length === 0 ? (
             <p className="px-6 lg:px-8 py-8 text-zinc-500 text-sm m-0">
-              No forum posts yet — community discussion coming soon.
+              No forum posts yet.{" "}
+              <Link to="/forum/new" className="font-semibold underline">
+                Share your first bracket
+              </Link>
             </p>
           ) : (
             <ul className="divide-y divide-zinc-100 dark:divide-zinc-800 m-0 p-0 list-none">
               {posts.map((p) => (
-                <li key={p.id} className="px-6 lg:px-8 py-4">
-                  <p className="font-medium m-0">{p.title}</p>
-                  {p.username && (
-                    <p className="text-xs text-zinc-500 mt-1 m-0">by {p.username}</p>
-                  )}
+                <li key={p.id}>
+                  <Link
+                    to={`/forum/${p.id}`}
+                    state={{ preview: p }}
+                    className="block px-6 lg:px-8 py-4 hover:bg-zinc-50 dark:hover:bg-zinc-800/50"
+                  >
+                    <p className="font-medium m-0">{p.title}</p>
+                    {p.username && (
+                      <p className="text-xs text-zinc-500 mt-1 m-0">by {p.username}</p>
+                    )}
+                  </Link>
                 </li>
               ))}
             </ul>

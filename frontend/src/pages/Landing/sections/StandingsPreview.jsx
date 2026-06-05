@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import { standingsApi } from "../../../api/standingsApi.js";
 import GroupStandingsTable from "../../../components/standings/GroupStandingsTable.jsx";
+import HomeButton from "../../../components/common/HomeButton.jsx";
 
 const GROUP_ORDER = "ABCDEFGHIJKL".split("");
 
@@ -32,12 +32,9 @@ export default function StandingsPreview() {
           <h2 className="text-2xl sm:text-3xl font-bold tracking-tight m-0">
             Group standings
           </h2>
-          <Link
-            to="/standings"
-            className="text-sm font-semibold underline underline-offset-4 shrink-0"
-          >
+          <HomeButton as="link" to="/standings" variant="link" className="shrink-0">
             View all standings
-          </Link>
+          </HomeButton>
         </div>
 
         {loading && (

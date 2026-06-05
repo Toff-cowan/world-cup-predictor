@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { syncFifaTournament } from "../scraper/simpleFifaScraper.js";
-import { syncFifaNews } from "../scraper/syncFifaNews.js";
+import { runNewsSync } from "../startup/newsSyncScheduler.js";
 import { ok, fail } from "../utils/apiResponse.js";
 
 const router = Router();
@@ -14,7 +14,7 @@ function adminKey(req, res, next) {
 router.post("/run", adminKey, async (req, res, next) => {
   try {
     const result = await syncFifaTournament();
-    const news = await syncFifaNews();
+    const news = await runNewsSync();
     return ok(res, { ...result, ...news });
   } catch (err) {
     next(err);
@@ -23,7 +23,7 @@ router.post("/run", adminKey, async (req, res, next) => {
 
 router.post("/news", adminKey, async (req, res, next) => {
   try {
-    const result = await syncFifaNews();
+    const result = await runNewsSync();
     return ok(res, result);
   } catch (err) {
     next(err);

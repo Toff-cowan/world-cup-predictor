@@ -4,7 +4,8 @@ Simulate and save World Cup 2026 brackets (48 teams, 12 groups A–L, knockout r
 
 **Stack:** React + Tailwind + Vite · Node + Express · PostgreSQL · Fetch API · simple FIFA scraper
 
-See **[FILES.md](./FILES.md)** for what every file does.
+See **[FILES.md](./FILES.md)** for what every file does.  
+See **[DOCUMENTATION.md](./DOCUMENTATION.md)** for architecture, functions, state, and implementation logic.
 
 ## Setup
 
@@ -13,3 +14,9 @@ See **[FILES.md](./FILES.md)** for what every file does.
 3. Frontend: `cd frontend && cp .env.example .env && npm install && npm run dev`
 
 Open http://localhost:5173
+
+## Production deploy
+
+**Supabase** (Postgres) + **Render** (API) + **Vercel** (frontend).
+
+See **[DEPLOYMENT.md](./DEPLOYMENT.md)** for step-by-step setup and every env var you need.

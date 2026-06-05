@@ -45,7 +45,12 @@ function MobileStandingCard({
             )}
           </span>
         )}
-        <TeamFlag countryCode={row.country_code} teamCode={row.team_code} className="w-9 h-6" />
+        <TeamFlag
+          flagUrl={row.flag_url}
+          countryCode={row.country_code}
+          teamCode={row.team_code}
+          className="w-9 h-6"
+        />
         <div className="min-w-0 flex-1">
           {linkTeamSearch && row.team_name ? (
             <a
@@ -186,7 +191,11 @@ export default function GroupStandingsTable({
                         )}
                       </span>
                     )}
-                    <TeamFlag countryCode={row.country_code} teamCode={row.team_code} />
+                    <TeamFlag
+                      flagUrl={row.flag_url}
+                      countryCode={row.country_code}
+                      teamCode={row.team_code}
+                    />
                     {linkTeamSearch && row.team_name ? (
                       <a
                         href={nationalTeamSearchUrl(row.team_name)}

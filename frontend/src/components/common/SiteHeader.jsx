@@ -1,14 +1,16 @@
 import { useEffect, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { TROPHY_IMAGE } from "../../constants/assets.js";
+import { useAuth } from "../../context/AuthContext.jsx";
 import { useTheme } from "../../context/ThemeContext.jsx";
 
 const NAV_LINKS = [
   { to: "/", label: "Home", end: true },
+  { to: "/news", label: "News" },
+  { to: "/fixtures", label: "Fixtures" },
   { to: "/standings", label: "Standings" },
   { to: "/predictions", label: "Predictions" },
-  { to: "/#news", label: "News" },
-  { to: "/#fixtures", label: "Fixtures" },
+  { to: "/forum", label: "Forum" },
 ];
 
 function SiteLogo({ className = "" }) {
@@ -21,18 +23,65 @@ function SiteLogo({ className = "" }) {
   );
 }
 
-function AccountButton({ className = "", onNavigate }) {
+function GearIcon({ className = "w-5 h-5" }) {
+  return (
+    <svg
+      className={`text-white shrink-0 ${className}`}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth={2}
+      aria-hidden
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+      />
+      <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+    </svg>
+  );
+}
+
+function AccountMenu({ className = "", onNavigate }) {
+  const { isAuthenticated, logout } = useAuth();
+
+  if (isAuthenticated) {
+    return (
+      <div className={`flex items-center gap-1 sm:gap-2 shrink-0 ${className}`}>
+        <Link
+          to="/profile"
+          onClick={onNavigate}
+          className="group flex items-center justify-center min-h-[2.75rem] min-w-[2.75rem] px-2 text-[11px] sm:text-xs font-semibold tracking-wide uppercase text-white hover:opacity-90 transition-all"
+          aria-label="Account"
+          title="Account"
+        >
+          <GearIcon />
+          <span className="hidden group-hover:inline group-focus-visible:inline ml-2 whitespace-nowrap">
+            Account
+          </span>
+        </Link>
+        <button
+          type="button"
+          onClick={() => {
+            logout();
+            onNavigate?.();
+          }}
+          className="hidden sm:inline text-[10px] font-bold uppercase tracking-wide text-white/60 hover:text-white px-2"
+        >
+          Log out
+        </button>
+      </div>
+    );
+  }
+
   return (
     <Link
-      to="/profile"
+      to="/login"
       onClick={onNavigate}
-      className={`flex items-center justify-center gap-2 min-h-[2.75rem] min-w-[2.75rem] sm:min-w-0 px-2 sm:px-0 text-[11px] sm:text-xs font-semibold tracking-wide uppercase hover:opacity-80 shrink-0 ${className}`}
-      aria-label="Account"
+      className={`flex items-center justify-center min-h-[2.75rem] px-3 text-[11px] sm:text-xs font-semibold tracking-wide uppercase hover:opacity-80 shrink-0 ${className}`}
     >
-      <svg className="w-5 h-5 text-white shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-        <path d="M12 12c2.2 0 4-1.8 4-4s-1.8-4-4-4-4 1.8-4 4 1.8 4 4 4zm0 2c-2.7 0-8 1.3-8 4v2h16v-2c0-2.7-5.3-4-8-4z" />
-      </svg>
-      <span className="hidden sm:inline">Account</span>
+      Sign in
     </Link>
   );
 }
@@ -77,8 +126,8 @@ export default function SiteHeader() {
   const closeMenu = () => setMenuOpen(false);
 
   const navClass = ({ isActive }) =>
-    `flex items-center min-h-[3rem] px-1 text-sm sm:text-xs font-semibold tracking-wide whitespace-nowrap transition-opacity hover:opacity-80 ${
-      isActive ? "opacity-100 underline underline-offset-4 decoration-2" : "opacity-90"
+    `nav-link-hover flex items-center min-h-[3rem] px-1 text-sm sm:text-xs font-semibold tracking-wide whitespace-nowrap transition-opacity hover:opacity-100 ${
+      isActive ? "nav-link-active opacity-100" : "opacity-90"
     }`;
 
   return (
@@ -115,7 +164,7 @@ export default function SiteHeader() {
             WC Predictor
           </span>
 
-          <div className="hidden lg:flex items-center gap-6 ml-6">
+          <div className="hidden lg:flex items-center gap-5 xl:gap-6 ml-4 xl:ml-6 overflow-x-auto">
             {NAV_LINKS.map(({ to, label, end }) => (
               <NavLink key={label} to={to} end={end} className={navClass}>
                 {label}
@@ -125,7 +174,7 @@ export default function SiteHeader() {
 
           <div className="flex items-center gap-1 sm:gap-3 ml-auto shrink-0">
             <ThemeToggle />
-            <AccountButton onNavigate={closeMenu} />
+            <AccountMenu onNavigate={closeMenu} />
           </div>
         </div>
 

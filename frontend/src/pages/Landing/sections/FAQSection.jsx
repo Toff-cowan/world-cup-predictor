@@ -1,8 +1,18 @@
 import { useState } from "react";
+import { useTheme } from "../../../context/ThemeContext.jsx";
 
-const FAQ_ACTIVE = "#120B2F";
 const FAQ_DURATION = "1400ms";
 const FAQ_EASE = "cubic-bezier(0.16, 1, 0.3, 1)";
+
+function faqColors(isDark) {
+  return {
+    active: isDark ? "#f4f4f5" : "#120B2F",
+    number: isDark ? "#71717a" : "#8a8a8a",
+    icon: isDark ? "#71717a" : "#9ca3af",
+    heading: isDark ? "#a1a1aa" : "#6b6b6b",
+    focusRing: isDark ? "focus-visible:ring-zinc-400/40" : "focus-visible:ring-[#120B2F]/30",
+  };
+}
 
 const FAQ_ITEMS = [
   {
@@ -94,6 +104,8 @@ function TrophyIcon({ className, style }) {
 
 export default function FAQSection() {
   const [activeIndex, setActiveIndex] = useState(null);
+  const { isDark } = useTheme();
+  const colors = faqColors(isDark);
 
   return (
     <section className="font-sans bg-white dark:bg-[#0a0a0a] text-zinc-900 dark:text-zinc-100">
@@ -101,7 +113,7 @@ export default function FAQSection() {
         <h2 className="font-display text-4xl sm:text-5xl lg:text-7xl xl:text-8xl font-bold uppercase tracking-tight text-[#120B2F] dark:text-zinc-100 m-0 leading-[0.95]">
           FAQs
         </h2>
-        <p className="mt-4 text-sm text-zinc-500 m-0 max-w-md">
+        <p className="mt-4 text-sm text-zinc-500 dark:text-zinc-400 m-0 max-w-md">
           Hover a topic to read more
         </p>
 
@@ -123,7 +135,7 @@ export default function FAQSection() {
                 <div className={`flex ${alignRight ? "justify-end" : "justify-start"}`}>
                   <button
                     type="button"
-                    className={`w-full max-w-[min(100%,52rem)] text-left outline-none focus-visible:ring-2 focus-visible:ring-[#120B2F]/30 focus-visible:ring-offset-4 motion-reduce:transition-none ${
+                    className={`w-full max-w-[min(100%,52rem)] text-left outline-none focus-visible:ring-2 focus-visible:ring-offset-4 dark:focus-visible:ring-offset-zinc-950 motion-reduce:transition-none ${colors.focusRing} ${
                       alignRight ? "text-right" : "text-left"
                     }`}
                     aria-expanded={active}
@@ -148,7 +160,7 @@ export default function FAQSection() {
                       <span
                         className="font-display text-sm font-semibold tabular-nums w-10 shrink-0 motion-reduce:transition-none"
                         style={{
-                          color: active ? FAQ_ACTIVE : "#8a8a8a",
+                          color: active ? colors.active : colors.number,
                           opacity: labelMuted ? 0.55 : 1,
                           paddingTop: active ? "0.75rem" : "0.25rem",
                           ...faqTransition("color, opacity, padding-top"),
@@ -162,7 +174,7 @@ export default function FAQSection() {
                           active ? "faq-icon-enter" : ""
                         }`}
                         style={{
-                          color: active ? FAQ_ACTIVE : "#9ca3af",
+                          color: active ? colors.active : colors.icon,
                           opacity: active ? 1 : labelMuted ? 0.5 : 0.7,
                           maxHeight: active ? "4rem" : "2.5rem",
                           marginTop: active ? "0.5rem" : "0.15rem",
@@ -184,7 +196,7 @@ export default function FAQSection() {
                         <h3
                           className={`font-display uppercase m-0 leading-[0.9] motion-reduce:transition-none ${alignRight ? "origin-right" : "origin-left"} ${headingClass}`}
                           style={{
-                            color: active ? FAQ_ACTIVE : "#6b6b6b",
+                            color: active ? colors.active : colors.heading,
                             opacity: active ? 1 : labelMuted ? 0.5 : 0.82,
                             fontSize: active
                               ? "clamp(2.75rem, 8vw, 5.5rem)"

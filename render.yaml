@@ -1,0 +1,23 @@
+# Render Blueprint — https://render.com/docs/blueprint-spec
+# After connecting the repo, set secret env vars in the Render dashboard.
+services:
+  - type: web
+    name: world-cup-predictor-api
+    runtime: node
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_SSL
+        value: "true"
+      - key: ALLOW_VERCEL_PREVIEWS
+        value: "true"
+      # Set in Render dashboard (secrets):
+      # DATABASE_URL — Supabase connection string (Session pooler, port 5432)
+      # JWT_SECRET — long random string
+      # CLIENT_URL — https://your-app.vercel.app
+      # ADMIN_SCRAPE_KEY — optional, for POST /api/scraper/run
+      # SCRAPE_IF_EMPTY — "true" to run npm run scrape on first boot when teams table is empty

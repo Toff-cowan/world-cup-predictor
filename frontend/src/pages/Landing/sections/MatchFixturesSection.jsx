@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { matchesApi } from "../../../api/matchesApi.js";
+import HomeButton from "../../../components/common/HomeButton.jsx";
+import { isLikelyEmptyDatabase } from "../../../utils/apiError.js";
 import TeamFlag from "../../../components/standings/TeamFlag.jsx";
 import {
   groupStageFixturesByRound,
@@ -58,6 +60,7 @@ function MatchCard({ match }) {
       <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3">
         <div className="flex flex-col items-center gap-2 min-w-0 text-center">
           <TeamFlag
+            flagUrl={match.homeFlagUrl}
             countryCode={match.homeCountryCode}
             teamCode={match.homeTeamCode}
             className="w-10 h-7"
@@ -79,6 +82,7 @@ function MatchCard({ match }) {
 
         <div className="flex flex-col items-center gap-2 min-w-0 text-center">
           <TeamFlag
+            flagUrl={match.awayFlagUrl}
             countryCode={match.awayCountryCode}
             teamCode={match.awayTeamCode}
             className="w-10 h-7"
@@ -101,7 +105,12 @@ function QualifierChip({ team, rank }) {
       <span className="text-[10px] font-bold text-emerald-700 dark:text-emerald-400 shrink-0">
         {rank}
       </span>
-      <TeamFlag countryCode={team.country_code} teamCode={team.team_code} className="w-6 h-4 shrink-0" />
+      <TeamFlag
+        flagUrl={team.flag_url}
+        countryCode={team.country_code}
+        teamCode={team.team_code}
+        className="w-6 h-4 shrink-0"
+      />
       <span className="text-xs font-semibold truncate">{team.team_name}</span>
     </div>
   );
@@ -139,7 +148,7 @@ function RoundQualifiers({ topTwoByGroup, round }) {
   );
 }
 
-export default function MatchFixturesSection() {
+export default function MatchFixturesSection({ embedded = false }) {
   const [matches, setMatches] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -181,34 +190,54 @@ export default function MatchFixturesSection() {
 
   return (
     <section
-      id="fixtures"
-      className="bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 border-t border-zinc-200 dark:border-zinc-800"
+      id={embedded ? undefined : "fixtures"}
+      className={`bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 ${
+        embedded ? "" : "border-t border-zinc-200 dark:border-zinc-800"
+      }`}
     >
       <div className="max-w-[1400px] mx-auto px-4 lg:px-8 py-12 lg:py-16">
-        <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4 mb-8">
-          <div>
-            <h2 className="text-2xl sm:text-3xl font-bold tracking-tight m-0">Match fixtures</h2>
-            <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-2 m-0">
-              Group stage by round · three featured matches · top two qualifiers per group
-            </p>
+        {!embedded && (
+          <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4 mb-8">
+            <div>
+              <h2 className="text-2xl sm:text-3xl font-bold tracking-tight m-0">Match fixtures</h2>
+              <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-2 m-0">
+                Group stage by round · three featured matches · top two qualifiers per group
+              </p>
+            </div>
+            <div className="flex flex-wrap items-center gap-3 shrink-0">
+              <HomeButton as="link" to="/fixtures" variant="link">
+                Full fixtures page →
+              </HomeButton>
+              <div className="flex items-center gap-2">
+                {[1, 2, 3].map((round) => (
+                  <HomeButton
+                    key={round}
+                    variant="tab"
+                    active={activeRound === round}
+                    onClick={() => setActiveRound(round)}
+                  >
+                    Round {round}
+                  </HomeButton>
+                ))}
+              </div>
+            </div>
           </div>
-          <div className="flex items-center gap-2 shrink-0">
+        )}
+
+        {embedded && (
+          <div className="flex flex-wrap items-center gap-2 mb-8">
             {[1, 2, 3].map((round) => (
-              <button
+              <HomeButton
                 key={round}
-                type="button"
+                variant="tab"
+                active={activeRound === round}
                 onClick={() => setActiveRound(round)}
-                className={`px-4 py-2 text-xs font-bold uppercase tracking-wide border transition-colors ${
-                  activeRound === round
-                    ? "bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 border-zinc-900 dark:border-white"
-                    : "bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 border-zinc-300 dark:border-zinc-600 hover:border-zinc-900 dark:hover:border-white"
-                }`}
               >
                 Round {round}
-              </button>
+              </HomeButton>
             ))}
           </div>
-        </div>
+        )}
 
         {loading && (
           <p className="text-zinc-500 dark:text-zinc-400">Loading fixtures…</p>
@@ -216,9 +245,19 @@ export default function MatchFixturesSection() {
 
         {error && (
           <p className="text-red-600 dark:text-red-400 text-sm">
-            {error}. Run{" "}
-            <code className="bg-zinc-200 dark:bg-zinc-800 px-1.5 py-0.5">npm run scrape</code> in
-            the backend.
+            {error}
+            {isLikelyEmptyDatabase({ message: error }) && (
+              <>
+                {" "}
+                Run{" "}
+                <code className="bg-zinc-200 dark:bg-zinc-800 px-1.5 py-0.5">npm run scrape</code>{" "}
+                in the backend (or seed production via{" "}
+                <code className="bg-zinc-200 dark:bg-zinc-800 px-1.5 py-0.5">
+                  POST /api/scraper/run
+                </code>
+                ).
+              </>
+            )}
           </p>
         )}
 

@@ -15,6 +15,7 @@ export default function TeamPicker({
     <div className={`flex items-center gap-2 min-w-0 ${className}`}>
       {value && (
         <TeamFlag
+          flagUrl={teams.find((t) => t.id === value)?.flag_url}
           countryCode={teams.find((t) => t.id === value)?.country_code}
           teamCode={teams.find((t) => t.id === value)?.code}
           className="w-7 h-5"
