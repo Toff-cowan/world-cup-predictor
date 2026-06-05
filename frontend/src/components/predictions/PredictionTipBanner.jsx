@@ -7,7 +7,7 @@ const TIPS = {
   },
   knockout: {
     key: "wc-tip-knockout",
-    text: "Use Bracket view to see your full tournament tree and download a PNG image. Switch to Edit scores to update knockout results.",
+    text: "Knockout teams are set from your group-stage predictions (winners, runners-up, and best third-place teams). Enter scores round by round — no manual team picking.",
   },
 };
 

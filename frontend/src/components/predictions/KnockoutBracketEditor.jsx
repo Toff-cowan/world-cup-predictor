@@ -1,11 +1,11 @@
 import { useRef, useState, useEffect } from "react";
 import { KNOCKOUT_ROUNDS, matchKey } from "../../constants/bracket.js";
+import { getKnockoutMatchLabel } from "../../constants/knockoutBracket2026.js";
 import { helpTargetProps } from "../../utils/predictionHelp.js";
-import { teamById } from "../../utils/bracketHelpers.js";
+import { getVisibleKnockoutMatchIndices, teamById } from "../../utils/bracketHelpers.js";
 import { downloadElementScreenshot } from "../../utils/downloadScreenshot.js";
 import KnockoutBracketView from "./KnockoutBracketView.jsx";
 import MatchPredictionTable from "./MatchPredictionTable.jsx";
-import TeamPicker from "./TeamPicker.jsx";
 
 function TieBreaker({ match, locked, onWinner }) {
   if (!match.home || !match.away) return null;
@@ -53,7 +53,6 @@ export default function KnockoutBracketEditor({
   bracketName,
   isStageLocked,
   helpHighlight,
-  onSide,
   onScore,
   onWinner,
 }) {
@@ -91,8 +90,8 @@ export default function KnockoutBracketEditor({
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <p className="text-sm text-zinc-500 dark:text-zinc-400 m-0">
           {mode === "view"
-            ? "Bracket view — your predicted path to the final."
-            : "Edit mode — pick teams and enter Home / Away scores."}
+            ? "Knockout teams are filled from your group-stage predictions (top two per group plus eight best third-place teams)."
+            : "Enter scores only — Round of 32 pairings follow the official FIFA bracket and update from group results."}
         </p>
         <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-2 w-full sm:w-auto">
           {mode === "view" && (
@@ -152,16 +151,30 @@ export default function KnockoutBracketEditor({
       )}
 
       {mode === "edit" && (
-        <div
-          className="grid grid-cols-1 xl:grid-cols-2 gap-6"
-          {...helpTargetProps("help-knockout-edit", helpHighlight)}
-        >
+        <div className="space-y-8" {...helpTargetProps("help-knockout-edit", helpHighlight)}>
           {KNOCKOUT_ROUNDS.map((round) => {
             const locked = isStageLocked(round.key);
-            const canPickTeams = round.key === "round_of_32";
+            const matchIndices = getVisibleKnockoutMatchIndices(round, knockout);
 
-            const rows = Array.from({ length: round.count }, (_, i) => {
-              const idx = i + 1;
+            if (matchIndices.length === 0) {
+              if (round.key === "round_of_32") {
+                return (
+                  <section
+                    key={round.key}
+                    className="border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-4 py-8 text-center"
+                  >
+                    <h3 className="text-sm font-bold m-0">{round.label}</h3>
+                    <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-2 m-0 max-w-lg mx-auto">
+                      Enter group-stage scores first. The Round of 32 fills with group winners,
+                      runners-up, and the eight best third-place teams per FIFA rules.
+                    </p>
+                  </section>
+                );
+              }
+              return null;
+            }
+
+            const rows = matchIndices.map((idx) => {
               const mk = matchKey(idx);
               const match = knockout[round.key]?.[mk] || {
                 home: null,
@@ -169,39 +182,18 @@ export default function KnockoutBracketEditor({
                 winner: null,
                 scores: { home: null, away: null },
               };
-              const homeTeam = teamById(teams, match.home);
-              const awayTeam = teamById(teams, match.away);
+              const label = getKnockoutMatchLabel(round.key, idx);
 
               return {
                 key: `${round.key}-${mk}`,
-                label: mk,
-                homeTeam,
-                awayTeam,
+                label: label || mk,
+                homeTeam: teamById(teams, match.home),
+                awayTeam: teamById(teams, match.away),
                 homeScore: match.scores?.home,
                 awayScore: match.scores?.away,
                 scoreDisabled: !match.home || !match.away,
                 onHomeScoreChange: (value) => onScore(round.key, idx, "home_score", value),
                 onAwayScoreChange: (value) => onScore(round.key, idx, "away_score", value),
-                homePicker: canPickTeams ? (
-                  <TeamPicker
-                    teams={teams}
-                    value={match.home}
-                    disabled={locked}
-                    excludeIds={match.away ? [match.away] : []}
-                    onChange={(id) => onSide(round.key, idx, "home", id)}
-                    placeholder="Home team"
-                  />
-                ) : undefined,
-                awayPicker: canPickTeams ? (
-                  <TeamPicker
-                    teams={teams}
-                    value={match.away}
-                    disabled={locked}
-                    excludeIds={match.home ? [match.home] : []}
-                    onChange={(id) => onSide(round.key, idx, "away", id)}
-                    placeholder="Away team"
-                  />
-                ) : undefined,
                 tieBreaker: (
                   <TieBreaker
                     match={match}

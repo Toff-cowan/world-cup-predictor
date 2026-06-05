@@ -12,7 +12,7 @@ export const HELP_SECTIONS = [
   {
     title: "Knockout — Edit mode",
     targetId: "help-knockout-edit",
-    body: "Use Edit scores to pick Round of 32 teams and enter match results. Home and Away columns show each side's goals. Winners advance automatically.",
+    body: "Knockout teams fill automatically from group-stage results. Enter scores for each round — winners advance through the official FIFA bracket.",
   },
   {
     title: "Knockout — Bracket view",

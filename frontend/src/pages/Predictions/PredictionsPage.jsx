@@ -17,9 +17,9 @@ import {
   createEmptyBracket,
   lockGroupInBracket,
   normalizeBracket,
+  resyncBracketFromGroups,
   setGroupMatchScore,
   setKnockoutMatchScore,
-  setKnockoutSide,
   setKnockoutWinner,
 } from "../../utils/bracketHelpers.js";
 import {
@@ -228,6 +228,11 @@ export default function PredictionsPage() {
     }, 150);
     return () => window.clearTimeout(timer);
   }, [helpHighlight]);
+
+  useEffect(() => {
+    if (tab !== "knockout" || !teams.length) return;
+    setBracket((prev) => resyncBracketFromGroups(prev, teams, matches));
+  }, [tab, teams, matches]);
 
   function openHelp() {
     setHelpStep(0);
@@ -625,16 +630,15 @@ export default function PredictionsPage() {
               bracketName={prediction?.name}
               helpHighlight={helpHighlight}
               isStageLocked={isStageLocked}
-              onSide={(roundKey, matchIndex, side, teamId) =>
-                updateBracket((b) => setKnockoutSide(b, roundKey, matchIndex, side, teamId))
-              }
               onScore={(roundKey, matchIndex, side, value) =>
                 updateBracket((b) =>
-                  setKnockoutMatchScore(b, roundKey, matchIndex, side, value)
+                  setKnockoutMatchScore(b, roundKey, matchIndex, side, value, teams, matches)
                 )
               }
               onWinner={(roundKey, matchIndex, teamId) =>
-                updateBracket((b) => setKnockoutWinner(b, roundKey, matchIndex, teamId))
+                updateBracket((b) =>
+                  setKnockoutWinner(b, roundKey, matchIndex, teamId, teams, matches)
+                )
               }
             />
           </div>
