@@ -1,5 +1,6 @@
 import pool from "../../config/db.js";
 import { ok, fail } from "../../utils/apiResponse.js";
+import { validateForumPost } from "../../utils/forumContentFilter.js";
 
 async function attachUserVotes(posts, userId) {
   if (!userId || posts.length === 0) {
@@ -18,7 +19,8 @@ async function attachUserVotes(posts, userId) {
 export async function createForumPost(req, res, next) {
   try {
     const { title, body, share_token: shareToken } = req.body;
-    if (!title || !body) return fail(res, "title and body are required");
+    const contentCheck = validateForumPost(title, body);
+    if (!contentCheck.ok) return fail(res, contentCheck.message, 400);
 
     if (shareToken) {
       const { rows: owned } = await pool.query(

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation, useParams } from "react-router-dom";
 import { newsApi } from "../../api/newsApi.js";
+import ExternalSiteLink from "../../components/common/ExternalSiteLink.jsx";
 import HomeButton from "../../components/common/HomeButton.jsx";
 
 function formatDate(iso) {
@@ -107,9 +108,13 @@ export default function NewsDetailPage() {
 
         {article.sourceUrl && (
           <div className="mt-10 pt-6 border-t border-zinc-200 dark:border-zinc-800">
-            <HomeButton as="a" href={article.sourceUrl} target="_blank" rel="noopener noreferrer" variant="link">
+            <ExternalSiteLink
+              href={article.sourceUrl}
+              hint="fifa.com"
+              className="text-sm font-semibold underline underline-offset-4 text-zinc-900 hover:text-zinc-600 dark:text-zinc-100 dark:hover:text-white"
+            >
               Read on FIFA.com →
-            </HomeButton>
+            </ExternalSiteLink>
           </div>
         )}
       </div>

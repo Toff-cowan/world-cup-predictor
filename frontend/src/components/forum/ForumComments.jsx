@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { forumApi } from "../../api/forumApi.js";
 import AuthModal from "../auth/AuthModal.jsx";
 import { useAuth } from "../../context/AuthContext.jsx";
+import { FORUM_LIMITS, validateForumComment } from "../../utils/forumContentFilter.js";
 
 function formatDate(iso) {
   if (!iso) return "";
@@ -32,7 +33,11 @@ export default function ForumComments({ postId, initialComments = [] }) {
       setAuthOpen(true);
       return;
     }
-    if (!body.trim()) return;
+    const contentCheck = validateForumComment(body);
+    if (!contentCheck.ok) {
+      setError(contentCheck.message);
+      return;
+    }
 
     setError("");
     setSubmitting(true);
@@ -90,15 +95,20 @@ export default function ForumComments({ postId, initialComments = [] }) {
 
         {isAuthenticated ? (
           <label className="block">
-            <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">
-              Comment as {user?.username}
-            </span>
+            <div className="flex items-baseline justify-between gap-2">
+              <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">
+                Comment as {user?.username}
+              </span>
+              <span className="text-[10px] text-zinc-400 tabular-nums">
+                {body.length}/{FORUM_LIMITS.commentMax}
+              </span>
+            </div>
             <textarea
               value={body}
               onChange={(e) => setBody(e.target.value)}
               placeholder="Leave your feedback…"
               rows={3}
-              maxLength={2000}
+              maxLength={FORUM_LIMITS.commentMax}
               className="mt-1 w-full px-3 py-2 bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-600 text-zinc-900 dark:text-zinc-100 resize-y min-h-[5rem]"
               required
             />

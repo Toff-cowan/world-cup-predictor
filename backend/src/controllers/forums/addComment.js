@@ -1,5 +1,6 @@
 import pool from "../../config/db.js";
 import { ok, fail } from "../../utils/apiResponse.js";
+import { validateForumComment } from "../../utils/forumContentFilter.js";
 
 export async function getPostComments(req, res, next) {
   try {
@@ -28,7 +29,8 @@ export async function addComment(req, res, next) {
   try {
     const postId = req.params.id;
     const { body } = req.body;
-    if (!body?.trim()) return fail(res, "Comment is required");
+    const contentCheck = validateForumComment(body);
+    if (!contentCheck.ok) return fail(res, contentCheck.message, 400);
 
     const { rows: postRows } = await pool.query(
       `SELECT id FROM forum_posts WHERE id = $1`,

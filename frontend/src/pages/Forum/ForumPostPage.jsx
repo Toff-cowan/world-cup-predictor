@@ -5,7 +5,9 @@ import { predictionsApi } from "../../api/predictionsApi.js";
 import { teamsApi } from "../../api/teamsApi.js";
 import KnockoutBracketView from "../../components/predictions/KnockoutBracketView.jsx";
 import ForumComments from "../../components/forum/ForumComments.jsx";
+import ForumPageHeader from "../../components/forum/ForumPageHeader.jsx";
 import ForumPostActions from "../../components/forum/ForumPostActions.jsx";
+import { fifaHeaderThemeForId } from "../../constants/fifaColors.js";
 import { normalizeBracket } from "../../utils/bracketHelpers.js";
 
 function formatDate(iso) {
@@ -83,42 +85,21 @@ export default function ForumPostPage() {
   const bracket = shared
     ? normalizeBracket(shared.bracket, { teams, matches: [] })
     : null;
+  const headerTheme = post ? fifaHeaderThemeForId(post.id) : { bg: "#000000", text: "#ffffff", badge: "#ffd100", badgeText: "#000000" };
 
   return (
     <div className="min-h-screen bg-[#f3f3f3] dark:bg-[#0a0a0a] text-zinc-900 dark:text-zinc-100">
-      <section className="w-full bg-black text-white py-10 sm:py-12 px-4">
-        <div className="max-w-[1400px] mx-auto">
-          <Link to="/forum" className="text-xs font-bold uppercase tracking-widest text-white/60 hover:text-white">
-            ← Back to forum
-          </Link>
-          {post ? (
-            <>
-              <div className="flex flex-wrap items-center gap-3 mt-4">
-                {post.share_token ? (
-                  <span className="text-[10px] font-bold uppercase tracking-widest px-2 py-1 bg-white/10 border border-white/20">
-                    Bracket post
-                  </span>
-                ) : (
-                  <span className="text-[10px] font-bold uppercase tracking-widest px-2 py-1 bg-white/10 border border-white/20">
-                    Question
-                  </span>
-                )}
-              </div>
-              <h1 className="font-display text-2xl sm:text-4xl font-bold uppercase tracking-tight mt-3 m-0">
-                {post.title}
-              </h1>
-              <p className="text-sm text-white/60 mt-2 m-0">
-                {post.username && <>by {post.username} · </>}
-                {formatDate(post.created_at)}
-              </p>
-            </>
-          ) : loadingPost ? (
-            <h1 className="font-display text-2xl sm:text-4xl font-bold uppercase tracking-tight mt-4 m-0">
-              Loading post…
-            </h1>
-          ) : null}
-        </div>
-      </section>
+      <ForumPageHeader
+        theme={headerTheme}
+        backTo="/forum"
+        title={post?.title || (loadingPost ? "Loading post…" : "Forum post")}
+        badge={post ? (post.share_token ? "Bracket post" : "Question") : null}
+        meta={
+          post
+            ? `${post.username ? `by ${post.username} · ` : ""}${formatDate(post.created_at)}`
+            : null
+        }
+      />
 
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12 py-8 sm:py-10 space-y-8">
         {error && <p className="text-red-600 dark:text-red-400">{error}</p>}

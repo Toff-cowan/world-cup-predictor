@@ -1,8 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { forumApi } from "../../api/forumApi.js";
 import { predictionsApi } from "../../api/predictionsApi.js";
+import ForumPageHeader from "../../components/forum/ForumPageHeader.jsx";
+import { randomFifaHeaderTheme } from "../../constants/fifaColors.js";
 import { useAuth } from "../../context/AuthContext.jsx";
+import { FORUM_LIMITS, validateForumPost } from "../../utils/forumContentFilter.js";
 import { syncLocalBracketsToServer } from "../../utils/localBrackets.js";
 
 const POST_TYPES = [
@@ -21,6 +24,7 @@ export default function CreatePost() {
   const [loadingBrackets, setLoadingBrackets] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const pageTheme = useMemo(() => randomFifaHeaderTheme(), []);
 
   useEffect(() => {
     if (authLoading) return;
@@ -59,6 +63,12 @@ export default function CreatePost() {
   async function handleSubmit(e) {
     e.preventDefault();
     setError("");
+
+    const contentCheck = validateForumPost(title, body);
+    if (!contentCheck.ok) {
+      setError(contentCheck.message);
+      return;
+    }
 
     if (postType === "bracket" && brackets.length === 0) {
       setError("Create a bracket first, or post as a question instead.");
@@ -100,19 +110,12 @@ export default function CreatePost() {
 
   return (
     <div className="min-h-screen bg-[#f3f3f3] dark:bg-[#0a0a0a] text-zinc-900 dark:text-zinc-100">
-      <section className="w-full bg-black text-white py-10 sm:py-12 px-4">
-        <div className="max-w-[1400px] mx-auto">
-          <Link to="/forum" className="text-xs font-bold uppercase tracking-widest text-white/60 hover:text-white">
-            ← Back to forum
-          </Link>
-          <h1 className="font-display text-2xl sm:text-4xl font-bold uppercase tracking-tight mt-4 m-0">
-            New forum post
-          </h1>
-          <p className="text-sm text-white/70 mt-2 m-0">
-            Ask the community a question or share your bracket predictions.
-          </p>
-        </div>
-      </section>
+      <ForumPageHeader
+        theme={pageTheme}
+        backTo="/forum"
+        title="New forum post"
+        subtitle="Ask the community a question or share your bracket predictions. Keep language respectful — explicit words are blocked."
+      />
 
       <form
         onSubmit={handleSubmit}
@@ -192,9 +195,14 @@ export default function CreatePost() {
             )}
 
             <label className="block">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">
-                Title
-              </span>
+              <div className="flex items-baseline justify-between gap-2">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">
+                  Title
+                </span>
+                <span className="text-[10px] text-zinc-400 tabular-nums">
+                  {title.length}/{FORUM_LIMITS.titleMax}
+                </span>
+              </div>
               <input
                 type="text"
                 value={title}
@@ -205,15 +213,20 @@ export default function CreatePost() {
                     : "e.g. Dark horses for the knockout stage"
                 }
                 className={`${inputClass} min-h-[2.75rem]`}
-                maxLength={200}
+                maxLength={FORUM_LIMITS.titleMax}
                 required
               />
             </label>
 
             <label className="block">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">
-                {postType === "question" ? "Your question" : "Message"}
-              </span>
+              <div className="flex items-baseline justify-between gap-2">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">
+                  {postType === "question" ? "Your question" : "Message"}
+                </span>
+                <span className="text-[10px] text-zinc-400 tabular-nums">
+                  {body.length}/{FORUM_LIMITS.bodyMax}
+                </span>
+              </div>
               <textarea
                 value={body}
                 onChange={(e) => setBody(e.target.value)}
@@ -224,6 +237,7 @@ export default function CreatePost() {
                 }
                 rows={6}
                 className={`${inputClass} resize-y min-h-[8rem]`}
+                maxLength={FORUM_LIMITS.bodyMax}
                 required
               />
             </label>

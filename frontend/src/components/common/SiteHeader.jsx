@@ -126,8 +126,8 @@ export default function SiteHeader() {
   const closeMenu = () => setMenuOpen(false);
 
   const navClass = ({ isActive }) =>
-    `flex items-center min-h-[3rem] px-1 text-sm sm:text-xs font-semibold tracking-wide whitespace-nowrap transition-opacity hover:opacity-80 ${
-      isActive ? "opacity-100 underline underline-offset-4 decoration-2" : "opacity-90"
+    `nav-link-hover flex items-center min-h-[3rem] px-1 text-sm sm:text-xs font-semibold tracking-wide whitespace-nowrap transition-opacity hover:opacity-100 ${
+      isActive ? "nav-link-active opacity-100" : "opacity-90"
     }`;
 
   return (

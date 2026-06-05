@@ -127,24 +127,117 @@ html.dark .text-black {
   color: rgb(250 250 250);
 }
 
-/* White / light buttons and chips keep dark text in dark mode */
+/* White / light buttons and chips keep dark text in dark mode (not form fields) */
 html.dark :is(.bg-white, .dark\:bg-white, .bg-zinc-100, .dark\:bg-zinc-100):is(
     .text-black,
     .text-zinc-900,
     .text-zinc-800,
     .dark\:text-zinc-900,
     .dark\:text-black
-  ) {
+  ):not(input):not(textarea):not(select) {
   color: rgb(24 24 27) !important;
 }
 
-html.dark :is(.bg-white, .dark\:bg-white) :is(.text-black, .text-zinc-900, .dark\:text-zinc-900) {
+html.dark
+  :is(.bg-white, .dark\:bg-white)
+  :is(.text-black, .text-zinc-900, .dark\:text-zinc-900):not(input):not(textarea):not(select) {
   color: rgb(24 24 27) !important;
 }
 
 html.dark button:is(.bg-white, .dark\:bg-white),
 html.dark a:is(.bg-white, .dark\:bg-white) {
   color: rgb(24 24 27) !important;
+}
+
+/* Form fields — white text on dark backgrounds in dark mode */
+html.dark :is(
+  input:not([type="submit"]):not([type="button"]):not([type="checkbox"]):not([type="radio"]),
+  textarea,
+  select
+) {
+  color: rgb(250 250 250);
+  -webkit-text-fill-color: rgb(250 250 250);
+}
+
+html.dark :is(input, textarea)::placeholder {
+  color: rgb(113 113 122);
+  opacity: 1;
+}
+
+html.dark select option {
+  color: rgb(24 24 27);
+  background: rgb(250 250 250);
+}
+
+html.dark input:-webkit-autofill,
+html.dark input:-webkit-autofill:hover,
+html.dark input:-webkit-autofill:focus,
+html.dark textarea:-webkit-autofill,
+html.dark textarea:-webkit-autofill:hover,
+html.dark textarea:-webkit-autofill:focus {
+  -webkit-text-fill-color: rgb(250 250 250);
+  caret-color: rgb(250 250 250);
+}
+
+/* Site-wide hover interactions (pointer devices only) */
+@media (hover: hover) {
+  .interactive-card {
+    transition:
+      transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+      box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+      border-color 0.2s ease;
+  }
+
+  .interactive-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
+  }
+
+  html.dark .interactive-card:hover {
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+  }
+
+  .external-site-link {
+    transition: color 0.2s ease, opacity 0.2s ease;
+  }
+
+  .nav-link-hover {
+    position: relative;
+  }
+
+  .nav-link-hover::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0.35rem;
+    width: 100%;
+    height: 2px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .nav-link-hover:hover::after,
+  .nav-link-hover:focus-visible::after {
+    transform: scaleX(1);
+  }
+
+  .nav-link-hover.nav-link-active::after {
+    transform: scaleX(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .interactive-card,
+  .interactive-card:hover {
+    transform: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .external-site-link span[aria-hidden] {
+    transition: none;
+  }
 }
 
 html.dark .text-slate-950,

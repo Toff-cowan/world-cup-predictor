@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { newsApi } from "../../api/newsApi.js";
+import ExternalSiteLink from "../../components/common/ExternalSiteLink.jsx";
 import HomeButton from "../../components/common/HomeButton.jsx";
 
 function formatDate(iso) {
@@ -17,7 +18,7 @@ function ArticleCard({ article }) {
     <Link
       to={`/news/${article.slug}`}
       state={{ preview: article }}
-      className="group flex flex-col border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 overflow-hidden hover:border-zinc-400 dark:hover:border-zinc-500 transition-colors"
+      className="group interactive-card flex flex-col border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 overflow-hidden hover:border-zinc-400 dark:hover:border-zinc-500"
     >
       {article.imageUrl ? (
         <div className="aspect-[16/10] overflow-hidden">
@@ -94,14 +95,14 @@ export default function NewsPage() {
           </h1>
           <p className="text-sm text-white/70 mt-2 m-0">
             Tournament stories sourced from{" "}
-            <a
+            <ExternalSiteLink
               href="https://www.fifa.com/en/news"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="underline underline-offset-2"
+              hint="fifa.com · news"
+              showArrow={false}
+              className="underline underline-offset-2 text-white/90 hover:text-white"
             >
               FIFA.com
-            </a>
+            </ExternalSiteLink>
           </p>
         </div>
       </section>

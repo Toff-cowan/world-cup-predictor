@@ -1,7 +1,11 @@
 import { Link, NavLink } from "react-router-dom";
 import { TROPHY_IMAGE } from "../../constants/assets.js";
+import ExternalSiteLink from "./ExternalSiteLink.jsx";
 
 const CREATOR_URL = "https://toff-industries.com/";
+const FIFA_WC_URL =
+  "https://www.fifa.com/en/tournaments/mens/worldcup/canadamexicousa2026";
+const FIFA_HOME = "https://www.fifa.com/en";
 
 const FOOTER_LINKS = [
   { to: "/", label: "Home", end: true },
@@ -55,24 +59,23 @@ export default function SiteFooter() {
             <p className="text-[10px] font-bold uppercase tracking-widest text-white/50 m-0 mb-4">
               Official source
             </p>
-            <a
-              href="https://www.fifa.com/en/tournaments/mens/worldcup/canadamexicousa2026"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-sm font-semibold text-[#7eb3ff] hover:underline underline-offset-4"
+            <ExternalSiteLink
+              href={FIFA_WC_URL}
+              hint="fifa.com · World Cup 2026"
+              className="text-sm font-semibold text-[#7eb3ff] hover:text-[#a8cbff]"
             >
               FIFA World Cup 2026™ on FIFA.com →
-            </a>
+            </ExternalSiteLink>
             <p className="text-xs text-white/45 mt-4 m-0 leading-relaxed">
               Schedules, tickets, and verified news on{" "}
-              <a
-                href="https://www.fifa.com/en"
-                target="_blank"
-                rel="noopener noreferrer"
+              <ExternalSiteLink
+                href={FIFA_HOME}
+                hint="fifa.com"
+                showArrow={false}
                 className="text-white/70 hover:text-white underline underline-offset-2"
               >
                 fifa.com
-              </a>
+              </ExternalSiteLink>
               .
             </p>
           </div>
@@ -81,24 +84,23 @@ export default function SiteFooter() {
             <p className="text-[10px] font-bold uppercase tracking-widest text-white/50 m-0 mb-4">
               Creator
             </p>
-            <a
+            <ExternalSiteLink
               href={CREATOR_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-sm font-semibold text-[#7eb3ff] hover:underline underline-offset-4"
+              hint="toff-industries.com"
+              className="text-sm font-semibold text-[#7eb3ff] hover:text-[#a8cbff]"
             >
               Christoff Cowan · Toff Industries →
-            </a>
+            </ExternalSiteLink>
             <p className="text-xs text-white/45 mt-4 m-0 leading-relaxed">
               Built by{" "}
-              <a
+              <ExternalSiteLink
                 href={CREATOR_URL}
-                target="_blank"
-                rel="noopener noreferrer"
+                hint="toff-industries.com"
+                showArrow={false}
                 className="text-white/70 hover:text-white underline underline-offset-2"
               >
                 Christoff Cowan
-              </a>
+              </ExternalSiteLink>
               . View portfolio, projects, and services at toff-industries.com.
             </p>
           </div>
@@ -109,14 +111,14 @@ export default function SiteFooter() {
         >
           <p className="m-0">
             © {new Date().getFullYear()} World Cup Predictor · Fan project ·{" "}
-            <a
+            <ExternalSiteLink
               href={CREATOR_URL}
-              target="_blank"
-              rel="noopener noreferrer"
+              hint="toff-industries.com"
+              showArrow={false}
               className="text-white/60 hover:text-white underline underline-offset-2"
             >
               toff-industries.com
-            </a>
+            </ExternalSiteLink>
           </p>
           <p className="m-0">USA · Canada · Mexico 2026</p>
         </div>

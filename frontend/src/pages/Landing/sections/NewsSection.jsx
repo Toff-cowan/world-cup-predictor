@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { newsApi } from "../../../api/newsApi.js";
 import HomeButton from "../../../components/common/HomeButton.jsx";
+import ExternalSiteLink from "../../../components/common/ExternalSiteLink.jsx";
 
 function formatDate(iso) {
   if (!iso) return "";
@@ -59,14 +60,14 @@ export default function NewsSection() {
             <h2 className="text-2xl sm:text-3xl font-bold tracking-tight m-0">Top stories</h2>
             <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-2 m-0">
               Latest from{" "}
-              <a
+              <ExternalSiteLink
                 href="https://www.fifa.com/en/news"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="underline underline-offset-2 hover:text-zinc-900 dark:hover:text-white"
+                hint="fifa.com · news"
+                showArrow={false}
+                className="underline underline-offset-2 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white"
               >
                 FIFA.com
-              </a>
+              </ExternalSiteLink>
             </p>
           </div>
           <HomeButton as="link" to="/news" variant="link">
