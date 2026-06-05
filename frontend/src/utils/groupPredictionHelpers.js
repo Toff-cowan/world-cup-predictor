@@ -49,7 +49,9 @@ export function getGroupFixtures(groupLetter, groupTeams, allMatches = []) {
 export function fixturesByGroup(allMatches, teams) {
   const byGroup = {};
   for (const letter of GROUP_LETTERS) {
-    const groupTeams = teams.filter((t) => t.group_letter === letter);
+    const groupTeams = teams.filter(
+      (t) => String(t.group_letter || "").toUpperCase() === letter
+    );
     byGroup[letter] = getGroupFixtures(letter, groupTeams, allMatches);
   }
   return byGroup;
