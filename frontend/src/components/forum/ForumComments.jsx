@@ -109,12 +109,12 @@ export default function ForumComments({ postId, initialComments = [] }) {
               placeholder="Leave your feedback…"
               rows={3}
               maxLength={FORUM_LIMITS.commentMax}
-              className="mt-1 w-full px-3 py-2 bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-600 text-zinc-900 dark:text-zinc-100 resize-y min-h-[5rem]"
+              className="mt-1 w-full px-3 py-2 bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-600 text-zinc-900 dark:text-white resize-y min-h-[5rem]"
               required
             />
           </label>
         ) : (
-          <p className="text-sm text-zinc-600 dark:text-zinc-400 m-0">
+          <p className="text-sm text-zinc-600 dark:text-white m-0">
             Sign in to leave feedback on this post.
           </p>
         )}
@@ -124,7 +124,7 @@ export default function ForumComments({ postId, initialComments = [] }) {
             <button
               type="submit"
               disabled={submitting || !body.trim()}
-              className="px-5 py-2.5 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-sm font-bold disabled:opacity-50"
+              className="px-5 py-2.5 bg-zinc-900 dark:bg-zinc-800 text-white dark:text-white text-sm font-bold disabled:opacity-50"
             >
               {submitting ? "Posting…" : "Post comment"}
             </button>
@@ -132,7 +132,7 @@ export default function ForumComments({ postId, initialComments = [] }) {
             <button
               type="button"
               onClick={() => setAuthOpen(true)}
-              className="px-5 py-2.5 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-sm font-bold"
+              className="px-5 py-2.5 bg-zinc-900 dark:bg-zinc-800 text-white dark:text-white text-sm font-bold"
             >
               Sign in to comment
             </button>

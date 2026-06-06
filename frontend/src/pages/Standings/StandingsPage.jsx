@@ -47,7 +47,7 @@ export default function StandingsPage() {
   );
 
   return (
-    <div className="min-h-screen bg-[#f3f3f3] dark:bg-[#0a0a0a] text-zinc-900 dark:text-zinc-100">
+    <div className="min-h-screen bg-[#f3f3f3] dark:bg-[#0a0a0a] text-zinc-900 dark:text-white">
       <section className="w-full bg-black text-white py-10 sm:py-12 lg:py-16 px-4">
         <h1 className="font-display text-2xl sm:text-4xl lg:text-5xl font-bold uppercase tracking-tight text-center m-0">
           Standings
@@ -62,8 +62,8 @@ export default function StandingsPage() {
               onClick={() => setView("overall")}
               className={`flex-1 sm:flex-none min-h-[2.75rem] px-4 py-2 text-sm font-medium transition-colors ${
                 view === "overall"
-                  ? "bg-zinc-900 dark:bg-white text-white dark:text-zinc-900"
-                  : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white"
+                  ? "bg-zinc-900 dark:bg-zinc-800 text-white dark:text-white"
+                  : "text-zinc-600 dark:text-white hover:text-zinc-900 dark:hover:text-white"
               }`}
             >
               Overall
@@ -73,8 +73,8 @@ export default function StandingsPage() {
               onClick={() => setView("groups")}
               className={`flex-1 sm:flex-none min-h-[2.75rem] px-4 py-2 text-sm font-medium transition-colors ${
                 view === "groups"
-                  ? "bg-zinc-900 dark:bg-white text-white dark:text-zinc-900"
-                  : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white"
+                  ? "bg-zinc-900 dark:bg-zinc-800 text-white dark:text-white"
+                  : "text-zinc-600 dark:text-white hover:text-zinc-900 dark:hover:text-white"
               }`}
             >
               By group
@@ -83,7 +83,7 @@ export default function StandingsPage() {
         </div>
 
         {loading && (
-          <p className="text-zinc-500 dark:text-zinc-400 py-12 text-center">Loading standings…</p>
+          <p className="text-zinc-500 dark:text-white py-12 text-center">Loading standings…</p>
         )}
 
         {error && (
@@ -93,7 +93,7 @@ export default function StandingsPage() {
         )}
 
         {!loading && !error && groups.length === 0 && (
-          <p className="text-zinc-500 dark:text-zinc-400 py-12 text-center">
+          <p className="text-zinc-500 dark:text-white py-12 text-center">
             No standings yet. Run{" "}
             <code className="bg-zinc-200 dark:bg-zinc-800 px-1.5 py-0.5 text-sm">
               npm run scrape

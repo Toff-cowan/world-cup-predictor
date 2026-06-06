@@ -28,7 +28,7 @@ export default function ForumCommentPreview({ comments = [], commentCount = 0 })
             {comment.created_at && (
               <span className="text-zinc-400 text-xs ml-2">{formatDate(comment.created_at)}</span>
             )}
-            <p className="text-zinc-600 dark:text-zinc-400 mt-0.5 m-0 line-clamp-2">{comment.body}</p>
+            <p className="text-zinc-600 dark:text-white mt-0.5 m-0 line-clamp-2">{comment.body}</p>
           </li>
         ))}
       </ul>

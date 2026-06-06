@@ -6,7 +6,7 @@ import FAQSection from "./sections/FAQSection.jsx";
 
 export default function LandingPage() {
   return (
-    <div className="font-sans min-h-screen bg-white dark:bg-[#0a0a0a] text-zinc-900 dark:text-zinc-100">
+    <div className="font-sans min-h-screen bg-white dark:bg-[#0a0a0a] text-zinc-900 dark:text-white">
       <HeroSection />
       <NewsSection />
       <StandingsPreview />

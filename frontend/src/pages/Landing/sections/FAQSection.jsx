@@ -108,12 +108,12 @@ export default function FAQSection() {
   const colors = faqColors(isDark);
 
   return (
-    <section className="font-sans bg-white dark:bg-[#0a0a0a] text-zinc-900 dark:text-zinc-100">
+    <section className="font-sans bg-white dark:bg-[#0a0a0a] text-zinc-900 dark:text-white">
       <div className="max-w-[1400px] mx-auto px-4 lg:px-12 py-20 lg:py-28">
-        <h2 className="font-display text-4xl sm:text-5xl lg:text-7xl xl:text-8xl font-bold uppercase tracking-tight text-[#120B2F] dark:text-zinc-100 m-0 leading-[0.95]">
+        <h2 className="font-display text-4xl sm:text-5xl lg:text-7xl xl:text-8xl font-bold uppercase tracking-tight text-[#120B2F] dark:text-white m-0 leading-[0.95]">
           FAQs
         </h2>
-        <p className="mt-4 text-sm text-zinc-500 dark:text-zinc-400 m-0 max-w-md">
+        <p className="mt-4 text-sm text-zinc-500 dark:text-white m-0 max-w-md">
           Hover a topic to read more
         </p>
 
@@ -222,7 +222,7 @@ export default function FAQSection() {
                             {active && (
                               <p
                                 key={`faq-answer-${i}`}
-                                className={`font-sans faq-answer-enter text-base sm:text-lg leading-relaxed m-0 mt-5 lg:mt-7 max-w-xl text-[#3a3a3a] dark:text-zinc-200 ${
+                                className={`font-sans faq-answer-enter text-base sm:text-lg leading-relaxed m-0 mt-5 lg:mt-7 max-w-xl text-[#3a3a3a] dark:text-white ${
                                   alignRight ? "ml-auto" : "mr-auto"
                                 }`}
                               >

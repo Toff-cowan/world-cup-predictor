@@ -3,18 +3,18 @@ import { matchesApi } from "../../../api/matchesApi.js";
 import HomeButton from "../../../components/common/HomeButton.jsx";
 import { isLikelyEmptyDatabase } from "../../../utils/apiError.js";
 import TeamFlag from "../../../components/standings/TeamFlag.jsx";
-import {
-  groupStageFixturesByRound,
-  topTwoByGroupThroughRound,
-} from "../../../utils/matchRounds.js";
+import { topTwoByGroupSoFar, upcomingMatches } from "../../../utils/matchRounds.js";
 
-const MATCHES_PER_ROUND = 3;
-const POLL_MS = 45_000;
+const UPCOMING_LIMIT = 12;
+const POLL_MS = 30_000;
 const GROUP_ORDER = "ABCDEFGHIJKL".split("");
 
 function formatKickoff(iso) {
   if (!iso) return "TBD";
-  return new Date(iso).toLocaleTimeString(undefined, {
+  return new Date(iso).toLocaleString(undefined, {
+    weekday: "short",
+    month: "short",
+    day: "numeric",
     hour: "numeric",
     minute: "2-digit",
   });
@@ -31,7 +31,7 @@ function StatusBadge({ status }) {
   }
   if (status === "completed") {
     return (
-      <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">
+      <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 dark:text-white">
         Full time
       </span>
     );
@@ -54,7 +54,9 @@ function MatchCard({ match }) {
     <article className="border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 p-4 flex flex-col gap-3">
       <div className="flex items-center justify-between gap-2">
         <StatusBadge status={match.status} />
-        <span className="text-xs text-zinc-500 tabular-nums">{formatKickoff(match.kickoffAt)}</span>
+        <span className="text-xs text-zinc-500 dark:text-white tabular-nums">
+          {formatKickoff(match.kickoffAt)}
+        </span>
       </div>
 
       <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3">
@@ -65,18 +67,20 @@ function MatchCard({ match }) {
             teamCode={match.homeTeamCode}
             className="w-10 h-7"
           />
-          <span className="text-xs sm:text-sm font-semibold truncate w-full">{match.homeTeamName}</span>
+          <span className="text-xs sm:text-sm font-semibold truncate w-full text-zinc-900 dark:text-white">
+            {match.homeTeamName}
+          </span>
         </div>
 
         <div className="text-center shrink-0 min-w-[3.5rem]">
           {showScore ? (
-            <span className="text-xl font-bold tabular-nums tracking-tight">
+            <span className="text-xl font-bold tabular-nums tracking-tight text-zinc-900 dark:text-white">
               {match.homeScore ?? 0}
               <span className="text-zinc-400 mx-1">–</span>
               {match.awayScore ?? 0}
             </span>
           ) : (
-            <span className="text-sm font-bold text-zinc-400">vs</span>
+            <span className="text-sm font-bold text-zinc-400 dark:text-white/70">vs</span>
           )}
         </div>
 
@@ -87,11 +91,13 @@ function MatchCard({ match }) {
             teamCode={match.awayTeamCode}
             className="w-10 h-7"
           />
-          <span className="text-xs sm:text-sm font-semibold truncate w-full">{match.awayTeamName}</span>
+          <span className="text-xs sm:text-sm font-semibold truncate w-full text-zinc-900 dark:text-white">
+            {match.awayTeamName}
+          </span>
         </div>
       </div>
 
-      <p className="text-[10px] text-zinc-500 m-0 text-center truncate">
+      <p className="text-[10px] text-zinc-500 dark:text-white/70 m-0 text-center truncate">
         {match.groupLetter ? `Group ${match.groupLetter}` : match.stage?.replace(/_/g, " ")}
         {match.venue ? ` · ${match.venue}` : ""}
       </p>
@@ -102,7 +108,7 @@ function MatchCard({ match }) {
 function QualifierChip({ team, rank }) {
   return (
     <div className="flex items-center gap-2 min-w-0 px-2 py-1.5 bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800/50">
-      <span className="text-[10px] font-bold text-emerald-700 dark:text-emerald-400 shrink-0">
+      <span className="text-[10px] font-bold text-emerald-700 dark:text-white shrink-0">
         {rank}
       </span>
       <TeamFlag
@@ -111,31 +117,31 @@ function QualifierChip({ team, rank }) {
         teamCode={team.team_code}
         className="w-6 h-4 shrink-0"
       />
-      <span className="text-xs font-semibold truncate">{team.team_name}</span>
+      <span className="text-xs font-semibold truncate text-zinc-900 dark:text-white">{team.team_name}</span>
     </div>
   );
 }
 
-function RoundQualifiers({ topTwoByGroup, round }) {
+function RoundQualifiers({ topTwoByGroup }) {
   const groups = GROUP_ORDER.filter((g) => topTwoByGroup[g]?.length);
 
   if (groups.length === 0) {
     return (
-      <p className="text-xs text-zinc-500 m-0 mt-4">
-        Top two per group appear here once results are in through round {round}.
+      <p className="text-xs text-zinc-500 dark:text-white m-0 mt-4">
+        Top two per group appear here once group-stage results are in.
       </p>
     );
   }
 
   return (
     <div className="mt-5 pt-4 border-t border-zinc-200 dark:border-zinc-700">
-      <p className="text-[10px] font-bold uppercase tracking-widest text-emerald-700 dark:text-emerald-400 m-0 mb-3">
-        Top two after round {round}
+      <p className="text-[10px] font-bold uppercase tracking-widest text-emerald-700 dark:text-white m-0 mb-3">
+        Top two so far
       </p>
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
         {groups.map((group) => (
           <div key={group} className="min-w-0">
-            <p className="text-[10px] font-bold text-zinc-500 m-0 mb-1.5">Grp {group}</p>
+            <p className="text-[10px] font-bold text-zinc-500 dark:text-white m-0 mb-1.5">Grp {group}</p>
             <div className="space-y-1.5">
               {(topTwoByGroup[group] || []).map((team) => (
                 <QualifierChip key={team.team_id} team={team} rank={team.position} />
@@ -152,46 +158,55 @@ export default function MatchFixturesSection({ embedded = false }) {
   const [matches, setMatches] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [activeRound, setActiveRound] = useState(1);
+  const [lastUpdated, setLastUpdated] = useState(null);
 
   useEffect(() => {
     let cancelled = false;
 
-    function load() {
+    function load(isInitial = false) {
       matchesApi
         .all()
         .then((data) => {
-          if (!cancelled) setMatches(data.matches || []);
+          if (!cancelled) {
+            setMatches(data.matches || []);
+            setLastUpdated(new Date());
+            setError("");
+          }
         })
         .catch((err) => {
           if (!cancelled) setError(err.message);
         })
         .finally(() => {
-          if (!cancelled) setLoading(false);
+          if (!cancelled && isInitial) setLoading(false);
         });
     }
 
-    load();
-    const id = setInterval(load, POLL_MS);
+    function onVisible() {
+      if (document.visibilityState === "visible") load(false);
+    }
+
+    load(true);
+    const id = setInterval(() => load(false), POLL_MS);
+    document.addEventListener("visibilitychange", onVisible);
+
     return () => {
       cancelled = true;
       clearInterval(id);
+      document.removeEventListener("visibilitychange", onVisible);
     };
   }, []);
 
-  const rounds = useMemo(() => groupStageFixturesByRound(matches), [matches]);
-
-  const topTwoByGroup = useMemo(
-    () => topTwoByGroupThroughRound(matches, activeRound),
-    [matches, activeRound]
+  const nextMatches = useMemo(
+    () => upcomingMatches(matches, UPCOMING_LIMIT),
+    [matches]
   );
 
-  const roundMatches = (rounds[activeRound] || []).slice(0, MATCHES_PER_ROUND);
+  const topTwoByGroup = useMemo(() => topTwoByGroupSoFar(matches), [matches]);
 
   return (
     <section
       id={embedded ? undefined : "fixtures"}
-      className={`bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 ${
+      className={`bg-white dark:bg-zinc-950 text-zinc-900 dark:text-white ${
         embedded ? "" : "border-t border-zinc-200 dark:border-zinc-800"
       }`}
     >
@@ -200,47 +215,18 @@ export default function MatchFixturesSection({ embedded = false }) {
           <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4 mb-8">
             <div>
               <h2 className="text-2xl sm:text-3xl font-bold tracking-tight m-0">Match fixtures</h2>
-              <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-2 m-0">
-                Group stage by round · three featured matches · top two qualifiers per group
+              <p className="text-sm text-zinc-500 dark:text-white mt-2 m-0">
+                Upcoming fixtures · provisional top two per group from results so far
               </p>
             </div>
-            <div className="flex flex-wrap items-center gap-3 shrink-0">
-              <HomeButton as="link" to="/fixtures" variant="link">
-                Full fixtures page →
-              </HomeButton>
-              <div className="flex items-center gap-2">
-                {[1, 2, 3].map((round) => (
-                  <HomeButton
-                    key={round}
-                    variant="tab"
-                    active={activeRound === round}
-                    onClick={() => setActiveRound(round)}
-                  >
-                    Round {round}
-                  </HomeButton>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {embedded && (
-          <div className="flex flex-wrap items-center gap-2 mb-8">
-            {[1, 2, 3].map((round) => (
-              <HomeButton
-                key={round}
-                variant="tab"
-                active={activeRound === round}
-                onClick={() => setActiveRound(round)}
-              >
-                Round {round}
-              </HomeButton>
-            ))}
+            <HomeButton as="link" to="/fixtures" variant="link">
+              Full fixtures page →
+            </HomeButton>
           </div>
         )}
 
         {loading && (
-          <p className="text-zinc-500 dark:text-zinc-400">Loading fixtures…</p>
+          <p className="text-zinc-500 dark:text-white">Loading fixtures…</p>
         )}
 
         {error && (
@@ -262,38 +248,58 @@ export default function MatchFixturesSection({ embedded = false }) {
         )}
 
         {!loading && !error && matches.length === 0 && (
-          <p className="text-zinc-500 dark:text-zinc-400 text-sm">
+          <p className="text-zinc-500 dark:text-white text-sm">
             No fixtures yet. Sync tournament data with{" "}
             <code className="bg-zinc-200 dark:bg-zinc-800 px-1.5 py-0.5">npm run scrape</code>.
           </p>
         )}
 
         {!loading && !error && matches.length > 0 && (
-          <div className="grid lg:grid-cols-[1fr_1.1fr] gap-10 lg:gap-14">
+          <div className="space-y-10">
             <div>
-              <h3 className="text-sm font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-400 mb-4 m-0 pb-2 border-b border-zinc-200 dark:border-zinc-700">
-                Round {activeRound} — featured matches
-              </h3>
-              {roundMatches.length === 0 ? (
-                <p className="text-sm text-zinc-500">No matches scheduled for this round yet.</p>
+              <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 mb-4 pb-2 border-b border-zinc-200 dark:border-zinc-700">
+                <h3 className="text-sm font-bold uppercase tracking-widest text-zinc-500 dark:text-white m-0">
+                  Upcoming matches
+                </h3>
+                <p className="text-[10px] font-semibold uppercase tracking-widest text-zinc-500 dark:text-white/70 m-0 flex items-center gap-2">
+                  <span
+                    className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"
+                    aria-hidden
+                  />
+                  Auto-refreshes every 30s
+                  {lastUpdated && (
+                    <span className="normal-case tracking-normal font-normal">
+                      · Updated{" "}
+                      {lastUpdated.toLocaleTimeString(undefined, {
+                        hour: "numeric",
+                        minute: "2-digit",
+                      })}
+                    </span>
+                  )}
+                </p>
+              </div>
+              {nextMatches.length === 0 ? (
+                <p className="text-sm text-zinc-500 dark:text-white">
+                  No upcoming matches right now. Check back after the next kickoff window.
+                </p>
               ) : (
-                <div className="space-y-4">
-                  {roundMatches.map((match) => (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {nextMatches.map((match) => (
                     <MatchCard key={match.id} match={match} />
                   ))}
                 </div>
               )}
             </div>
 
-            <div className="border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-900/50 p-5 lg:p-6">
-              <h3 className="text-sm font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-400 m-0">
+            <div className="border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-900 p-5 lg:p-6 text-zinc-900 dark:text-white">
+              <h3 className="text-sm font-bold uppercase tracking-widest text-zinc-500 dark:text-white m-0">
                 Qualification picture
               </h3>
-              <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-2 m-0 leading-relaxed">
-                Provisional top two in each group based on results through round {activeRound}.
-                Green rows in standings mark teams on course to advance.
+              <p className="text-xs text-zinc-500 dark:text-white mt-2 m-0 leading-relaxed">
+                Provisional top two in each group based on results so far. Green rows in standings
+                mark teams on course to advance.
               </p>
-              <RoundQualifiers topTwoByGroup={topTwoByGroup} round={activeRound} />
+              <RoundQualifiers topTwoByGroup={topTwoByGroup} />
             </div>
           </div>
         )}

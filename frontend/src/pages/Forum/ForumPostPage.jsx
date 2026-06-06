@@ -88,7 +88,7 @@ export default function ForumPostPage() {
   const headerTheme = post ? fifaHeaderThemeForId(post.id) : { bg: "#000000", text: "#ffffff", badge: "#ffd100", badgeText: "#000000" };
 
   return (
-    <div className="min-h-screen bg-[#f3f3f3] dark:bg-[#0a0a0a] text-zinc-900 dark:text-zinc-100">
+    <div className="min-h-screen bg-[#f3f3f3] dark:bg-[#0a0a0a] text-zinc-900 dark:text-white">
       <ForumPageHeader
         theme={headerTheme}
         backTo="/forum"

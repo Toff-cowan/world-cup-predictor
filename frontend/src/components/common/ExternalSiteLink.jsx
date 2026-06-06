@@ -38,10 +38,10 @@ export default function ExternalSiteLink({
       {tooltip && (
         <span
           role="tooltip"
-          className="pointer-events-none absolute bottom-full left-0 mb-2 px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-wide whitespace-nowrap bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 opacity-0 translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 group-focus-visible:opacity-100 group-focus-visible:translate-y-0 transition-all duration-200 z-30 shadow-lg rounded-sm"
+          className="pointer-events-none absolute bottom-full left-0 mb-2 px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-wide whitespace-nowrap bg-zinc-900 text-white dark:bg-zinc-800 dark:text-white opacity-0 translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 group-focus-visible:opacity-100 group-focus-visible:translate-y-0 transition-all duration-200 z-30 shadow-lg rounded-sm"
         >
           {label}
-          <span className="block normal-case font-normal tracking-normal text-white/70 dark:text-zinc-500 text-[9px] mt-0.5">
+          <span className="block normal-case font-normal tracking-normal text-white/70 dark:text-white text-[9px] mt-0.5">
             Opens in new tab
           </span>
         </span>

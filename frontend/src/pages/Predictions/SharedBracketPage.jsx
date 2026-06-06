@@ -59,7 +59,7 @@ export default function SharedBracketPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f3f3f3] dark:bg-[#0a0a0a] text-zinc-900 dark:text-zinc-100">
+    <div className="min-h-screen bg-[#f3f3f3] dark:bg-[#0a0a0a] text-zinc-900 dark:text-white">
       <section className="w-full bg-black text-white py-10 sm:py-12 px-4">
         <div className="max-w-[1400px] mx-auto text-center">
           <p className="text-[10px] font-bold uppercase tracking-widest text-white/50 m-0">

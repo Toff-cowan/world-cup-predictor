@@ -105,11 +105,11 @@ export default function CreatePost() {
   }
 
   const inputClass =
-    "mt-1 w-full px-3 py-2 bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-600 text-zinc-900 dark:text-zinc-100";
+    "mt-1 w-full px-3 py-2 bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-600 text-zinc-900 dark:text-white";
   const activeType = POST_TYPES.find((t) => t.id === postType);
 
   return (
-    <div className="min-h-screen bg-[#f3f3f3] dark:bg-[#0a0a0a] text-zinc-900 dark:text-zinc-100">
+    <div className="min-h-screen bg-[#f3f3f3] dark:bg-[#0a0a0a] text-zinc-900 dark:text-white">
       <ForumPageHeader
         theme={pageTheme}
         backTo="/forum"
@@ -135,8 +135,8 @@ export default function CreatePost() {
                 onClick={() => setPostType(id)}
                 className={`flex-1 px-4 py-3 text-sm font-bold border text-left transition-colors ${
                   postType === id
-                    ? "border-zinc-900 dark:border-white bg-zinc-900 dark:bg-white text-white dark:text-zinc-900"
-                    : "border-zinc-300 dark:border-zinc-600 text-zinc-600 dark:text-zinc-400 hover:border-zinc-500"
+                    ? "border-zinc-900 dark:border-white bg-zinc-900 dark:bg-zinc-800 text-white dark:text-white"
+                    : "border-zinc-300 dark:border-zinc-600 text-zinc-600 dark:text-white hover:border-zinc-500"
                 }`}
               >
                 {label}
@@ -163,7 +163,7 @@ export default function CreatePost() {
               <button
                 type="button"
                 onClick={() => setPostType("question")}
-                className="font-semibold underline text-zinc-900 dark:text-zinc-100"
+                className="font-semibold underline text-zinc-900 dark:text-white"
               >
                 Ask a question
               </button>{" "}
@@ -245,7 +245,7 @@ export default function CreatePost() {
             <button
               type="submit"
               disabled={submitting}
-              className="w-full sm:w-auto px-8 py-3 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 font-bold disabled:opacity-50"
+              className="w-full sm:w-auto px-8 py-3 bg-zinc-900 dark:bg-zinc-800 text-white dark:text-white font-bold disabled:opacity-50"
             >
               {submitting ? "Posting…" : postType === "question" ? "Post question" : "Share bracket"}
             </button>

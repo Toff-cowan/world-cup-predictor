@@ -15,7 +15,7 @@ function TieBreaker({ match, locked, onWinner }) {
 
   return (
     <div className="flex flex-wrap items-center gap-2">
-      <span className="text-[10px] uppercase tracking-widest text-zinc-500">
+      <span className="text-[10px] uppercase tracking-widest text-zinc-500 dark:text-white/70">
         Winner after extra time / penalties
       </span>
       <button
@@ -24,8 +24,8 @@ function TieBreaker({ match, locked, onWinner }) {
         onClick={() => onWinner(match.home)}
         className={`px-3 py-1 text-xs border transition-colors ${
           match.winner === match.home
-            ? "bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 border-zinc-900 dark:border-white"
-            : "border-zinc-300 dark:border-zinc-600 hover:border-zinc-900 dark:hover:border-white"
+            ? "bg-zinc-900 dark:bg-zinc-800 text-white dark:text-white border-zinc-900 dark:border-white"
+            : "border-zinc-300 dark:border-zinc-600 text-zinc-700 dark:text-white hover:border-zinc-900 dark:hover:border-white"
         }`}
       >
         Home
@@ -36,8 +36,8 @@ function TieBreaker({ match, locked, onWinner }) {
         onClick={() => onWinner(match.away)}
         className={`px-3 py-1 text-xs border transition-colors ${
           match.winner === match.away
-            ? "bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 border-zinc-900 dark:border-white"
-            : "border-zinc-300 dark:border-zinc-600 hover:border-zinc-900 dark:hover:border-white"
+            ? "bg-zinc-900 dark:bg-zinc-800 text-white dark:text-white border-zinc-900 dark:border-white"
+            : "border-zinc-300 dark:border-zinc-600 text-zinc-700 dark:text-white hover:border-zinc-900 dark:hover:border-white"
         }`}
       >
         Away
@@ -88,7 +88,7 @@ export default function KnockoutBracketEditor({
   return (
     <div className="space-y-6 pb-12">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        <p className="text-sm text-zinc-500 dark:text-zinc-400 m-0">
+        <p className="text-sm text-zinc-500 dark:text-white/70 m-0">
           {mode === "view"
             ? "Knockout teams are filled from your group-stage predictions (top two per group plus eight best third-place teams)."
             : "Enter scores only — Round of 32 pairings follow the official FIFA bracket and update from group results."}
@@ -100,7 +100,7 @@ export default function KnockoutBracketEditor({
                 type="button"
                 disabled={downloading}
                 onClick={handleDownload}
-                className="w-full sm:w-auto min-h-[2.75rem] px-4 py-2 text-xs font-bold uppercase tracking-wide border border-zinc-300 dark:border-zinc-600 hover:border-zinc-900 dark:hover:border-white disabled:opacity-50"
+                className="w-full sm:w-auto min-h-[2.75rem] px-4 py-2 text-xs font-bold uppercase tracking-wide border border-zinc-300 dark:border-zinc-600 text-zinc-700 dark:text-white hover:border-zinc-900 dark:hover:border-white disabled:opacity-50"
               >
                 {downloading ? "Preparing…" : "Download PNG"}
               </button>
@@ -117,8 +117,8 @@ export default function KnockoutBracketEditor({
               onClick={() => setMode("view")}
               className={`flex-1 sm:flex-none min-h-[2.75rem] px-4 py-2 text-sm font-medium transition-colors ${
                 mode === "view"
-                  ? "bg-zinc-900 dark:bg-white text-white dark:text-zinc-900"
-                  : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white"
+                  ? "bg-zinc-900 dark:bg-zinc-800 text-white dark:text-white"
+                  : "text-zinc-600 dark:text-white/80 hover:text-zinc-900 dark:hover:text-white"
               }`}
             >
               Bracket view
@@ -128,8 +128,8 @@ export default function KnockoutBracketEditor({
               onClick={() => setMode("edit")}
               className={`flex-1 sm:flex-none min-h-[2.75rem] px-4 py-2 text-sm font-medium transition-colors ${
                 mode === "edit"
-                  ? "bg-zinc-900 dark:bg-white text-white dark:text-zinc-900"
-                  : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white"
+                  ? "bg-zinc-900 dark:bg-zinc-800 text-white dark:text-white"
+                  : "text-zinc-600 dark:text-white/80 hover:text-zinc-900 dark:hover:text-white"
               }`}
             >
               Edit scores
@@ -163,8 +163,8 @@ export default function KnockoutBracketEditor({
                     key={round.key}
                     className="border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-4 py-8 text-center"
                   >
-                    <h3 className="text-sm font-bold m-0">{round.label}</h3>
-                    <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-2 m-0 max-w-lg mx-auto">
+                    <h3 className="text-sm font-bold text-zinc-900 dark:text-white m-0">{round.label}</h3>
+                    <p className="text-sm text-zinc-500 dark:text-white/70 mt-2 m-0 max-w-lg mx-auto">
                       Enter group-stage scores first. The Round of 32 fills with group winners,
                       runners-up, and the eight best third-place teams per FIFA rules.
                     </p>

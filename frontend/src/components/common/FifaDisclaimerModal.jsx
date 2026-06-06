@@ -52,26 +52,26 @@ export default function FifaDisclaimerModal() {
         />
 
         <div className="px-6 sm:px-8 pt-7 pb-6">
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-500 dark:text-zinc-400 m-0">
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-500 dark:text-white m-0">
             Before you explore
           </p>
           <h2
             id="fifa-disclaimer-title"
-            className="text-xl sm:text-2xl font-bold tracking-tight mt-2 m-0 text-zinc-900 dark:text-zinc-50"
+            className="text-xl sm:text-2xl font-bold tracking-tight mt-2 m-0 text-zinc-900 dark:text-white"
           >
             Fan project — not an official FIFA product
           </h2>
 
-          <p className="text-sm text-zinc-600 dark:text-zinc-300 mt-4 m-0 leading-relaxed">
+          <p className="text-sm text-zinc-600 dark:text-white mt-4 m-0 leading-relaxed">
             Match data, standings, and news on this site are{" "}
-            <strong className="font-semibold text-zinc-800 dark:text-zinc-100">
+            <strong className="font-semibold text-zinc-800 dark:text-white">
               aggregated from public FIFA sources
             </strong>{" "}
             for prediction and fan use only. They are not official records and should not be
             treated as authoritative or used as original published content.
           </p>
 
-          <p className="text-sm text-zinc-600 dark:text-zinc-300 mt-3 m-0 leading-relaxed">
+          <p className="text-sm text-zinc-600 dark:text-white mt-3 m-0 leading-relaxed">
             For verified news, schedules, and tournament information, always refer to the source:
           </p>
 
@@ -82,7 +82,7 @@ export default function FifaDisclaimerModal() {
             className="mt-5 flex items-center justify-between gap-4 group border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-900/80 px-4 py-3.5 hover:border-[#326295] dark:hover:border-[#5a8fd4] transition-colors"
           >
             <span className="min-w-0">
-              <span className="block text-[10px] uppercase tracking-widest text-zinc-500 dark:text-zinc-400">
+              <span className="block text-[10px] uppercase tracking-widest text-zinc-500 dark:text-white">
                 Official source
               </span>
               <span className="block text-base font-bold text-[#326295] dark:text-[#7eb3ff] mt-0.5 truncate group-hover:underline underline-offset-4">
@@ -101,7 +101,7 @@ export default function FifaDisclaimerModal() {
           <button
             type="button"
             onClick={dismiss}
-            className="mt-6 w-full py-3 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-sm font-bold hover:opacity-90 transition-opacity"
+            className="mt-6 w-full py-3 bg-zinc-900 dark:bg-zinc-800 text-white dark:text-white text-sm font-bold hover:opacity-90 transition-opacity"
           >
             I understand — continue
           </button>

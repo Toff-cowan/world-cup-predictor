@@ -53,18 +53,18 @@ export default function NewsSection() {
   }, []);
 
   return (
-    <section id="news" className="bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100">
+    <section id="news" className="bg-white dark:bg-zinc-950 text-zinc-900 dark:text-white">
       <div className="max-w-[1400px] mx-auto px-4 lg:px-8 py-12 lg:py-16">
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
           <div>
             <h2 className="text-2xl sm:text-3xl font-bold tracking-tight m-0">Top stories</h2>
-            <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-2 m-0">
+            <p className="text-sm text-zinc-500 dark:text-white mt-2 m-0">
               Latest from{" "}
               <ExternalSiteLink
                 href="https://www.fifa.com/en/news"
                 hint="fifa.com · news"
                 showArrow={false}
-                className="underline underline-offset-2 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white"
+                className="underline underline-offset-2 text-zinc-600 dark:text-white hover:text-zinc-900 dark:hover:text-white"
               >
                 FIFA.com
               </ExternalSiteLink>
@@ -76,7 +76,7 @@ export default function NewsSection() {
         </div>
 
         {loading && (
-          <p className="text-zinc-500 dark:text-zinc-400 mt-8">Loading news…</p>
+          <p className="text-zinc-500 dark:text-white mt-8">Loading news…</p>
         )}
 
         {error && (
@@ -88,7 +88,7 @@ export default function NewsSection() {
         )}
 
         {!loading && !error && !featured && articles.length === 0 && (
-          <p className="text-zinc-500 dark:text-zinc-400 mt-8 text-sm">
+          <p className="text-zinc-500 dark:text-white mt-8 text-sm">
             No news yet. Run{" "}
             <code className="bg-zinc-200 dark:bg-zinc-800 px-1.5 py-0.5">npm run scrape</code> in
             the backend to pull stories from FIFA.com.
@@ -121,7 +121,7 @@ export default function NewsSection() {
               <h3 className="text-xl sm:text-2xl font-bold mt-2 m-0 leading-snug">
                 {featured.title}
               </h3>
-              <p className="text-sm text-zinc-600 dark:text-zinc-400 mt-3 m-0 leading-relaxed max-w-prose">
+              <p className="text-sm text-zinc-600 dark:text-white mt-3 m-0 leading-relaxed max-w-prose">
                 {featured.body || featured.summary}
               </p>
               <div className="flex flex-wrap items-center gap-4 mt-4">
@@ -178,7 +178,7 @@ export default function NewsSection() {
                       {story.title}
                     </Link>
                     {story.summary && (
-                      <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1 m-0 line-clamp-2">
+                      <p className="text-xs text-zinc-500 dark:text-white mt-1 m-0 line-clamp-2">
                         {story.summary}
                       </p>
                     )}

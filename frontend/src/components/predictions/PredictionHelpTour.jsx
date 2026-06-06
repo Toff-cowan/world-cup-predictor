@@ -156,11 +156,11 @@ export default function PredictionHelpTour({ open, stepIndex, onStepChange, onCl
 
           <h2
             id="prediction-help-step-title"
-            className="font-display text-base font-bold uppercase tracking-tight m-0 mb-2 text-zinc-900 dark:text-zinc-100"
+            className="font-display text-base font-bold uppercase tracking-tight m-0 mb-2 text-zinc-900 dark:text-white"
           >
             {section.title}
           </h2>
-          <p className="text-sm text-zinc-600 dark:text-zinc-400 m-0 leading-relaxed">
+          <p className="text-sm text-zinc-600 dark:text-white m-0 leading-relaxed">
             {section.body}
           </p>
         </div>
@@ -170,7 +170,7 @@ export default function PredictionHelpTour({ open, stepIndex, onStepChange, onCl
             type="button"
             onClick={prev}
             disabled={isFirst}
-            className="flex items-center justify-center w-9 h-9 border border-zinc-300 dark:border-zinc-600 text-zinc-700 dark:text-zinc-300 hover:border-zinc-900 dark:hover:border-white disabled:opacity-30 disabled:pointer-events-none"
+            className="flex items-center justify-center w-9 h-9 border border-zinc-300 dark:border-zinc-600 text-zinc-700 dark:text-white hover:border-zinc-900 dark:hover:border-white disabled:opacity-30 disabled:pointer-events-none"
             aria-label="Previous step"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -181,7 +181,7 @@ export default function PredictionHelpTour({ open, stepIndex, onStepChange, onCl
           <button
             type="button"
             onClick={isLast ? finish : next}
-            className="px-4 py-2 text-xs font-bold uppercase tracking-wide bg-zinc-900 dark:bg-white text-white dark:text-zinc-900"
+            className="px-4 py-2 text-xs font-bold uppercase tracking-wide bg-zinc-900 dark:bg-zinc-800 text-white dark:text-white"
           >
             {isLast ? "Got it" : "Next"}
           </button>
@@ -190,7 +190,7 @@ export default function PredictionHelpTour({ open, stepIndex, onStepChange, onCl
             type="button"
             onClick={next}
             disabled={isLast}
-            className="flex items-center justify-center w-9 h-9 border border-zinc-300 dark:border-zinc-600 text-zinc-700 dark:text-zinc-300 hover:border-zinc-900 dark:hover:border-white disabled:opacity-30 disabled:pointer-events-none"
+            className="flex items-center justify-center w-9 h-9 border border-zinc-300 dark:border-zinc-600 text-zinc-700 dark:text-white hover:border-zinc-900 dark:hover:border-white disabled:opacity-30 disabled:pointer-events-none"
             aria-label={isLast ? "End of tour" : "Next step"}
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

@@ -32,7 +32,7 @@ export default function AuthModal({ open, onClose, onSuccess, title, message }) 
   }
 
   const inputClass =
-    "mt-1 w-full min-h-[2.75rem] px-3 py-2 bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-600 text-zinc-900 dark:text-zinc-100";
+    "mt-1 w-full min-h-[2.75rem] px-3 py-2 bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-600 text-zinc-900 dark:text-white";
 
   return (
     <div
@@ -44,11 +44,11 @@ export default function AuthModal({ open, onClose, onSuccess, title, message }) 
       <div className="w-full sm:max-w-md bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 shadow-xl max-h-[90vh] overflow-y-auto">
         <div className="flex items-start justify-between gap-4 px-6 pt-6 pb-2">
           <div>
-            <h2 id="auth-modal-title" className="text-xl font-bold m-0 text-zinc-900 dark:text-zinc-100">
+            <h2 id="auth-modal-title" className="text-xl font-bold m-0 text-zinc-900 dark:text-white">
               {title || (mode === "login" ? "Sign in to continue" : "Create an account")}
             </h2>
             {message && (
-              <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-2 m-0">{message}</p>
+              <p className="text-sm text-zinc-500 dark:text-white mt-2 m-0">{message}</p>
             )}
           </div>
           <button
@@ -109,7 +109,7 @@ export default function AuthModal({ open, onClose, onSuccess, title, message }) 
           <button
             type="submit"
             disabled={submitting}
-            className="w-full min-h-[2.75rem] py-2 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 font-bold disabled:opacity-50"
+            className="w-full min-h-[2.75rem] py-2 bg-zinc-900 dark:bg-zinc-800 text-white dark:text-white font-bold disabled:opacity-50"
           >
             {submitting ? "Please wait…" : mode === "login" ? "Sign in" : "Create account"}
           </button>
@@ -121,7 +121,7 @@ export default function AuthModal({ open, onClose, onSuccess, title, message }) 
                 <button
                   type="button"
                   onClick={() => setMode("register")}
-                  className="font-semibold underline text-zinc-900 dark:text-zinc-100"
+                  className="font-semibold underline text-zinc-900 dark:text-white"
                 >
                   Register
                 </button>
@@ -132,7 +132,7 @@ export default function AuthModal({ open, onClose, onSuccess, title, message }) 
                 <button
                   type="button"
                   onClick={() => setMode("login")}
-                  className="font-semibold underline text-zinc-900 dark:text-zinc-100"
+                  className="font-semibold underline text-zinc-900 dark:text-white"
                 >
                   Sign in
                 </button>

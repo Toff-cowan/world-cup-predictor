@@ -55,7 +55,7 @@ export default function ForumPage() {
   const useCardGrid = posts.length > 1;
 
   return (
-    <div className="min-h-screen bg-[#f3f3f3] dark:bg-[#0a0a0a] text-zinc-900 dark:text-zinc-100">
+    <div className="min-h-screen bg-[#f3f3f3] dark:bg-[#0a0a0a] text-zinc-900 dark:text-white">
       <ForumPageHeader
         theme={pageTheme}
         title="Forum"

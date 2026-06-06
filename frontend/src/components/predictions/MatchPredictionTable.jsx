@@ -14,7 +14,7 @@ function ScoreInput({ value, disabled, onChange, ariaLabel }) {
       value={value ?? ""}
       onChange={(e) => onChange(e.target.value)}
       aria-label={ariaLabel}
-      className="w-full min-h-[2.75rem] text-center text-base sm:text-sm tabular-nums bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-600 px-2 py-2 sm:py-1.5 disabled:opacity-50"
+      className="w-full min-h-[2.75rem] text-center text-base sm:text-sm tabular-nums text-zinc-900 dark:text-white bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-600 px-2 py-2 sm:py-1.5 disabled:opacity-50"
     />
   );
 }
@@ -22,7 +22,7 @@ function ScoreInput({ value, disabled, onChange, ariaLabel }) {
 function TeamCell({ team, align = "left" }) {
   if (!team) {
     return (
-      <span className={`text-sm text-zinc-400 ${align === "right" ? "text-right" : ""}`}>
+      <span className={`text-sm text-zinc-400 dark:text-white/60 ${align === "right" ? "text-right" : ""}`}>
         TBD
       </span>
     );
@@ -36,7 +36,7 @@ function TeamCell({ team, align = "left" }) {
     >
       {align === "right" ? (
         <>
-          <span className="text-sm font-medium text-zinc-900 dark:text-zinc-100 truncate">
+          <span className="text-sm font-medium text-zinc-900 dark:text-white truncate">
             {team.name}
           </span>
           <TeamFlag
@@ -52,7 +52,7 @@ function TeamCell({ team, align = "left" }) {
             countryCode={team.country_code}
             teamCode={team.code || team.team_code}
           />
-          <span className="text-sm font-medium text-zinc-900 dark:text-zinc-100 truncate">
+          <span className="text-sm font-medium text-zinc-900 dark:text-white truncate">
             {team.name}
           </span>
         </>
@@ -70,7 +70,7 @@ function MobileMatchRow({ row, locked }) {
 
       <div className="flex items-center gap-3">
         <div className="flex-1">
-          <span className="text-[10px] font-bold uppercase text-zinc-500 block mb-1 text-center">
+          <span className="text-[10px] font-bold uppercase text-zinc-500 dark:text-white/70 block mb-1 text-center">
             Home
           </span>
           <ScoreInput
@@ -82,7 +82,7 @@ function MobileMatchRow({ row, locked }) {
         </div>
         <span className="text-zinc-400 font-bold pt-5">–</span>
         <div className="flex-1">
-          <span className="text-[10px] font-bold uppercase text-zinc-500 block mb-1 text-center">
+          <span className="text-[10px] font-bold uppercase text-zinc-500 dark:text-white/70 block mb-1 text-center">
             Away
           </span>
           <ScoreInput
@@ -114,7 +114,7 @@ export default function MatchPredictionTable({
   return (
     <section className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 overflow-hidden w-full">
       <div className="px-4 sm:px-6 lg:px-10 py-3.5 border-b border-zinc-100 dark:border-zinc-800">
-        <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100 m-0">{title}</h3>
+        <h3 className="text-sm font-bold text-zinc-900 dark:text-white m-0">{title}</h3>
       </div>
 
       {/* Mobile */}
@@ -127,7 +127,7 @@ export default function MatchPredictionTable({
       {/* Desktop */}
       <div className="hidden md:block">
         <div
-          className={`grid ${GRID_COLS} gap-x-4 lg:gap-x-8 items-center px-6 lg:px-10 py-3 border-b border-zinc-100 dark:border-zinc-800 text-xs font-semibold text-zinc-500 dark:text-zinc-400`}
+          className={`grid ${GRID_COLS} gap-x-4 lg:gap-x-8 items-center px-6 lg:px-10 py-3 border-b border-zinc-100 dark:border-zinc-800 text-xs font-semibold text-zinc-500 dark:text-white/70`}
         >
           <span>Home team</span>
           <span className="text-center">Home</span>

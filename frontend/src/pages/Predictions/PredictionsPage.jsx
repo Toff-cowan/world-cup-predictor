@@ -441,7 +441,7 @@ export default function PredictionsPage() {
   if (loading || authLoading) {
     return (
       <div className="min-h-screen bg-[#f3f3f3] dark:bg-[#0a0a0a] flex items-center justify-center">
-        <p className="text-zinc-500 dark:text-zinc-400">Loading bracket…</p>
+        <p className="text-zinc-500 dark:text-white">Loading bracket…</p>
       </div>
     );
   }
@@ -455,7 +455,7 @@ export default function PredictionsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f3f3f3] dark:bg-[#0a0a0a] text-zinc-900 dark:text-zinc-100">
+    <div className="min-h-screen bg-[#f3f3f3] dark:bg-[#0a0a0a] text-zinc-900 dark:text-white">
       <section className="w-full bg-black text-white py-10 sm:py-12 lg:py-16 px-4">
         <h1 className="font-display text-2xl sm:text-4xl lg:text-5xl font-bold uppercase tracking-tight text-center m-0">
           My Predictions
@@ -508,7 +508,7 @@ export default function PredictionsPage() {
             <button
               type="button"
               onClick={openHelp}
-              className="px-4 py-2 text-xs font-bold uppercase tracking-wide border border-zinc-300 dark:border-zinc-600 text-zinc-600 dark:text-zinc-400 hover:border-zinc-900 dark:hover:border-white"
+              className="px-4 py-2 text-xs font-bold uppercase tracking-wide border border-zinc-300 dark:border-zinc-600 text-zinc-600 dark:text-white hover:border-zinc-900 dark:hover:border-white"
             >
               How it works
             </button>
@@ -517,9 +517,13 @@ export default function PredictionsPage() {
 
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div className="flex flex-wrap items-center gap-3 order-2 sm:order-1">
-            {switching && <span className="text-xs text-zinc-500">Loading bracket…</span>}
+            {switching && (
+              <span className="text-xs text-zinc-500 dark:text-white/70">Loading bracket…</span>
+            )}
             {saving && !switching && (
-              <span className="text-xs text-zinc-500">{isLocal ? "Saved locally" : "Saving…"}</span>
+              <span className="text-xs text-zinc-500 dark:text-white/70">
+                {isLocal ? "Saved locally" : "Saving…"}
+              </span>
             )}
             {error && (
               <span className="text-xs text-red-500 dark:text-red-400">{error}</span>
@@ -536,8 +540,8 @@ export default function PredictionsPage() {
                 onClick={() => setTab("group")}
                 className={`px-4 py-2 text-sm font-medium transition-colors ${
                   tab === "group"
-                    ? "bg-zinc-900 dark:bg-white text-white dark:text-zinc-900"
-                    : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white"
+                    ? "bg-zinc-900 dark:bg-zinc-800 text-white dark:text-white"
+                    : "text-zinc-600 dark:text-white/80 hover:text-zinc-900 dark:hover:text-white"
                 }`}
               >
                 Group stage
@@ -547,8 +551,8 @@ export default function PredictionsPage() {
                 onClick={() => setTab("knockout")}
                 className={`px-4 py-2 text-sm font-medium transition-colors ${
                   tab === "knockout"
-                    ? "bg-zinc-900 dark:bg-white text-white dark:text-zinc-900"
-                    : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white"
+                    ? "bg-zinc-900 dark:bg-zinc-800 text-white dark:text-white"
+                    : "text-zinc-600 dark:text-white/80 hover:text-zinc-900 dark:hover:text-white"
                 }`}
               >
                 Knockout
@@ -579,7 +583,7 @@ export default function PredictionsPage() {
                   className={`px-3 py-1.5 text-[10px] font-bold uppercase tracking-wide border transition-colors ${
                     locked
                       ? "border-emerald-600 text-emerald-600 dark:text-emerald-400 hover:border-amber-600 hover:text-amber-700 dark:hover:text-amber-400"
-                      : "border-zinc-300 dark:border-zinc-600 hover:border-zinc-900 dark:hover:border-white"
+                      : "border-zinc-300 dark:border-zinc-600 text-zinc-700 dark:text-white hover:border-zinc-900 dark:hover:border-white"
                   } disabled:opacity-40`}
                 >
                   {locked ? "✓ " : ""}
