@@ -29,3 +29,6 @@ export const KNOCKOUT_ROUNDS = [
 export function matchKey(index) {
   return `m${index}`;
 }
+
+export const BRACKET_MODE_FULL = "full";
+export const BRACKET_MODE_SIMPLE = "simple";

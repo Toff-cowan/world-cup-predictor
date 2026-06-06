@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { matchesApi } from "../../api/matchesApi.js";
 import { predictionsApi } from "../../api/predictionsApi.js";
 import { teamsApi } from "../../api/teamsApi.js";
@@ -7,6 +7,8 @@ import AuthModal from "../../components/auth/AuthModal.jsx";
 import BracketSelector from "../../components/predictions/BracketSelector.jsx";
 import GroupStageEditor from "../../components/predictions/GroupStageEditor.jsx";
 import KnockoutBracketEditor from "../../components/predictions/KnockoutBracketEditor.jsx";
+import SimpleGroupStageEditor from "../../components/predictions/SimpleGroupStageEditor.jsx";
+import SimpleKnockoutEditor from "../../components/predictions/SimpleKnockoutEditor.jsx";
 import PredictionHelpTour, {
   shouldShowHelpOnLoad,
 } from "../../components/predictions/PredictionHelpTour.jsx";
@@ -15,13 +17,17 @@ import { STAGE_LABELS, STAGE_ORDER } from "../../constants/bracket.js";
 import { useAuth } from "../../context/AuthContext.jsx";
 import {
   createEmptyBracket,
+  isSimpleBracket,
   lockGroupInBracket,
   normalizeBracket,
   resyncBracketFromGroups,
+  setBracketMode,
   setGroupMatchScore,
   setKnockoutMatchScore,
   setKnockoutWinner,
+  setSimpleGroupRank,
 } from "../../utils/bracketHelpers.js";
+import { syncSimpleKnockoutFromGroups } from "../../utils/knockoutPopulation.js";
 import {
   createLocalBracket,
   deleteLocalBracket,
@@ -30,6 +36,8 @@ import {
   setActiveLocalBracket,
   updateLocalBracket,
 } from "../../utils/localBrackets.js";
+import ShareBracketPrompt from "../../components/predictions/ShareBracketPrompt.jsx";
+import { getBracketShareStatus } from "../../utils/bracketShare.js";
 import {
   getHelpTargetId,
   helpTargetProps,
@@ -64,6 +72,9 @@ export default function PredictionsPage() {
   predictionRef.current = prediction;
 
   const helpHighlight = helpOpen ? getHelpTargetId(helpStep) : null;
+
+  const isSimple = isSimpleBracket(bracket);
+  const shareStatus = useMemo(() => getBracketShareStatus(bracket), [bracket]);
 
   const lockedStages = prediction?.locked_stages || [];
   const lockedGroups = bracket.locked_groups || [];
@@ -230,7 +241,7 @@ export default function PredictionsPage() {
   }, [helpHighlight]);
 
   useEffect(() => {
-    if (tab !== "knockout" || !teams.length) return;
+    if (tab !== "knockout" || !teams.length || isSimpleBracket(bracketRef.current)) return;
     setBracket((prev) => resyncBracketFromGroups(prev, teams, matches));
   }, [tab, teams, matches]);
 
@@ -248,6 +259,19 @@ export default function PredictionsPage() {
     setBracket((prev) => {
       const next = typeof updater === "function" ? updater(prev) : updater;
       queueSave(next);
+      return next;
+    });
+  }
+
+  function setPredictorMode(mode) {
+    updateBracket((prev) => {
+      let next = setBracketMode(prev, mode);
+      if (mode === "simple") {
+        next.knockout = syncSimpleKnockoutFromGroups(next.knockout, next);
+        setTab("group");
+      } else if (teams.length) {
+        next = resyncBracketFromGroups(next, teams, matches);
+      }
       return next;
     });
   }
@@ -489,22 +513,6 @@ export default function PredictionsPage() {
             onDeleteRequest={isLocal ? handleLocalDelete : undefined}
           />
           <div className="flex flex-wrap gap-2 shrink-0 self-start">
-            {isAuthenticated ? (
-              <Link
-                to="/forum/new"
-                className="px-4 py-2 text-xs font-bold uppercase tracking-wide bg-emerald-600 text-white hover:bg-emerald-500"
-              >
-                Share to forum
-              </Link>
-            ) : (
-              <button
-                type="button"
-                onClick={() => setAuthOpen(true)}
-                className="px-4 py-2 text-xs font-bold uppercase tracking-wide bg-emerald-600 text-white hover:bg-emerald-500"
-              >
-                Share to forum
-              </button>
-            )}
             <button
               type="button"
               onClick={openHelp}
@@ -530,10 +538,32 @@ export default function PredictionsPage() {
             )}
           </div>
 
-          <div
-            className="flex justify-end order-1 sm:order-2"
-            {...helpTargetProps("help-stage-tabs", helpHighlight)}
-          >
+          <div className="flex flex-col sm:flex-row gap-2 order-1 sm:order-2">
+            <div className="flex border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-900 p-1">
+              <button
+                type="button"
+                onClick={() => setPredictorMode("full")}
+                className={`px-4 py-2 text-sm font-medium transition-colors ${
+                  !isSimple
+                    ? "bg-zinc-900 dark:bg-zinc-800 text-white dark:text-white"
+                    : "text-zinc-600 dark:text-white/80 hover:text-zinc-900 dark:hover:text-white"
+                }`}
+              >
+                Full
+              </button>
+              <button
+                type="button"
+                onClick={() => setPredictorMode("simple")}
+                className={`px-4 py-2 text-sm font-medium transition-colors ${
+                  isSimple
+                    ? "bg-zinc-900 dark:bg-zinc-800 text-white dark:text-white"
+                    : "text-zinc-600 dark:text-white/80 hover:text-zinc-900 dark:hover:text-white"
+                }`}
+              >
+                Simple
+              </button>
+            </div>
+
             <div className="flex border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-900 p-1">
               <button
                 type="button"
@@ -555,19 +585,20 @@ export default function PredictionsPage() {
                     : "text-zinc-600 dark:text-white/80 hover:text-zinc-900 dark:hover:text-white"
                 }`}
               >
-                Knockout
+                {isSimple ? "Bracket" : "Knockout"}
               </button>
             </div>
           </div>
         </div>
 
+        {(!isSimple || tab === "knockout") && (
         <div className="flex flex-col gap-3">
           <div
             className="mobile-scroll-x -mx-4 px-4 sm:mx-0 sm:px-0"
             {...helpTargetProps("help-stage-locks", helpHighlight)}
           >
             <div className="flex flex-nowrap sm:flex-wrap gap-2 min-w-min pb-1 sm:pb-0">
-            {STAGE_ORDER.map((stage) => {
+            {STAGE_ORDER.filter((stage) => stage !== "group").map((stage) => {
               const locked = lockedStages.includes(stage);
               return (
                 <button
@@ -605,8 +636,9 @@ export default function PredictionsPage() {
             </button>
           )}
         </div>
+        )}
 
-        {tab === "group" && (
+        {!isSimple && tab === "group" && (
           <div {...helpTargetProps("help-group-stage", helpHighlight)}>
             <PredictionTipBanner tab="group" />
             <GroupStageEditor
@@ -624,7 +656,7 @@ export default function PredictionsPage() {
           </div>
         )}
 
-        {tab === "knockout" && (
+        {!isSimple && tab === "knockout" && (
           <div>
             <PredictionTipBanner tab="knockout" />
             <KnockoutBracketEditor
@@ -634,6 +666,12 @@ export default function PredictionsPage() {
               bracketName={prediction?.name}
               helpHighlight={helpHighlight}
               isStageLocked={isStageLocked}
+              shareReady={shareStatus.ready}
+              shareMessage={shareStatus.message}
+              predictionId={prediction?.id}
+              predictionName={prediction?.name}
+              isAuthenticated={isAuthenticated}
+              onSignIn={() => setAuthOpen(true)}
               onScore={(roundKey, matchIndex, side, value) =>
                 updateBracket((b) =>
                   setKnockoutMatchScore(b, roundKey, matchIndex, side, value, teams, matches)
@@ -644,6 +682,46 @@ export default function PredictionsPage() {
                   setKnockoutWinner(b, roundKey, matchIndex, teamId, teams, matches)
                 )
               }
+            />
+          </div>
+        )}
+
+        {isSimple && tab === "group" && (
+          <div>
+            <PredictionTipBanner tab="simple-group" />
+            <SimpleGroupStageEditor
+              teams={teams}
+              groups={bracket.groups}
+              isStageLocked={isStageLocked}
+              onGroupRank={(group, teamId) =>
+                updateBracket((b) => setSimpleGroupRank(b, group, teamId, teams, matches))
+              }
+              onContinueToBracket={() => setTab("knockout")}
+            />
+          </div>
+        )}
+
+        {isSimple && tab === "knockout" && (
+          <div>
+            <PredictionTipBanner tab="simple-knockout" />
+            <SimpleKnockoutEditor
+              teams={teams}
+              groups={bracket.groups}
+              knockout={bracket.knockout}
+              bracketName={prediction?.name}
+              isStageLocked={isStageLocked}
+              shareReady={shareStatus.ready}
+              shareMessage={shareStatus.message}
+              predictionId={prediction?.id}
+              predictionName={prediction?.name}
+              isAuthenticated={isAuthenticated}
+              onSignIn={() => setAuthOpen(true)}
+              onWinner={(roundKey, matchIndex, teamId) =>
+                updateBracket((b) =>
+                  setKnockoutWinner(b, roundKey, matchIndex, teamId, teams, matches)
+                )
+              }
+              onBackToGroups={() => setTab("group")}
             />
           </div>
         )}
@@ -663,7 +741,13 @@ export default function PredictionsPage() {
         message="Create a free account to post your predictions to the forum."
         onSuccess={() => {
           setAuthOpen(false);
-          navigate("/forum/new");
+          navigate("/forum/new", {
+            state: {
+              postType: "bracket",
+              bracketId: prediction?.id,
+              bracketName: prediction?.name,
+            },
+          });
         }}
       />
     </div>

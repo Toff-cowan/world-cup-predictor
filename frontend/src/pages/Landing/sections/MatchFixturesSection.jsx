@@ -158,7 +158,6 @@ export default function MatchFixturesSection({ embedded = false }) {
   const [matches, setMatches] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [lastUpdated, setLastUpdated] = useState(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -169,7 +168,6 @@ export default function MatchFixturesSection({ embedded = false }) {
         .then((data) => {
           if (!cancelled) {
             setMatches(data.matches || []);
-            setLastUpdated(new Date());
             setError("");
           }
         })
@@ -257,26 +255,10 @@ export default function MatchFixturesSection({ embedded = false }) {
         {!loading && !error && matches.length > 0 && (
           <div className="space-y-10">
             <div>
-              <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 mb-4 pb-2 border-b border-zinc-200 dark:border-zinc-700">
+              <div className="mb-4 pb-2 border-b border-zinc-200 dark:border-zinc-700">
                 <h3 className="text-sm font-bold uppercase tracking-widest text-zinc-500 dark:text-white m-0">
                   Upcoming matches
                 </h3>
-                <p className="text-[10px] font-semibold uppercase tracking-widest text-zinc-500 dark:text-white/70 m-0 flex items-center gap-2">
-                  <span
-                    className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"
-                    aria-hidden
-                  />
-                  Auto-refreshes every 30s
-                  {lastUpdated && (
-                    <span className="normal-case tracking-normal font-normal">
-                      · Updated{" "}
-                      {lastUpdated.toLocaleTimeString(undefined, {
-                        hour: "numeric",
-                        minute: "2-digit",
-                      })}
-                    </span>
-                  )}
-                </p>
               </div>
               {nextMatches.length === 0 ? (
                 <p className="text-sm text-zinc-500 dark:text-white">

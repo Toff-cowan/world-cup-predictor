@@ -1,15 +1,29 @@
-import { GROUP_LETTERS, KNOCKOUT_ROUNDS, matchKey } from "../constants/bracket.js";
+import { BRACKET_MODE_SIMPLE, GROUP_LETTERS, KNOCKOUT_ROUNDS, matchKey } from "../constants/bracket.js";
 import {
   computePredictedStandings,
   fixturesByGroup,
   qualifiersFromStandings,
 } from "./groupPredictionHelpers.js";
-import { syncOfficialKnockout } from "./knockoutPopulation.js";
+import { syncOfficialKnockout, syncSimpleKnockoutAdvancement, syncSimpleKnockoutFromGroups } from "./knockoutPopulation.js";
+
+export function getBracketMode(bracket) {
+  return bracket?.mode === BRACKET_MODE_SIMPLE ? BRACKET_MODE_SIMPLE : "full";
+}
+
+export function isSimpleBracket(bracket) {
+  return getBracketMode(bracket) === BRACKET_MODE_SIMPLE;
+}
+
+export function setBracketMode(bracket, mode) {
+  const next = structuredClone(bracket);
+  next.mode = mode === BRACKET_MODE_SIMPLE ? BRACKET_MODE_SIMPLE : "full";
+  return next;
+}
 
 export function createEmptyBracket() {
   const groups = {};
   for (const g of GROUP_LETTERS) {
-    groups[g] = { first: null, second: null };
+    groups[g] = { first: null, second: null, third: null, fourth: null };
   }
 
   const knockout = {};
@@ -20,7 +34,7 @@ export function createEmptyBracket() {
     }
   }
 
-  return { groups, group_matches: {}, locked_groups: [], knockout };
+  return { groups, group_matches: {}, locked_groups: [], knockout, mode: "full" };
 }
 
 function ensureMatch(knockout, roundKey, index) {
@@ -98,10 +112,47 @@ function syncGroupQualifiers(bracket, teams, matches) {
   return next;
 }
 
+function invalidateMatchSides(match, homeId, awayId) {
+  const winner = normTeamId(match.winner);
+  if (winner != null && winner !== homeId && winner !== awayId) {
+    match.winner = null;
+    match.scores = { home: null, away: null };
+  }
+}
+
+function clearTeamFromKnockout(knockout, teamId, except = null) {
+  const id = normTeamId(teamId);
+  if (id == null) return;
+
+  for (const round of KNOCKOUT_ROUNDS) {
+    for (let i = 1; i <= round.count; i++) {
+      const mk = matchKey(i);
+      const match = knockout[round.key]?.[mk];
+      if (!match) continue;
+
+      const skip =
+        except?.roundKey === round.key && except?.matchIndex === i;
+
+      if (!skip && normTeamId(match.home) === id) {
+        match.home = null;
+        invalidateMatchSides(match, null, normTeamId(match.away));
+      }
+      if (!skip && normTeamId(match.away) === id) {
+        match.away = null;
+        invalidateMatchSides(match, normTeamId(match.home), null);
+      }
+    }
+  }
+}
+
 function withKnockoutSync(bracket, teams, matches) {
   const matchList = Array.isArray(matches) ? matches : [];
   const next = structuredClone(bracket);
-  next.knockout = syncKnockoutAdvancement(next.knockout, next, teams, matchList);
+  if (isSimpleBracket(next)) {
+    next.knockout = syncSimpleKnockoutFromGroups(next.knockout, next);
+  } else {
+    next.knockout = syncKnockoutAdvancement(next.knockout, next, teams, matchList);
+  }
   return next;
 }
 
@@ -110,9 +161,13 @@ export function resyncBracketFromGroups(bracket, teams, matches) {
   return withKnockoutSync(syncGroupQualifiers(bracket, teams, matches), teams, matches);
 }
 
-export function normalizeBracket(raw, { teams, matches } = {}) {
+export function normalizeBracket(raw, { teams, matches, viewOnly = false } = {}) {
   const base = createEmptyBracket();
   if (!raw || typeof raw !== "object") return base;
+
+  if (raw.mode === BRACKET_MODE_SIMPLE) {
+    base.mode = BRACKET_MODE_SIMPLE;
+  }
 
   if (raw.group_matches && typeof raw.group_matches === "object") {
     base.group_matches = { ...raw.group_matches };
@@ -127,9 +182,13 @@ export function normalizeBracket(raw, { teams, matches } = {}) {
       base.groups[g] = {
         first: raw.groups[g].first ?? null,
         second: raw.groups[g].second ?? null,
+        third: raw.groups[g].third ?? null,
+        fourth: raw.groups[g].fourth ?? null,
       };
     }
   }
+
+  const preserveKnockoutSides = isSimpleBracket(base) || viewOnly;
 
   for (const round of KNOCKOUT_ROUNDS) {
     const src = raw.knockout?.[round.key] || {};
@@ -138,8 +197,8 @@ export function normalizeBracket(raw, { teams, matches } = {}) {
       const s = src[mk];
       if (s) {
         base.knockout[round.key][mk] = {
-          home: null,
-          away: null,
+          home: preserveKnockoutSides ? normTeamId(s.home) : null,
+          away: preserveKnockoutSides ? normTeamId(s.away) : null,
           winner: s.winner ?? null,
           scores: {
             home: s.scores?.home ?? null,
@@ -148,6 +207,18 @@ export function normalizeBracket(raw, { teams, matches } = {}) {
         };
       }
     }
+  }
+
+  if (isSimpleBracket(base)) {
+    if (teams?.length) {
+      base.knockout = syncSimpleKnockoutFromGroups(base.knockout, base);
+    }
+    return base;
+  }
+
+  if (viewOnly) {
+    base.knockout = syncSimpleKnockoutAdvancement(base.knockout);
+    return base;
   }
 
   if (teams?.length) {
@@ -175,6 +246,47 @@ export function unlockGroupInBracket(bracket, letter) {
 
 export function isGroupLocked(bracket, letter) {
   return bracket.locked_groups?.includes(letter) ?? false;
+}
+
+export function countSimpleGroupsComplete(groups) {
+  let count = 0;
+  for (const letter of GROUP_LETTERS) {
+    const picks = groups?.[letter];
+    if (picks?.first && picks?.second && picks?.third && picks?.fourth) {
+      count += 1;
+    }
+  }
+  return count;
+}
+
+export function setSimpleGroupRank(bracket, group, teamId, teams, matches) {
+  if (!GROUP_LETTERS.includes(group)) return bracket;
+
+  const id = normTeamId(teamId);
+  const team = teamById(teams, id);
+  if (!team || String(team.group_letter || "").toUpperCase() !== group) return bracket;
+
+  const next = structuredClone(bracket);
+  const picks = { ...next.groups[group] };
+  const slots = ["first", "second", "third", "fourth"];
+  const ranked = slots.map((slot) => normTeamId(picks[slot]));
+
+  const existingIdx = ranked.indexOf(id);
+  if (existingIdx >= 0) {
+    ranked.splice(existingIdx, 1);
+    ranked.push(null);
+  } else {
+    const emptyIdx = ranked.findIndex((value) => value == null);
+    if (emptyIdx < 0) return bracket;
+    ranked[emptyIdx] = id;
+  }
+
+  slots.forEach((slot, index) => {
+    picks[slot] = ranked[index] ?? null;
+  });
+  next.groups[group] = picks;
+
+  return withKnockoutSync(next, teams, matches);
 }
 
 export function setGroupPick(bracket, group, slot, teamId) {
@@ -250,6 +362,25 @@ export function setKnockoutWinner(bracket, roundKey, matchIndex, teamId, teams, 
   const mk = matchKey(matchIndex);
   ensureMatch(next.knockout, roundKey, matchIndex);
   next.knockout[roundKey][mk].winner = teamId || null;
+  return withKnockoutSync(next, teams, matches);
+}
+
+export function setKnockoutSide(bracket, roundKey, matchIndex, side, teamId, teams, matches) {
+  if (side !== "home" && side !== "away") return bracket;
+
+  const next = structuredClone(bracket);
+  const mk = matchKey(matchIndex);
+  ensureMatch(next.knockout, roundKey, matchIndex);
+  const match = next.knockout[roundKey][mk];
+  const id = normTeamId(teamId);
+
+  if (id != null) {
+    clearTeamFromKnockout(next.knockout, id, { roundKey, matchIndex });
+  }
+
+  match[side] = id;
+  invalidateMatchSides(match, normTeamId(match.home), normTeamId(match.away));
+
   return withKnockoutSync(next, teams, matches);
 }
 

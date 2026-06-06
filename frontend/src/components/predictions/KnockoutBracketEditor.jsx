@@ -6,6 +6,7 @@ import { getVisibleKnockoutMatchIndices, teamById } from "../../utils/bracketHel
 import { downloadElementScreenshot } from "../../utils/downloadScreenshot.js";
 import KnockoutBracketView from "./KnockoutBracketView.jsx";
 import MatchPredictionTable from "./MatchPredictionTable.jsx";
+import ShareBracketPrompt from "./ShareBracketPrompt.jsx";
 
 function TieBreaker({ match, locked, onWinner }) {
   if (!match.home || !match.away) return null;
@@ -53,6 +54,12 @@ export default function KnockoutBracketEditor({
   bracketName,
   isStageLocked,
   helpHighlight,
+  shareReady,
+  shareMessage,
+  predictionId,
+  predictionName,
+  isAuthenticated,
+  onSignIn,
   onScore,
   onWinner,
 }) {
@@ -214,6 +221,17 @@ export default function KnockoutBracketEditor({
             );
           })}
         </div>
+      )}
+
+      {mode === "view" && (
+        <ShareBracketPrompt
+          ready={shareReady}
+          message={shareMessage}
+          predictionId={predictionId}
+          predictionName={predictionName}
+          isAuthenticated={isAuthenticated}
+          onSignIn={onSignIn}
+        />
       )}
     </div>
   );

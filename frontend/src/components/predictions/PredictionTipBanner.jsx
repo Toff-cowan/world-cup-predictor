@@ -9,6 +9,18 @@ const TIPS = {
     key: "wc-tip-knockout",
     text: "Knockout teams are set from your group-stage predictions (winners, runners-up, and best third-place teams). Enter scores round by round — no manual team picking.",
   },
+  simple: {
+    key: "wc-tip-simple",
+    text: "Rank each group 1st to 4th by clicking teams in order. The Round of 32 fills automatically from the official FIFA bracket (top 2 + 8 best third-place teams). Tap winners through the tree and download your bracket as a PNG.",
+  },
+  "simple-group": {
+    key: "wc-tip-simple-group",
+    text: "Click teams in each group to rank them 1st through 4th. Tap a ranked team again to remove it. When all 12 groups are done, continue to the bracket.",
+  },
+  "simple-knockout": {
+    key: "wc-tip-simple-knockout",
+    text: "Tap the team you think wins each match — no scores needed. The bracket follows the official FIFA tree from your group rankings. Download a PNG when you're done.",
+  },
 };
 
 export default function PredictionTipBanner({ tab }) {

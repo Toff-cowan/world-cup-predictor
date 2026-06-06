@@ -36,7 +36,7 @@ export default function SharedBracketPage() {
   }, [token]);
 
   const bracket = shared
-    ? normalizeBracket(shared.bracket, { teams, matches: [] })
+    ? normalizeBracket(shared.bracket, { teams, matches: [], viewOnly: true })
     : null;
 
   if (loading) {

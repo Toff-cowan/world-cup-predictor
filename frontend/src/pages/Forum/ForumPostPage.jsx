@@ -83,7 +83,7 @@ export default function ForumPostPage() {
   }, [post?.share_token]);
 
   const bracket = shared
-    ? normalizeBracket(shared.bracket, { teams, matches: [] })
+    ? normalizeBracket(shared.bracket, { teams, matches: [], viewOnly: true })
     : null;
   const headerTheme = post ? fifaHeaderThemeForId(post.id) : { bg: "#000000", text: "#ffffff", badge: "#ffd100", badgeText: "#000000" };
 
@@ -131,7 +131,7 @@ export default function ForumPostPage() {
         )}
 
         {post?.share_token && (
-          <section className="border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 overflow-hidden">
+          <section className="border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900">
             <div className="px-6 py-4 border-b border-zinc-100 dark:border-zinc-800 flex flex-wrap items-center justify-between gap-3">
               <h2 className="text-lg font-bold m-0">
                 {shared?.name || "Shared bracket"}
@@ -143,7 +143,7 @@ export default function ForumPostPage() {
                 Open full view
               </Link>
             </div>
-            <div className="p-4 overflow-x-auto">
+            <div className="p-2 sm:p-4">
               {loadingBracket && (
                 <p className="text-zinc-500 text-sm px-2">Loading bracket…</p>
               )}

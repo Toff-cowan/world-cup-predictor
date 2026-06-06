@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { forumApi } from "../../api/forumApi.js";
 import { predictionsApi } from "../../api/predictionsApi.js";
 import ForumPageHeader from "../../components/forum/ForumPageHeader.jsx";
@@ -15,8 +15,9 @@ const POST_TYPES = [
 
 export default function CreatePost() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { isAuthenticated, loading: authLoading } = useAuth();
-  const [postType, setPostType] = useState("question");
+  const [postType, setPostType] = useState(location.state?.postType || "question");
   const [brackets, setBrackets] = useState([]);
   const [selectedId, setSelectedId] = useState("");
   const [title, setTitle] = useState("");
@@ -46,7 +47,14 @@ export default function CreatePost() {
         if (cancelled) return;
         const list = data.predictions || [];
         setBrackets(list);
-        if (list.length > 0) setSelectedId(String(list[0].id));
+        if (list.length > 0) {
+          const fromState = location.state?.bracketId
+            ? list.find((b) => String(b.id) === String(location.state.bracketId))
+            : location.state?.bracketName
+              ? list.find((b) => b.name === location.state.bracketName)
+              : null;
+          setSelectedId(String((fromState || list[0]).id));
+        }
       } catch (err) {
         if (!cancelled) setError(err.message);
       } finally {
@@ -58,7 +66,7 @@ export default function CreatePost() {
     return () => {
       cancelled = true;
     };
-  }, [authLoading, isAuthenticated, postType]);
+  }, [authLoading, isAuthenticated, postType, location.state?.bracketId, location.state?.bracketName]);
 
   async function handleSubmit(e) {
     e.preventDefault();

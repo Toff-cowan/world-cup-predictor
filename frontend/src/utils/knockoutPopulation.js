@@ -156,3 +156,82 @@ export function syncOfficialKnockout(knockout, bracket, teams, matches) {
   assignSide(final, "away", getWinnerId(k, "semi_final", FINAL_FEED.away));
   return k;
 }
+
+/** Advance winners through the official tree without overwriting R32 slots. */
+export function syncSimpleKnockoutAdvancement(knockout) {
+  const k = structuredClone(knockout);
+  feedRound(k, "round_of_16", R16_FEED, "round_of_32");
+  feedRound(k, "quarter_final", QF_FEED, "round_of_16");
+  feedRound(k, "semi_final", SF_FEED, "quarter_final");
+  const final = ensureMatch(k, "final", 1);
+  assignSide(final, "home", getWinnerId(k, "semi_final", FINAL_FEED.home));
+  assignSide(final, "away", getWinnerId(k, "semi_final", FINAL_FEED.away));
+  return k;
+}
+
+/** Synthetic third-place stats for ranked groups (no match scores). */
+const SIMPLE_THIRD_STATS = { points: 3, goal_difference: 0 };
+
+function teamFromSimpleGroupRank(bracket, pos, groupLetter) {
+  const picks = bracket.groups?.[groupLetter];
+  if (!picks) return null;
+  const slot = pos === 1 ? "first" : pos === 2 ? "second" : pos === 3 ? "third" : "fourth";
+  return normTeamId(picks[slot]);
+}
+
+export function getSimpleThirdPlaceCandidates(bracket) {
+  const candidates = [];
+  for (let i = 0; i < GROUP_LETTERS.length; i++) {
+    const letter = GROUP_LETTERS[i];
+    const teamId = teamFromSimpleGroupRank(bracket, 3, letter);
+    if (teamId == null) continue;
+    candidates.push({
+      group: letter,
+      team_id: teamId,
+      points: SIMPLE_THIRD_STATS.points,
+      goal_difference: SIMPLE_THIRD_STATS.goal_difference,
+      goals_for: GROUP_LETTERS.length - i,
+    });
+  }
+  return candidates.sort(
+    (a, b) =>
+      b.points - a.points ||
+      b.goal_difference - a.goal_difference ||
+      b.goals_for - a.goals_for
+  );
+}
+
+/** Fill R32 from simple group rankings (1st–4th) + Annex C third-place mapping. */
+export function syncSimpleR32FromGroups(knockout, bracket) {
+  const k = structuredClone(knockout);
+  const thirdCandidates = getSimpleThirdPlaceCandidates(bracket);
+  const qualifyingThirdGroups = thirdCandidates.slice(0, 8).map((row) => row.group);
+  const mapping = lookupAnnexCMapping(qualifyingThirdGroups);
+  const thirdByWinnerSlot = buildThirdPlaceMap(qualifyingThirdGroups, mapping, thirdCandidates);
+
+  for (const fx of R32_FIXTURES) {
+    const match = ensureMatch(k, "round_of_32", fx.index);
+    const homeId = teamFromSimpleGroupRank(bracket, fx.home.pos, fx.home.group);
+    let awayId = null;
+    if (fx.away.pos === 3 && fx.away.thirdSlot) {
+      awayId = thirdByWinnerSlot[fx.away.thirdSlot] ?? null;
+    } else {
+      awayId = teamFromSimpleGroupRank(bracket, fx.away.pos, fx.away.group);
+    }
+    assignSide(match, "home", homeId);
+    assignSide(match, "away", awayId);
+  }
+  return k;
+}
+
+/** Simple mode: official FIFA tree from ranked groups + knockout winners. */
+export function syncSimpleKnockoutFromGroups(knockout, bracket) {
+  let k = syncSimpleR32FromGroups(knockout, bracket);
+  feedRound(k, "round_of_16", R16_FEED, "round_of_32");
+  feedRound(k, "quarter_final", QF_FEED, "round_of_16");
+  feedRound(k, "semi_final", SF_FEED, "quarter_final");
+  const final = ensureMatch(k, "final", 1);
+  assignSide(final, "home", getWinnerId(k, "semi_final", FINAL_FEED.home));
+  assignSide(final, "away", getWinnerId(k, "semi_final", FINAL_FEED.away));
+  return k;
+}
