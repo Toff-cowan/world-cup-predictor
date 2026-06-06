@@ -32,7 +32,7 @@ function FormArrow({ result }) {
   if (result === "D") {
     return (
       <span
-        className="inline-flex items-center justify-center w-5 h-5 text-zinc-400 dark:text-zinc-500 text-sm font-bold"
+        className="inline-flex items-center justify-center w-5 h-5 text-zinc-400 dark:text-white text-sm font-bold"
         title="Draw"
         aria-label="Draw"
       >
@@ -67,7 +67,7 @@ export function PositionTrendIcon({ trend }) {
     );
   }
   return (
-    <span className="text-zinc-400 dark:text-zinc-500 text-sm leading-none" title="Unchanged" aria-hidden>
+    <span className="text-zinc-400 dark:text-white text-sm leading-none" title="Unchanged" aria-hidden>
       —
     </span>
   );

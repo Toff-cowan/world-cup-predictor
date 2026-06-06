@@ -12,6 +12,23 @@ export function assignFixtureRound(fixture, groupFixtures) {
   return Math.floor(idx / GROUP_MATCHES_PER_ROUND) + 1;
 }
 
+/** Next scheduled or live fixtures, soonest first. */
+export function upcomingMatches(allMatches, limit = 12) {
+  return allMatches
+    .filter((m) => m.status === "scheduled" || m.status === "live" || m.status === "upcoming")
+    .sort(
+      (a, b) =>
+        new Date(a.kickoffAt || a.kickoff_at || 0) - new Date(b.kickoffAt || b.kickoff_at || 0) ||
+        (a.id ?? 0) - (b.id ?? 0)
+    )
+    .slice(0, limit);
+}
+
+/** Provisional top two per group from all completed group-stage results so far. */
+export function topTwoByGroupSoFar(allMatches) {
+  return topTwoByGroupThroughRound(allMatches, 3);
+}
+
 export function groupStageFixturesByRound(allMatches) {
   const groupFixtures = allMatches.filter((m) => m.stage === "group" && m.groupLetter);
   const byGroup = new Map();

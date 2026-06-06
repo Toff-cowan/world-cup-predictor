@@ -43,7 +43,7 @@ export default function ForumPostCard({ post, onVoteChange, compact = false }) {
         </div>
 
         <div className="px-4 sm:px-5 py-4 flex-1">
-          <p className="text-sm text-zinc-600 dark:text-zinc-400 m-0 line-clamp-3">{post.body}</p>
+          <p className="text-sm text-zinc-600 dark:text-white m-0 line-clamp-3">{post.body}</p>
           <ForumCommentPreview
             comments={post.recent_comments}
             commentCount={post.comment_count}

@@ -88,7 +88,7 @@ export default function ForumPostActions({
         ? positive
           ? "border-emerald-600 bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300"
           : "border-red-500 bg-red-50 text-red-700 dark:bg-red-950/40 dark:text-red-300"
-        : "border-zinc-300 dark:border-zinc-600 text-zinc-600 dark:text-zinc-400 hover:border-zinc-900 dark:hover:border-white"
+        : "border-zinc-300 dark:border-zinc-600 text-zinc-600 dark:text-white hover:border-zinc-900 dark:hover:border-white"
     }`;
 
   return (
@@ -128,7 +128,7 @@ export default function ForumPostActions({
           type="button"
           disabled={copying}
           onClick={handleCopy}
-          className="inline-flex items-center px-3 py-1.5 text-xs font-bold border border-zinc-300 dark:border-zinc-600 text-zinc-700 dark:text-zinc-300 hover:border-zinc-900 dark:hover:border-white disabled:opacity-50"
+          className="inline-flex items-center px-3 py-1.5 text-xs font-bold border border-zinc-300 dark:border-zinc-600 text-zinc-700 dark:text-white hover:border-zinc-900 dark:hover:border-white disabled:opacity-50"
         >
           {copying ? "Copying…" : "Copy to my predictions"}
         </button>

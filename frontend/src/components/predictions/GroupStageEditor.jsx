@@ -90,8 +90,8 @@ export default function GroupStageEditor({
               onClick={() => setActiveGroup(letter)}
               className={`min-w-[2.75rem] min-h-[2.75rem] px-3 py-2 text-sm font-bold uppercase tracking-wide border transition-colors shrink-0 ${
                 activeGroup === letter
-                  ? "bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 border-zinc-900 dark:border-white"
-                  : "bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 border-zinc-300 dark:border-zinc-600 hover:border-zinc-900 dark:hover:border-white"
+                  ? "bg-zinc-900 dark:bg-zinc-800 text-white dark:text-white border-zinc-900 dark:border-white"
+                  : "bg-white dark:bg-zinc-900 text-zinc-600 dark:text-white border-zinc-300 dark:border-zinc-600 hover:border-zinc-900 dark:hover:border-white"
               }`}
             >
               {saved ? "✓ " : ""}
@@ -103,7 +103,7 @@ export default function GroupStageEditor({
       </div>
 
       {groupTeams.length === 0 && (
-        <p className="text-zinc-500 dark:text-zinc-400 text-sm py-8 text-center">
+        <p className="text-zinc-500 dark:text-white/70 text-sm py-8 text-center">
           No teams in Group {activeGroup} yet. Run{" "}
           <code className="bg-zinc-200 dark:bg-zinc-800 px-1.5 py-0.5">npm run scrape</code> in the
           backend.
@@ -111,7 +111,7 @@ export default function GroupStageEditor({
       )}
 
       {groupTeams.length > 0 && fixtures.length === 0 && (
-        <p className="text-zinc-500 dark:text-zinc-400 text-sm py-8 text-center">
+        <p className="text-zinc-500 dark:text-white/70 text-sm py-8 text-center">
           Not enough teams to build Group {activeGroup} fixtures.
         </p>
       )}
@@ -119,7 +119,7 @@ export default function GroupStageEditor({
       {fixtures.length > 0 && (
         <>
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-            <p className="text-sm text-zinc-500 dark:text-zinc-400 m-0">
+            <p className="text-sm text-zinc-500 dark:text-white/70 m-0">
               {groupLocked
                 ? `Group ${activeGroup} is locked. Unlock to edit scores again.`
                 : `Enter scores for Group ${activeGroup}, then save to lock your picks.`}
@@ -130,7 +130,7 @@ export default function GroupStageEditor({
                   type="button"
                   disabled={savingGroup}
                   onClick={() => onSaveGroup(activeGroup)}
-                  className="px-5 py-2 text-xs font-bold uppercase tracking-wide bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 disabled:opacity-50"
+                  className="px-5 py-2 text-xs font-bold uppercase tracking-wide bg-zinc-900 dark:bg-zinc-800 text-white dark:text-white disabled:opacity-50"
                 >
                   {savingGroup ? "Saving…" : `Save group ${activeGroup}`}
                 </button>

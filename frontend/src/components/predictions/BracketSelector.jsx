@@ -72,7 +72,7 @@ export default function BracketSelector({
     <div className="flex flex-col lg:flex-row lg:items-end gap-4 p-4 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700">
       <div className="flex-1 min-w-0 space-y-3">
         <label className="block">
-          <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-400">
+          <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 dark:text-white/70">
             Bracket name
           </span>
           <input
@@ -84,19 +84,19 @@ export default function BracketSelector({
               queueRename(e.target.value);
             }}
             placeholder="Name your bracket"
-            className="mt-1 w-full text-sm font-medium bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-600 px-3 py-2 disabled:opacity-50"
+            className="mt-1 w-full text-sm font-medium text-zinc-900 dark:text-white bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-600 px-3 py-2 disabled:opacity-50"
           />
         </label>
 
         <label className="block">
-          <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-400">
+          <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 dark:text-white/70">
             Select bracket
           </span>
           <select
             value={activeId ?? ""}
             disabled={disabled}
             onChange={(e) => onSelect(e.target.value)}
-            className="mt-1 w-full text-sm font-medium bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-600 px-3 py-2 disabled:opacity-50"
+            className="mt-1 w-full text-sm font-medium text-zinc-900 dark:text-white bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-600 px-3 py-2 disabled:opacity-50"
           >
             {brackets.map((b) => (
               <option key={b.id} value={b.id}>
@@ -112,7 +112,7 @@ export default function BracketSelector({
           type="button"
           disabled={disabled || creating}
           onClick={handleCreate}
-          className="px-4 py-2 text-xs font-bold uppercase tracking-wide bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 disabled:opacity-50"
+          className="px-4 py-2 text-xs font-bold uppercase tracking-wide bg-zinc-900 dark:bg-zinc-800 text-white dark:text-white disabled:opacity-50"
         >
           {creating ? "Creating…" : "New bracket"}
         </button>
@@ -120,7 +120,7 @@ export default function BracketSelector({
           type="button"
           disabled={disabled || brackets.length <= 1}
           onClick={handleDelete}
-          className="px-4 py-2 text-xs font-bold uppercase tracking-wide border border-zinc-300 dark:border-zinc-600 text-zinc-600 dark:text-zinc-400 hover:border-red-500 hover:text-red-500 disabled:opacity-40"
+          className="px-4 py-2 text-xs font-bold uppercase tracking-wide border border-zinc-300 dark:border-zinc-600 text-zinc-600 dark:text-white hover:border-red-500 hover:text-red-500 disabled:opacity-40"
         >
           Delete
         </button>

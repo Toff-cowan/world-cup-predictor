@@ -65,7 +65,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f3f3f3] dark:bg-[#0a0a0a] text-zinc-900 dark:text-zinc-100">
+    <div className="min-h-screen bg-[#f3f3f3] dark:bg-[#0a0a0a] text-zinc-900 dark:text-white">
       <section className="w-full bg-black text-white py-10 sm:py-12 lg:py-16">
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12 flex flex-col sm:flex-row sm:items-center gap-6">
           <div
@@ -114,7 +114,7 @@ export default function ProfilePage() {
             <h2 className="text-lg font-bold m-0">Your brackets</h2>
             <Link
               to="/predictions"
-              className="text-xs font-bold uppercase tracking-wide text-zinc-600 dark:text-zinc-300 hover:underline underline-offset-4"
+              className="text-xs font-bold uppercase tracking-wide text-zinc-600 dark:text-white hover:underline underline-offset-4"
             >
               Manage
             </Link>
@@ -143,7 +143,7 @@ export default function ProfilePage() {
                       Updated {formatDate(p.updated_at)}
                     </span>
                     {p.is_fully_locked ? (
-                      <span className="text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900">
+                      <span className="text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 bg-zinc-900 dark:bg-zinc-800 text-white dark:text-white">
                         Locked
                       </span>
                     ) : (
@@ -168,7 +168,7 @@ export default function ProfilePage() {
             <h2 className="text-lg font-bold m-0">Your forum posts</h2>
             <Link
               to="/forum/new"
-              className="text-xs font-bold uppercase tracking-wide text-zinc-600 dark:text-zinc-300 hover:underline underline-offset-4"
+              className="text-xs font-bold uppercase tracking-wide text-zinc-600 dark:text-white hover:underline underline-offset-4"
             >
               New post
             </Link>

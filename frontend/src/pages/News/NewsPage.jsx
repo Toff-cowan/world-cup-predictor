@@ -40,7 +40,7 @@ function ArticleCard({ article }) {
           {article.title}
         </h2>
         {article.summary && (
-          <p className="text-sm text-zinc-600 dark:text-zinc-400 mt-2 m-0 line-clamp-3 flex-1">
+          <p className="text-sm text-zinc-600 dark:text-white mt-2 m-0 line-clamp-3 flex-1">
             {article.summary}
           </p>
         )}
@@ -87,7 +87,7 @@ export default function NewsPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100">
+    <div className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-white">
       <section className="w-full bg-black text-white py-10 sm:py-12 lg:py-16 px-4">
         <div className="max-w-[1400px] mx-auto">
           <h1 className="font-display text-2xl sm:text-4xl lg:text-5xl font-bold uppercase tracking-tight m-0">

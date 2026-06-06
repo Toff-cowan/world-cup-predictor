@@ -71,7 +71,7 @@ export default function NewsDetailPage() {
   const content = article.body || article.summary;
 
   return (
-    <article className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100">
+    <article className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-white">
       <div className="w-full bg-black text-white py-8 sm:py-10 px-4">
         <div className="max-w-3xl mx-auto">
           <Link to="/news" className="text-xs font-bold uppercase tracking-widest text-white/60 hover:text-white">
@@ -111,7 +111,7 @@ export default function NewsDetailPage() {
             <ExternalSiteLink
               href={article.sourceUrl}
               hint="fifa.com"
-              className="text-sm font-semibold underline underline-offset-4 text-zinc-900 hover:text-zinc-600 dark:text-zinc-100 dark:hover:text-white"
+              className="text-sm font-semibold underline underline-offset-4 text-zinc-900 hover:text-zinc-600 dark:text-white dark:hover:text-white"
             >
               Read on FIFA.com →
             </ExternalSiteLink>

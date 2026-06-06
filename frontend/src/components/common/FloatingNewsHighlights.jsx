@@ -159,7 +159,7 @@ export default function FloatingNewsHighlights() {
             <button
               type="button"
               onClick={() => setCollapsed((c) => !c)}
-              className="min-h-[2.5rem] px-2 text-[10px] font-semibold uppercase tracking-wide text-zinc-600 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white"
+              className="min-h-[2.5rem] px-2 text-[10px] font-semibold uppercase tracking-wide text-zinc-600 dark:text-white hover:text-zinc-900 dark:hover:text-white"
               aria-expanded={!collapsed}
             >
               {collapsed ? "Show" : "Hide"}
