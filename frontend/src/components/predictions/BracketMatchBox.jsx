@@ -83,8 +83,11 @@ function TeamRow({
               className="bracket-flag w-5 h-5 shrink-0 pointer-events-none"
             />
           )}
-          <span className="text-[11px] font-bold uppercase tracking-wide truncate text-zinc-900 pointer-events-none">
+          <span className="text-[11px] font-bold uppercase tracking-wide truncate text-zinc-900 pointer-events-none bracket-team-name--full">
             {team.name}
+          </span>
+          <span className="text-[10px] font-bold uppercase tracking-wide text-zinc-900 pointer-events-none bracket-team-name--short">
+            {team.code || team.name}
           </span>
           {mirrored && (
             <TeamFlag
@@ -117,7 +120,7 @@ export function BracketMatchBox({
   const canPick = !locked && match.home && match.away;
 
   return (
-    <div className="bracket-match-box w-[132px] xl:w-[148px] shrink-0 flex flex-col overflow-hidden">
+    <div className="bracket-match-box shrink-0 flex flex-col overflow-hidden">
       <TeamRow
         team={homeTeam}
         seed={teamSeedLabel(match.home, groups, teams)}
@@ -183,7 +186,7 @@ export function BracketFlagNode({
 
 export function BracketCenterColumn({ children }) {
   return (
-    <div className="bracket-center flex flex-col items-center justify-between shrink-0 self-stretch px-2 py-2 min-w-[100px] xl:min-w-[120px]">
+    <div className="bracket-center flex flex-col items-center justify-between shrink-0 self-stretch px-2 py-2">
       {children}
     </div>
   );
@@ -198,7 +201,7 @@ export function BracketWinnerBlock({ champion, large = true }) {
           <div className="flex justify-center mb-2">
             <BracketFlagNode team={champion} large={large} />
           </div>
-          <p className="font-display text-lg xl:text-xl font-bold uppercase tracking-tight m-0 text-zinc-900 leading-tight">
+          <p className="bracket-winner-name font-display text-lg xl:text-xl font-bold uppercase tracking-tight m-0 text-zinc-900 leading-tight">
             {champion.name}
           </p>
         </>

@@ -7,13 +7,13 @@ const KnockoutBracketShell = forwardRef(function KnockoutBracketShell(
   ref
 ) {
   return (
-    <section className="bracket-shell bg-white text-zinc-900 border border-zinc-200 pb-4 sm:pb-6">
+    <section className="bracket-shell bg-white text-zinc-900 border border-zinc-200 dark:border-zinc-700 pb-4 sm:pb-6">
       <BracketFitViewport ref={ref}>
-        <div className="w-max px-2 py-3 bg-white">
+        <div className="w-max px-1 sm:px-2 py-2 sm:py-3 bg-white">
           {hint && (
             <p className="bracket-hint text-xs text-zinc-500 text-center m-0 mb-2">{hint}</p>
           )}
-          <h2 className="font-display text-lg xl:text-xl font-bold uppercase tracking-tight text-center m-0 mb-0.5 text-zinc-900">
+          <h2 className="bracket-shell-title font-display text-lg xl:text-xl font-bold uppercase tracking-tight text-center m-0 mb-0.5 text-zinc-900">
             {title}
           </h2>
           {subtitle ? (

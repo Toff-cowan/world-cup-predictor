@@ -1,5 +1,4 @@
 import {
-  BRACKET_GRID_MIN_HEIGHT,
   BRACKET_SLOT_COUNT,
   LEFT_QF,
   LEFT_R16,
@@ -13,11 +12,9 @@ import {
 } from "../../utils/knockoutBracketLayout.js";
 
 function Connector({ mirrored }) {
-  // Each connector merges two equal halves, so the vertical line always
-  // spans the middle 50% of its slot — linking the centers of both feeders.
   return (
     <div
-      className={`w-5 xl:w-6 shrink-0 h-full flex items-center ${
+      className={`bracket-connector w-5 xl:w-6 shrink-0 h-full flex items-center ${
         mirrored ? "justify-end" : "justify-start"
       }`}
       aria-hidden
@@ -42,17 +39,23 @@ function GridSlot({ rowStart, rowSpan, mirrored, children }) {
   );
 }
 
-function RoundGrid({ label, children }) {
+function RoundLabel({ long, short }) {
+  return (
+    <span className="bracket-round-label mb-2 whitespace-nowrap text-center">
+      <span className="bracket-round-label--long">{long}</span>
+      <span className="bracket-round-label--short">{short}</span>
+    </span>
+  );
+}
+
+function RoundGrid({ label, shortLabel, children }) {
   return (
     <div className="flex flex-col shrink-0 self-stretch">
-      <span className="bracket-round-label mb-2 whitespace-nowrap text-center">
-        {label}
-      </span>
+      <RoundLabel long={label} short={shortLabel} />
       <div
-        className="grid flex-1"
+        className="bracket-round-grid grid flex-1"
         style={{
           gridTemplateRows: `repeat(${BRACKET_SLOT_COUNT}, minmax(0, 1fr))`,
-          minHeight: BRACKET_GRID_MIN_HEIGHT,
         }}
       >
         {children}
@@ -64,10 +67,9 @@ function RoundGrid({ label, children }) {
 function ConnectorGrid({ mirrored, slots }) {
   return (
     <div
-      className="grid shrink-0 self-stretch"
+      className="bracket-round-grid grid shrink-0 self-stretch"
       style={{
         gridTemplateRows: `repeat(${BRACKET_SLOT_COUNT}, minmax(0, 1fr))`,
-        minHeight: BRACKET_GRID_MIN_HEIGHT,
       }}
     >
       {slots.map(({ rowStart, rowSpan }, index) => (
@@ -92,7 +94,7 @@ export default function BracketHalfLayout({ side, renderMatch }) {
 
   return (
     <div className={`flex items-stretch ${mirrored ? "flex-row-reverse" : ""}`}>
-      <RoundGrid label="Round of 32">
+      <RoundGrid label="Round of 32" shortLabel="R32">
         {r32Indices.map((idx, i) => {
           const { rowStart, rowSpan } = bracketGridSlot("r32", i);
           return (
@@ -105,7 +107,7 @@ export default function BracketHalfLayout({ side, renderMatch }) {
 
       <ConnectorGrid mirrored={mirrored} slots={r16ConnectorSlots} />
 
-      <RoundGrid label="Round of 16">
+      <RoundGrid label="Round of 16" shortLabel="R16">
         {r16Indices.map((idx, i) => {
           const { rowStart, rowSpan } = bracketGridSlot("r16", i);
           return (
@@ -118,7 +120,7 @@ export default function BracketHalfLayout({ side, renderMatch }) {
 
       <ConnectorGrid mirrored={mirrored} slots={qfConnectorSlots} />
 
-      <RoundGrid label="Quarter-Final">
+      <RoundGrid label="Quarter-Final" shortLabel="QF">
         {qfIndices.map((idx, i) => {
           const { rowStart, rowSpan } = bracketGridSlot("qf", i);
           return (
@@ -131,7 +133,7 @@ export default function BracketHalfLayout({ side, renderMatch }) {
 
       <ConnectorGrid mirrored={mirrored} slots={[sfConnectorSlot]} />
 
-      <RoundGrid label="Semi-Final">
+      <RoundGrid label="Semi-Final" shortLabel="SF">
         {(() => {
           const { rowStart, rowSpan } = bracketGridSlot("sf", 0);
           return (

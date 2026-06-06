@@ -423,8 +423,96 @@ optgroup {
   width: 100%;
 }
 
+.bracket-fit-viewport--mobile {
+  height: auto;
+  min-height: 0;
+}
+
+.bracket-fit-content {
+  transform-origin: top left;
+}
+
 .bracket-shell {
   background: #fff;
+  --bracket-grid-min-height: 720px;
+}
+
+@media (max-width: 767px) {
+  .bracket-shell {
+    --bracket-grid-min-height: 460px;
+    margin-left: 0;
+    margin-right: 0;
+    border-left: 0;
+    border-right: 0;
+  }
+
+  .bracket-fit-viewport {
+    height: auto;
+    min-height: 0;
+  }
+
+  .bracket-fit-scaler {
+    max-width: 100%;
+  }
+
+  .bracket-match-box {
+    width: 74px;
+  }
+
+  .bracket-center {
+    min-width: 48px;
+    padding-left: 2px;
+    padding-right: 2px;
+  }
+
+  .bracket-connector {
+    width: 8px;
+  }
+
+  .bracket-team-row {
+    gap: 0.25rem;
+    padding: 0.25rem 0.35rem;
+    min-height: 22px;
+  }
+
+  .bracket-team-row[role="button"] {
+    min-height: 28px;
+  }
+
+  .bracket-team-name--full,
+  .bracket-round-label--long {
+    display: none;
+  }
+
+  .bracket-team-name--short,
+  .bracket-round-label--short {
+    display: inline;
+  }
+
+  .bracket-trophy-img {
+    width: 3.5rem;
+    max-height: 4.5rem;
+  }
+
+  .bracket-winner-name {
+    font-size: 0.875rem;
+    line-height: 1.15;
+  }
+
+  .bracket-shell-title {
+    font-size: 1rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .bracket-team-name--short,
+  .bracket-round-label--short {
+    display: none;
+  }
+
+  .bracket-center {
+    min-width: 120px;
+  }
 }
 
 .bracket-round-label {
@@ -436,7 +524,18 @@ optgroup {
   color: #9ca3af;
 }
 
+.bracket-round-grid {
+  min-height: var(--bracket-grid-min-height, 720px);
+}
+
+.bracket-center {
+  min-width: 100px;
+  border-left: 0;
+  border-right: 0;
+}
+
 .bracket-match-box {
+  width: 148px;
   background: #eef9f7;
   border: 1px solid #c8ebe4;
   border-radius: 10px;
@@ -465,11 +564,6 @@ optgroup {
 .bracket-flag {
   border-radius: 9999px;
   object-fit: cover;
-}
-
-.bracket-center {
-  border-left: 0;
-  border-right: 0;
 }
 
 .bracket-trophy-img {
