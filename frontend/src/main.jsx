@@ -1,6 +1,7 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
+import { Analytics } from "@vercel/analytics/react";
 import { AuthProvider } from "./context/AuthContext.jsx";
 import { ThemeProvider } from "./context/ThemeContext.jsx";
 import { CountdownVisibilityProvider } from "./context/CountdownVisibilityContext.jsx";
@@ -14,6 +15,7 @@ createRoot(document.getElementById("root")).render(
         <ThemeProvider>
           <CountdownVisibilityProvider>
             <App />
+            <Analytics />
           </CountdownVisibilityProvider>
         </ThemeProvider>
       </AuthProvider>
