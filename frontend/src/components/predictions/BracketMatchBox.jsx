@@ -39,7 +39,6 @@ function TeamRow({
   team,
   seed,
   winner,
-  mirrored,
   locked,
   onClick,
 }) {
@@ -63,7 +62,6 @@ function TeamRow({
       className={[
         "bracket-team-row flex items-center gap-1.5 px-2 py-1.5 min-h-[26px]",
         winner ? "bracket-team-row--winner" : "",
-        mirrored ? "flex-row-reverse text-right" : "",
         interactive ? "cursor-pointer hover:brightness-[0.98]" : "",
         !team ? "opacity-60" : "",
       ]
@@ -75,28 +73,18 @@ function TeamRow({
       </span>
       {team ? (
         <>
-          {!mirrored && (
-            <TeamFlag
-              flagUrl={team.flag_url}
-              countryCode={team.country_code}
-              teamCode={team.code}
-              className="bracket-flag w-5 h-5 shrink-0 pointer-events-none"
-            />
-          )}
+          <TeamFlag
+            flagUrl={team.flag_url}
+            countryCode={team.country_code}
+            teamCode={team.code}
+            className="bracket-flag w-5 h-5 shrink-0 pointer-events-none"
+          />
           <span className="text-[11px] font-bold uppercase tracking-wide truncate text-zinc-900 pointer-events-none bracket-team-name--full">
             {team.name}
           </span>
           <span className="text-[10px] font-bold uppercase tracking-wide text-zinc-900 pointer-events-none bracket-team-name--short">
             {team.code || team.name}
           </span>
-          {mirrored && (
-            <TeamFlag
-              flagUrl={team.flag_url}
-              countryCode={team.country_code}
-              teamCode={team.code}
-              className="bracket-flag w-5 h-5 shrink-0 pointer-events-none"
-            />
-          )}
         </>
       ) : (
         <span className="text-[11px] text-zinc-400 uppercase">TBD</span>
@@ -109,7 +97,6 @@ export function BracketMatchBox({
   match,
   teams,
   groups,
-  mirrored = false,
   showScores = false,
   locked = true,
   onPickHome,
@@ -125,7 +112,6 @@ export function BracketMatchBox({
         team={homeTeam}
         seed={teamSeedLabel(match.home, groups, teams)}
         winner={match.winner === match.home}
-        mirrored={mirrored}
         locked={!canPick}
         onClick={canPick ? onPickHome : undefined}
       />
@@ -134,7 +120,6 @@ export function BracketMatchBox({
         team={awayTeam}
         seed={teamSeedLabel(match.away, groups, teams)}
         winner={match.winner === match.away}
-        mirrored={mirrored}
         locked={!canPick}
         onClick={canPick ? onPickAway : undefined}
       />

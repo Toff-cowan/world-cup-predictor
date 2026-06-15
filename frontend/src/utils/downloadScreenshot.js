@@ -35,6 +35,9 @@ export async function downloadElementScreenshot(element, filename = "bracket.png
 
   await waitForImages(element);
 
+  // The on-screen bracket is shrunk to fit via a CSS `transform: scale()`.
+  // Capture it at full size by neutralising that transform during export,
+  // otherwise mobile downloads come out as a tiny image.
   const width = element.scrollWidth;
   const height = element.scrollHeight;
 
@@ -48,6 +51,9 @@ export async function downloadElementScreenshot(element, filename = "bracket.png
       overflow: "visible",
       width: `${width}px`,
       height: `${height}px`,
+      transform: "none",
+      transformOrigin: "top left",
+      margin: "0",
     },
     skipFonts: false,
   });

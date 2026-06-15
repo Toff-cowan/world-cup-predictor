@@ -14,6 +14,38 @@ const STAT_COLS = [
   { key: "points", label: "Pts" },
 ];
 
+function LiveMatchTag({ live, compact = false }) {
+  if (!live) return null;
+
+  const scoreline =
+    live.teamScore != null && live.oppScore != null
+      ? `${live.teamScore}–${live.oppScore}`
+      : null;
+
+  if (live.isLive) {
+    return (
+      <span
+        className="inline-flex items-center gap-1 text-[10px] font-bold tabular-nums text-red-600 dark:text-red-400"
+        title={`Live vs ${live.opponentName || "opponent"}`}
+      >
+        <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse shrink-0" aria-hidden />
+        {compact ? "LIVE" : `LIVE ${scoreline ?? ""}`.trim()}
+      </span>
+    );
+  }
+
+  if (compact || scoreline == null) return null;
+
+  return (
+    <span
+      className="text-[10px] font-medium text-zinc-400 dark:text-white/50 tabular-nums"
+      title={`Last result vs ${live.opponentName || "opponent"}`}
+    >
+      FT {scoreline}
+    </span>
+  );
+}
+
 function MobileStandingCard({
   row,
   rank,
@@ -21,6 +53,7 @@ function MobileStandingCard({
   showRank,
   linkTeamSearch,
   trend,
+  live,
 }) {
   return (
     <li
@@ -66,11 +99,17 @@ function MobileStandingCard({
               {row.team_name}
             </span>
           )}
-          {row.group_letter && (
-            <span className="text-[10px] text-zinc-500 dark:text-white/70 uppercase">Group {row.group_letter}</span>
-          )}
+          <div className="flex items-center gap-2">
+            {row.group_letter && (
+              <span className="text-[10px] text-zinc-500 dark:text-white/70 uppercase">Group {row.group_letter}</span>
+            )}
+            <LiveMatchTag live={live} />
+          </div>
         </div>
-        <span className="text-lg font-bold tabular-nums shrink-0 text-zinc-900 dark:text-white">{row.points ?? 0}</span>
+        <div className="flex flex-col items-end shrink-0">
+          <span className="text-lg font-bold tabular-nums text-zinc-900 dark:text-white">{row.points ?? 0}</span>
+          <span className="text-[9px] uppercase tracking-wide text-zinc-400 dark:text-white/50">Pts</span>
+        </div>
       </div>
 
       <div className="mt-2.5 grid grid-cols-4 gap-1 text-center">
@@ -96,7 +135,10 @@ export default function GroupStandingsTable({
   showRank = true,
   linkTeamSearch = false,
   highlightQualifiers = !showGroupColumn,
+  liveByTeamId = null,
 }) {
+  const getLive = (row) =>
+    liveByTeamId && row.team_id != null ? liveByTeamId.get(row.team_id) : null;
   const sorted = [...teams].sort(
     (a, b) =>
       (a.position ?? 99) - (b.position ?? 99) ||
@@ -134,6 +176,7 @@ export default function GroupStandingsTable({
               showRank={showRank}
               linkTeamSearch={linkTeamSearch}
               trend={positionTrend(row.form)}
+              live={getLive(row)}
             />
           );
         })}
@@ -161,6 +204,7 @@ export default function GroupStandingsTable({
               const rank = row.position ?? index + 1;
               const isQualifier = highlightQualifiers && rank <= 2;
               const trend = positionTrend(row.form);
+              const live = getLive(row);
 
               return (
                 <li
@@ -210,6 +254,7 @@ export default function GroupStandingsTable({
                         {row.team_name}
                       </span>
                     )}
+                    <LiveMatchTag live={live} />
                   </div>
 
                   {showGroupColumn && (

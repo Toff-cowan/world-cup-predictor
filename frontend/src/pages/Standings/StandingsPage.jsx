@@ -1,8 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
 import { standingsApi } from "../../api/standingsApi.js";
+import { matchesApi } from "../../api/matchesApi.js";
 import GroupStandingsTable from "../../components/standings/GroupStandingsTable.jsx";
+import LiveResultsStrip from "../../components/standings/LiveResultsStrip.jsx";
+import { liveAndRecentResults, liveMatchByTeamId } from "../../utils/matchRounds.js";
 
 const GROUP_ORDER = "ABCDEFGHIJKL".split("");
+const POLL_MS = 30_000;
 
 function sortGroups(keys) {
   return [...keys].sort(
@@ -28,16 +32,48 @@ function buildOverallStandings(standingsByGroup) {
 
 export default function StandingsPage() {
   const [standings, setStandings] = useState({});
+  const [matches, setMatches] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [view, setView] = useState("overall");
+  const [updatedAt, setUpdatedAt] = useState(null);
 
   useEffect(() => {
-    standingsApi
-      .all()
-      .then((data) => setStandings(data.standings || {}))
-      .catch((err) => setError(err.message))
-      .finally(() => setLoading(false));
+    let cancelled = false;
+
+    function load(isInitial = false) {
+      Promise.all([
+        standingsApi.all(),
+        matchesApi.all().catch(() => ({ matches: [] })),
+      ])
+        .then(([standingsRes, matchesRes]) => {
+          if (cancelled) return;
+          setStandings(standingsRes.standings || {});
+          setMatches(matchesRes.matches || []);
+          setUpdatedAt(new Date());
+          setError("");
+        })
+        .catch((err) => {
+          if (!cancelled) setError(err.message);
+        })
+        .finally(() => {
+          if (!cancelled && isInitial) setLoading(false);
+        });
+    }
+
+    function onVisible() {
+      if (document.visibilityState === "visible") load(false);
+    }
+
+    load(true);
+    const id = setInterval(() => load(false), POLL_MS);
+    document.addEventListener("visibilitychange", onVisible);
+
+    return () => {
+      cancelled = true;
+      clearInterval(id);
+      document.removeEventListener("visibilitychange", onVisible);
+    };
   }, []);
 
   const groups = sortGroups(Object.keys(standings));
@@ -46,15 +82,34 @@ export default function StandingsPage() {
     [standings]
   );
 
+  const liveByTeamId = useMemo(() => liveMatchByTeamId(matches), [matches]);
+  const recentResults = useMemo(() => liveAndRecentResults(matches, 12), [matches]);
+  const hasLive = useMemo(
+    () => matches.some((m) => m.status === "live"),
+    [matches]
+  );
+
   return (
     <div className="min-h-screen bg-[#f3f3f3] dark:bg-[#0a0a0a] text-zinc-900 dark:text-white">
       <section className="w-full bg-black text-white py-10 sm:py-12 lg:py-16 px-4">
         <h1 className="font-display text-2xl sm:text-4xl lg:text-5xl font-bold uppercase tracking-tight text-center m-0">
           Standings
         </h1>
+        {hasLive && (
+          <p className="mt-3 text-center m-0">
+            <span className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-red-400">
+              <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" aria-hidden />
+              Live matches in play · table updates automatically
+            </span>
+          </p>
+        )}
       </section>
 
       <div className="w-full max-w-none mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 pb-10 pt-6 sm:pt-8 space-y-6">
+        {!loading && !error && recentResults.length > 0 && (
+          <LiveResultsStrip matches={recentResults} updatedAt={updatedAt} />
+        )}
+
         <div className="flex justify-stretch sm:justify-end">
           <div className="flex w-full sm:w-auto border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-900 p-1">
             <button
@@ -109,6 +164,7 @@ export default function StandingsPage() {
             showGroupColumn
             linkTeamSearch
             highlightQualifiers={false}
+            liveByTeamId={liveByTeamId}
           />
         )}
 
@@ -122,6 +178,7 @@ export default function StandingsPage() {
                 showRank
                 linkTeamSearch
                 highlightQualifiers
+                liveByTeamId={liveByTeamId}
               />
             ))}
           </div>

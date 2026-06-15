@@ -23,6 +23,8 @@ function mapMatch(row) {
     awayScore: row.away_score,
     status: row.status,
     venue: row.venue,
+    homeTeamId: row.home_team_id,
+    awayTeamId: row.away_team_id,
     homeTeamName: row.home_team_name,
     homeTeamCode: row.home_team_code,
     homeCountryCode: row.home_country_code,

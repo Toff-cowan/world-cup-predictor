@@ -29,6 +29,95 @@ export function topTwoByGroupSoFar(allMatches) {
   return topTwoByGroupThroughRound(allMatches, 3);
 }
 
+function matchTeamId(match, side) {
+  return side === "home"
+    ? match.homeTeamId ?? match.home_team_id ?? null
+    : match.awayTeamId ?? match.away_team_id ?? null;
+}
+
+function matchScore(match, side) {
+  return side === "home"
+    ? match.homeScore ?? match.home_score ?? null
+    : match.awayScore ?? match.away_score ?? null;
+}
+
+function matchKickoffMs(match) {
+  return new Date(match.kickoffAt || match.kickoff_at || 0).getTime();
+}
+
+/**
+ * Map team_id -> the team's most relevant in-play/recent match for showing live
+ * stats inside a standings row. A live match always wins; otherwise the most
+ * recently kicked-off completed match is used.
+ */
+export function liveMatchByTeamId(allMatches = []) {
+  const map = new Map();
+
+  const consider = (teamId, side, match) => {
+    if (!teamId) return;
+    const isLive = match.status === "live";
+    const oppSide = side === "home" ? "away" : "home";
+    const entry = {
+      match,
+      status: match.status,
+      isLive,
+      isHome: side === "home",
+      teamScore: matchScore(match, side),
+      oppScore: matchScore(match, oppSide),
+      opponentName:
+        oppSide === "home"
+          ? match.homeTeamName ?? match.home_team_name
+          : match.awayTeamName ?? match.away_team_name,
+      opponentCode:
+        oppSide === "home"
+          ? match.homeTeamCode ?? match.home_team_code
+          : match.awayTeamCode ?? match.away_team_code,
+      opponentCountryCode:
+        oppSide === "home"
+          ? match.homeCountryCode ?? match.home_country_code
+          : match.awayCountryCode ?? match.away_country_code,
+      opponentFlagUrl:
+        oppSide === "home"
+          ? match.homeFlagUrl ?? match.home_flag_url
+          : match.awayFlagUrl ?? match.away_flag_url,
+      kickoffMs: matchKickoffMs(match),
+    };
+
+    const existing = map.get(teamId);
+    if (!existing) {
+      map.set(teamId, entry);
+      return;
+    }
+    // Prefer live over anything; then the more recent kickoff.
+    if (entry.isLive && !existing.isLive) {
+      map.set(teamId, entry);
+    } else if (entry.isLive === existing.isLive && entry.kickoffMs > existing.kickoffMs) {
+      map.set(teamId, entry);
+    }
+  };
+
+  for (const match of allMatches) {
+    if (match.status !== "live" && match.status !== "completed") continue;
+    consider(matchTeamId(match, "home"), "home", match);
+    consider(matchTeamId(match, "away"), "away", match);
+  }
+
+  return map;
+}
+
+/** Live matches first (soonest kickoff), then most recently completed. */
+export function liveAndRecentResults(allMatches = [], limit = 8) {
+  const live = allMatches
+    .filter((m) => m.status === "live")
+    .sort((a, b) => matchKickoffMs(a) - matchKickoffMs(b));
+
+  const completed = allMatches
+    .filter((m) => m.status === "completed")
+    .sort((a, b) => matchKickoffMs(b) - matchKickoffMs(a));
+
+  return [...live, ...completed].slice(0, limit);
+}
+
 export function groupStageFixturesByRound(allMatches) {
   const groupFixtures = allMatches.filter((m) => m.stage === "group" && m.groupLetter);
   const byGroup = new Map();
