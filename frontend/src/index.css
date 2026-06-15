@@ -417,7 +417,7 @@ optgroup {
   align-items: center;
   min-width: 100%;
   white-space: nowrap;
-  animation: wc-marquee-scroll 26s linear infinite;
+  animation: wc-marquee-scroll 55s linear infinite;
   will-change: transform;
 }
 

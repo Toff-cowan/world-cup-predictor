@@ -15,10 +15,11 @@ export default function CountdownRibbon({ onClose }) {
         <button
           type="button"
           onClick={onClose}
-          className="absolute top-1/2 -translate-y-1/2 right-3 lg:right-6 z-10 p-1.5 text-white/80 hover:text-white hover:bg-white/10 transition-colors"
+          className="absolute top-1/2 -translate-y-1/2 right-3 lg:right-6 z-10 flex items-center justify-center w-9 h-9 rounded-full bg-white text-zinc-900 shadow-md ring-2 ring-white/70 hover:bg-zinc-100 hover:scale-105 transition-all"
           aria-label="Hide countdown"
+          style={{ color: WC_BLUE }}
         >
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
             <path strokeLinecap="round" d="M6 6l12 12M18 6L6 18" />
           </svg>
         </button>
