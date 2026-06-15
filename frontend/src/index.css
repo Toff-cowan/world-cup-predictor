@@ -403,6 +403,52 @@ optgroup {
   }
 }
 
+/* Right-to-left scrolling ribbon marquee */
+.wc-marquee {
+  display: flex;
+  overflow: hidden;
+  width: 100%;
+  user-select: none;
+}
+
+.wc-marquee__track {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  min-width: 100%;
+  white-space: nowrap;
+  animation: wc-marquee-scroll 26s linear infinite;
+  will-change: transform;
+}
+
+.wc-marquee__item {
+  display: inline-flex;
+  align-items: center;
+  padding-right: 2.5rem;
+}
+
+.wc-marquee__sep {
+  margin-left: 2.5rem;
+  font-size: 0.85em;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+@keyframes wc-marquee-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wc-marquee__track {
+    animation: none;
+    justify-content: center;
+  }
+}
+
 .countdown-ribbon-slide-in {
   animation: countdown-ribbon-slide-in 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
 }

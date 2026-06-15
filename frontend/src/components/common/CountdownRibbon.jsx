@@ -1,18 +1,21 @@
-import CountdownCompact from "./CountdownCompact.jsx";
 import { WC_BLUE } from "../../constants/wcTheme.js";
 
-/** FIFA-style blue countdown ribbon (below site header) */
+const PHRASE = "ITS WORLD CUP TIME!!!!!!!";
+// Rendered twice over; the track animates by -50% for a seamless loop.
+const ITEMS = Array.from({ length: 12 });
+
+/** FIFA-style blue ribbon with a right-to-left scrolling marquee. */
 export default function CountdownRibbon({ onClose }) {
   return (
     <section
-      className="font-sans text-white relative dark:border-b dark:border-white/10"
+      className="font-sans text-white relative overflow-hidden dark:border-b dark:border-white/10"
       style={{ backgroundColor: WC_BLUE }}
     >
       {onClose && (
         <button
           type="button"
           onClick={onClose}
-          className="absolute top-3 right-3 lg:top-4 lg:right-6 p-1.5 text-white/80 hover:text-white hover:bg-white/10 transition-colors"
+          className="absolute top-1/2 -translate-y-1/2 right-3 lg:right-6 z-10 p-1.5 text-white/80 hover:text-white hover:bg-white/10 transition-colors"
           aria-label="Hide countdown"
         >
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -21,16 +24,22 @@ export default function CountdownRibbon({ onClose }) {
         </button>
       )}
 
-      <div className="max-w-[1400px] mx-auto px-4 lg:px-8 py-5 pr-12 lg:pr-16 flex flex-col lg:flex-row lg:items-center gap-6 lg:gap-10">
-        <div className="shrink-0">
-          <p className="text-xl sm:text-2xl font-bold tracking-tight m-0">
-            FIFA World Cup 2026™
-          </p>
-          <p className="text-sm sm:text-base text-white/90 mt-1 m-0">11 June – 19 July 2026</p>
-        </div>
-
-        <div className="flex flex-col sm:flex-row sm:items-center gap-6 lg:ml-auto">
-          <CountdownCompact />
+      <div
+        className="wc-marquee py-4 sm:py-5"
+        role="marquee"
+        aria-label="It's World Cup time"
+      >
+        <div className="wc-marquee__track">
+          {ITEMS.map((_, i) => (
+            <span key={i} className="wc-marquee__item" aria-hidden={i !== 0}>
+              <span className="font-display font-bold tracking-tight text-xl sm:text-2xl lg:text-3xl">
+                {PHRASE}
+              </span>
+              <span className="wc-marquee__sep" aria-hidden>
+                ★
+              </span>
+            </span>
+          ))}
         </div>
       </div>
     </section>

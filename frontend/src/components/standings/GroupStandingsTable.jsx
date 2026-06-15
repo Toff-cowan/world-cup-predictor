@@ -1,7 +1,5 @@
 import TeamFlag from "./TeamFlag.jsx";
-import FormIndicators from "./FormIndicators.jsx";
 import { nationalTeamSearchUrl } from "../../utils/teamSearchUrl.js";
-import { positionTrend } from "../../utils/teamForm.js";
 
 const STAT_COLS = [
   { key: "played", label: "P" },
@@ -52,7 +50,6 @@ function MobileStandingCard({
   isQualifier,
   showRank,
   linkTeamSearch,
-  trend,
   live,
 }) {
   return (
@@ -120,10 +117,6 @@ function MobileStandingCard({
           </div>
         ))}
       </div>
-
-      <div className="mt-2 flex justify-end">
-        <FormIndicators form={row.form} showTrend trend={trend} />
-      </div>
     </li>
   );
 }
@@ -147,8 +140,8 @@ export default function GroupStandingsTable({
   );
 
   const gridCols = showGroupColumn
-    ? "grid-cols-[minmax(12rem,4fr)_3rem_repeat(8,minmax(2.25rem,1fr))_7rem]"
-    : "grid-cols-[minmax(12rem,4fr)_repeat(8,minmax(2.25rem,1fr))_7rem]";
+    ? "grid-cols-[minmax(12rem,4fr)_3rem_repeat(8,minmax(2.5rem,1fr))]"
+    : "grid-cols-[minmax(12rem,4fr)_repeat(8,minmax(2.5rem,1fr))]";
 
   return (
     <section className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 overflow-hidden w-full">
@@ -175,7 +168,6 @@ export default function GroupStandingsTable({
               isQualifier={isQualifier}
               showRank={showRank}
               linkTeamSearch={linkTeamSearch}
-              trend={positionTrend(row.form)}
               live={getLive(row)}
             />
           );
@@ -196,14 +188,12 @@ export default function GroupStandingsTable({
                 {col.label}
               </span>
             ))}
-            <span className="text-right">Form</span>
           </div>
 
           <ul className="list-none m-0 p-0">
             {sorted.map((row, index) => {
               const rank = row.position ?? index + 1;
               const isQualifier = highlightQualifiers && rank <= 2;
-              const trend = positionTrend(row.form);
               const live = getLive(row);
 
               return (
@@ -266,13 +256,15 @@ export default function GroupStandingsTable({
                   {STAT_COLS.map((col) => (
                     <span
                       key={col.key}
-                      className="text-center text-sm tabular-nums text-zinc-700 dark:text-white"
+                      className={`text-center text-sm tabular-nums ${
+                        col.key === "points"
+                          ? "font-bold text-zinc-900 dark:text-white"
+                          : "text-zinc-700 dark:text-white"
+                      }`}
                     >
                       {row[col.key] ?? 0}
                     </span>
                   ))}
-
-                  <FormIndicators form={row.form} showTrend trend={trend} />
                 </li>
               );
             })}

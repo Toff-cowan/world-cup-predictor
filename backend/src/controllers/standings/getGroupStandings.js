@@ -1,66 +1,106 @@
 import pool from "../../config/db.js";
 import { ok } from "../../utils/apiResponse.js";
 
-const FORM_LENGTH = 5;
+// Mirror fifa.com/.../standings: points/stats settle at full-time. Live,
+// in-play scores are surfaced separately (per-team badge + results strip),
+// and the table refreshes as soon as a match is marked completed.
+const STATUSES_THAT_COUNT = ["completed"];
 
-function resultForTeam(homeId, awayId, homeScore, awayScore, teamId) {
-  if (homeScore == null || awayScore == null) return null;
-  const isHome = teamId === homeId;
-  const gf = isHome ? homeScore : awayScore;
-  const ga = isHome ? awayScore : homeScore;
-  if (gf > ga) return "W";
-  if (gf < ga) return "L";
-  return "D";
+function emptyRow(team) {
+  return {
+    team_id: team.id,
+    team_name: team.name,
+    team_code: team.code,
+    country_code: team.country_code,
+    flag_url: team.flag_url,
+    group_letter: team.group_letter,
+    played: 0,
+    won: 0,
+    drawn: 0,
+    lost: 0,
+    goals_for: 0,
+    goals_against: 0,
+    goal_difference: 0,
+    points: 0,
+  };
 }
 
-async function fetchFormByTeamId() {
-  const { rows } = await pool.query(
-    `SELECT m.home_team_id, m.away_team_id, m.home_score, m.away_score, m.kickoff_at, m.status
-     FROM matches m
-     WHERE m.stage = 'group' AND m.status = 'completed'
-     ORDER BY m.kickoff_at ASC NULLS LAST, m.id ASC`
-  );
-
-  const formMap = new Map();
-  for (const m of rows) {
-    for (const teamId of [m.home_team_id, m.away_team_id]) {
-      const code = resultForTeam(
-        m.home_team_id,
-        m.away_team_id,
-        m.home_score,
-        m.away_score,
-        teamId
-      );
-      if (!code) continue;
-      if (!formMap.has(teamId)) formMap.set(teamId, []);
-      const list = formMap.get(teamId);
-      list.push(code);
-      if (list.length > FORM_LENGTH) list.shift();
-    }
+function applyMatch(row, gf, ga) {
+  row.played += 1;
+  row.goals_for += gf;
+  row.goals_against += ga;
+  row.goal_difference = row.goals_for - row.goals_against;
+  if (gf > ga) {
+    row.won += 1;
+    row.points += 3;
+  } else if (gf < ga) {
+    row.lost += 1;
+  } else {
+    row.drawn += 1;
+    row.points += 1;
   }
-  return formMap;
 }
 
-function attachForm(rows, formMap) {
-  return rows.map((row) => ({
-    ...row,
-    form: formMap.get(row.team_id) || [],
-  }));
+function sortRows(rows) {
+  return [...rows].sort(
+    (a, b) =>
+      b.points - a.points ||
+      b.goal_difference - a.goal_difference ||
+      b.goals_for - a.goals_for ||
+      a.team_name.localeCompare(b.team_name)
+  );
+}
+
+/** Build live group standings from the teams + matches tables. */
+async function computeLiveStandings() {
+  const [{ rows: teams }, { rows: matches }] = await Promise.all([
+    pool.query(
+      `SELECT id, name, code, country_code, flag_url, group_letter
+       FROM teams
+       WHERE group_letter IS NOT NULL`
+    ),
+    pool.query(
+      `SELECT home_team_id, away_team_id, home_score, away_score, status, group_letter
+       FROM matches
+       WHERE stage = 'group'`
+    ),
+  ]);
+
+  const rowsByTeam = new Map();
+  const byGroup = {};
+
+  for (const team of teams) {
+    const row = emptyRow(team);
+    rowsByTeam.set(team.id, row);
+    if (!byGroup[team.group_letter]) byGroup[team.group_letter] = [];
+    byGroup[team.group_letter].push(row);
+  }
+
+  for (const m of matches) {
+    if (!STATUSES_THAT_COUNT.includes(m.status)) continue;
+    if (m.home_score == null || m.away_score == null) continue;
+    const home = rowsByTeam.get(m.home_team_id);
+    const away = rowsByTeam.get(m.away_team_id);
+    if (!home || !away) continue;
+    applyMatch(home, m.home_score, m.away_score);
+    applyMatch(away, m.away_score, m.home_score);
+  }
+
+  for (const group of Object.keys(byGroup)) {
+    byGroup[group] = sortRows(byGroup[group]).map((row, i) => ({
+      ...row,
+      position: i + 1,
+    }));
+  }
+
+  return byGroup;
 }
 
 export async function getGroupStandings(req, res, next) {
   try {
     const group = req.params.group?.toUpperCase();
-    const formMap = await fetchFormByTeamId();
-    const { rows } = await pool.query(
-      `SELECT s.*, t.name AS team_name, t.code AS team_code, t.country_code, t.flag_url
-       FROM standings s
-       JOIN teams t ON t.id = s.team_id
-       WHERE s.group_letter = $1
-       ORDER BY s.position NULLS LAST, s.points DESC, s.goal_difference DESC`,
-      [group]
-    );
-    return ok(res, { group, standings: attachForm(rows, formMap) });
+    const byGroup = await computeLiveStandings();
+    return ok(res, { group, standings: byGroup[group] || [] });
   } catch (err) {
     next(err);
   }
@@ -68,18 +108,7 @@ export async function getGroupStandings(req, res, next) {
 
 export async function getAllGroupStandings(_req, res, next) {
   try {
-    const formMap = await fetchFormByTeamId();
-    const { rows } = await pool.query(
-      `SELECT s.*, t.name AS team_name, t.code AS team_code, t.country_code, t.flag_url
-       FROM standings s
-       JOIN teams t ON t.id = s.team_id
-       ORDER BY s.group_letter, s.position NULLS LAST, s.points DESC`
-    );
-    const byGroup = {};
-    for (const row of attachForm(rows, formMap)) {
-      if (!byGroup[row.group_letter]) byGroup[row.group_letter] = [];
-      byGroup[row.group_letter].push(row);
-    }
+    const byGroup = await computeLiveStandings();
     return ok(res, { standings: byGroup });
   } catch (err) {
     next(err);

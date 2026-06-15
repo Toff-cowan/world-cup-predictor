@@ -2,6 +2,7 @@ import dotenv from "dotenv";
 import app from "./app.js";
 import { ensureTournamentData } from "./startup/ensureTournamentData.js";
 import { startNewsSyncScheduler } from "./startup/newsSyncScheduler.js";
+import { startTournamentSyncScheduler } from "./startup/tournamentSyncScheduler.js";
 import { allowedOrigins } from "./config/cors.js";
 
 dotenv.config();
@@ -13,6 +14,7 @@ app.listen(PORT, () => {
   console.log(`CORS CLIENT_URL origins: ${allowedOrigins.join(", ") || "(none)"}`);
   console.log("CORS also allows all *.vercel.app hosts");
   startNewsSyncScheduler();
+  startTournamentSyncScheduler();
   ensureTournamentData().catch((err) => {
     console.error("Startup scrape failed:", err.message);
   });
